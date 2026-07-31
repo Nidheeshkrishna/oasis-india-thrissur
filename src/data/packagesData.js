@@ -12,7 +12,7 @@ export const PACKAGES = [
     rating: 4.95,
     reviews: 214,
     badge: 'Bestseller Pilgrimage',
-    image: '/kashi-vishwanath-real.jpg',
+    image: './kashi-vishwanath-real.jpg',
     included: [
       'Round-trip flight/train booking assistance from Thrissur',
       '5-Star/4-Star AC hotel stays with breakfast & dinner',
@@ -42,7 +42,7 @@ export const PACKAGES = [
     rating: 4.90,
     reviews: 188,
     badge: 'Popular Nature',
-    image: '/munnar-tea-plantations-real.jpg',
+    image: './munnar-tea-plantations-real.jpg',
     included: [
       'Private Luxury AC Innova/Traveller from Thrissur Swaraj Round',
       '4x4 Jeep Safari to Kolukkumalai Sunrise Peak',
@@ -71,7 +71,7 @@ export const PACKAGES = [
     rating: 4.88,
     reviews: 156,
     badge: 'Char Dham Special',
-    image: '/puri-jagannath-real.jpg',
+    image: './puri-jagannath-real.jpg',
     included: [
       'Cochin to Bhubaneswar round-trip flight arrangements',
       '5-Star Beach Resort stay in Puri & Mayfair Bhubaneswar',

@@ -9,9 +9,9 @@ export const DESTINATIONS = [
     category: 'Pilgrimage',
     location: 'Varanasi, Uttar Pradesh',
     coordinates: [25.3109, 83.0107],
-    heroImage: '/kashi-vishwanath-real.jpg',
+    heroImage: './kashi-vishwanath-real.jpg',
     galleryImages: [
-      '/kashi-vishwanath-real.jpg',
+      './kashi-vishwanath-real.jpg',
       'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1200&q=80',
       'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Ganga_Aarti_at_Dashashwamedh_Ghat%2C_Varanasi.jpg/1280px-Ganga_Aarti_at_Dashashwamedh_Ghat%2C_Varanasi.jpg',
       'https://images.unsplash.com/photo-1571536802807-30451e3955d8?auto=format&fit=crop&w=1200&q=80'
@@ -169,9 +169,9 @@ export const DESTINATIONS = [
     category: 'Pilgrimage',
     location: 'Ayodhya, Uttar Pradesh',
     coordinates: [26.7956, 82.1943],
-    heroImage: '/ayodhya-ram-mandir-real.jpg',
+    heroImage: './ayodhya-ram-mandir-real.jpg',
     galleryImages: [
-      '/ayodhya-ram-mandir-real.jpg',
+      './ayodhya-ram-mandir-real.jpg',
       'https://images.unsplash.com/photo-1663158021153-6112a647d34c?auto=format&fit=crop&w=1200&q=80',
       'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Ram_Mandir_Ayodhya.jpg/1280px-Ram_Mandir_Ayodhya.jpg'
     ],
@@ -326,10 +326,10 @@ export const DESTINATIONS = [
     category: 'Pilgrimage',
     location: 'Puri, Odisha',
     coordinates: [19.8049, 85.8179],
-    heroImage: '/puri-jagannath-entrance-real.jpg',
+    heroImage: './puri-jagannath-entrance-real.jpg',
     galleryImages: [
-      '/puri-jagannath-entrance-real.jpg',
-      '/puri-jagannath-real.jpg',
+      './puri-jagannath-entrance-real.jpg',
+      './puri-jagannath-real.jpg',
       'https://images.unsplash.com/photo-1626014903708-6979a4055278?auto=format&fit=crop&w=1200&q=80'
     ],
     rating: 4.9,
@@ -444,9 +444,9 @@ export const DESTINATIONS = [
     category: 'Hill Station',
     location: 'Ooty, Nilgiris, Tamil Nadu',
     coordinates: [11.4102, 76.6950],
-    heroImage: '/ooty-toy-train-real.jpg',
+    heroImage: './ooty-toy-train-real.jpg',
     galleryImages: [
-      '/ooty-toy-train-real.jpg',
+      './ooty-toy-train-real.jpg',
       'https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?auto=format&fit=crop&w=1200&q=80',
       'https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Nilgiri_Mountain_Railway_train.jpg/1280px-Nilgiri_Mountain_Railway_train.jpg'
     ],
@@ -523,9 +523,9 @@ export const DESTINATIONS = [
     category: 'Hill Station',
     location: 'Munnar, Idukki, Kerala',
     coordinates: [10.0889, 77.0595],
-    heroImage: '/munnar-tea-plantations-real.jpg',
+    heroImage: './munnar-tea-plantations-real.jpg',
     galleryImages: [
-      '/munnar-tea-plantations-real.jpg',
+      './munnar-tea-plantations-real.jpg',
       'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=1200&q=80',
       'https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Munnar_tea_plantations_Kerala.jpg/1280px-Munnar_tea_plantations_Kerala.jpg'
     ],
