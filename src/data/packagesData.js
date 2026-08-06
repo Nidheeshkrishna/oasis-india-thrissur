@@ -13,6 +13,16 @@ export const PACKAGES = [
     reviews: 214,
     badge: 'Bestseller Pilgrimage',
     image: './kashi-vishwanath-real.jpg',
+    bgMixImages: [
+      './kashi-vishwanath-real.jpg',
+      './ayodhya-ram-mandir-real.jpg'
+    ],
+    bgMixStyle: 'collage-blend',
+    mainPlaces: ['Varanasi', 'Ayodhya', 'Prayagraj'],
+    placeImages: [
+      { name: 'Kashi Vishwanath Temple', url: './kashi-vishwanath-real.jpg', group: 'Kashi' },
+      { name: 'Shri Ram Janmabhoomi Ayodhya', url: './ayodhya-ram-mandir-real.jpg', group: 'Ayodhya' }
+    ],
     included: [
       'Round-trip flight/train booking assistance from Thrissur',
       '5-Star/4-Star AC hotel stays with breakfast & dinner',
@@ -43,6 +53,22 @@ export const PACKAGES = [
     reviews: 188,
     badge: 'Popular Nature',
     image: './munnar-tea-plantations-real.jpg',
+    bgMixImages: [
+      './ooty-toy-train-real.jpg',
+      './ooty-tea-gardens-real.jpg',
+      './ooty-botanical-garden-real.jpg',
+      './ooty-lake-boating-real.jpg'
+    ],
+    bgMixStyle: 'collage-blend',
+    mainPlaces: ['Munnar', 'Ooty', 'Parambikulam'],
+    placeImages: [
+      { name: 'Ooty Heritage Toy Train', url: './ooty-toy-train-real.jpg', group: 'Tamil Nadu' },
+      { name: 'Ooty Tea Gardens', url: './ooty-tea-gardens-real.jpg', group: 'Tamil Nadu' },
+      { name: 'Ooty Botanical Garden', url: './ooty-botanical-garden-real.jpg', group: 'Tamil Nadu' },
+      { name: 'Ooty Lake Boating', url: './ooty-lake-boating-real.jpg', group: 'Tamil Nadu' },
+      { name: 'Munnar Tea Gardens', url: './munnar-tea-plantations-real.jpg', group: 'Kerala' },
+      { name: 'Parambikulam Forest', url: './parambikulam-forest-real.jpg', group: 'Kerala' }
+    ],
     included: [
       'Private Luxury AC Innova/Traveller from Thrissur Swaraj Round',
       '4x4 Jeep Safari to Kolukkumalai Sunrise Peak',
@@ -72,6 +98,18 @@ export const PACKAGES = [
     reviews: 156,
     badge: 'Char Dham Special',
     image: './puri-jagannath-real.jpg',
+    bgMixImages: [
+      './puri-jagannath-real.jpg',
+      './puri-jagannath-entrance-real.jpg',
+      './konark-sun-temple-real.jpg',
+      './lingaraj-temple-real.jpg'
+    ],
+    bgMixStyle: 'collage-blend',
+    mainPlaces: ['Puri', 'Konark', 'Bhubaneswar'],
+    placeImages: [
+      { name: 'Puri Jagannath Temple', url: './puri-jagannath-real.jpg', group: 'Odisha' },
+      { name: 'Jagannath Singhadwara Entrance', url: './puri-jagannath-entrance-real.jpg', group: 'Odisha' }
+    ],
     included: [
       'Cochin to Bhubaneswar round-trip flight arrangements',
       '5-Star Beach Resort stay in Puri & Mayfair Bhubaneswar',
@@ -99,7 +137,18 @@ export const PACKAGES = [
     rating: 4.92,
     reviews: 142,
     badge: 'Quick Getaway',
-    image: 'https://images.unsplash.com/photo-1621360841013-c7683c659ec6?auto=format&fit=crop&w=1200&q=80',
+    image: './tiruchendur-murugan-real.jpg',
+    bgMixImages: [
+      './tiruchendur-murugan-real.jpg',
+      './tiruchendur-beach-real.jpg',
+      './thenkasi-viswanathar-real.jpg'
+    ],
+    bgMixStyle: 'collage-blend',
+    mainPlaces: ['Tenkasi', 'Tiruchendur'],
+    placeImages: [
+      { name: 'Tiruchendur Murugan Temple', url: './tiruchendur-murugan-real.jpg', group: 'Tamil Nadu' },
+      { name: 'Tiruchendur Beach', url: './tiruchendur-beach-real.jpg', group: 'Tamil Nadu' }
+    ],
     included: [
       'Luxury AC Sleeper Coach from Thrissur',
       '3-Star Deluxe Hotel Stay near Tiruchendur Seashore',
@@ -111,6 +160,62 @@ export const PACKAGES = [
       { day: 1, title: 'Thrissur to Tenkasi Kasi Viswanathar', desc: 'Early morning departure from Thrissur. Visit Tenkasi Viswanathar Temple and Courtallam falls.' },
       { day: 2, title: 'Tenkasi to Tiruchendur Seashore Temple', desc: 'Proceed to Tiruchendur. Holy dip at Nazhikinaru spring and special evening Darshan.' },
       { day: 3, title: 'Sunrise Beach Aarti & Return to Thrissur', desc: 'Watch golden sunrise over Bay of Bengal. Afternoon drive back to Thrissur.' }
+    ]
+  },
+  {
+    id: 'kashmir-punjab-golden-trail',
+    title: 'Kashmir Paradise & Punjab Golden Trail',
+    subtitle: 'Amritsar • Wagah Border • Gulmarg • Pahalgam • Sonamarg • Dal Lake',
+    destinationId: 'kashmir-punjab-golden-trail',
+    duration: '7 Days / 6 Nights',
+    price: 49999,
+    originalPrice: 57999,
+    discountPercent: 14,
+    rating: 4.98,
+    reviews: 178,
+    badge: 'Luxury Himalayan Escape',
+    image: './dal-lake-shikara-real.jpg',
+    bgMixImages: [
+      './dal-lake-shikara-real.jpg',
+      './gulmarg-real.jpg',
+      './golden-temple-real.jpg',
+      './wagah-border-real.jpg'
+    ],
+    bgMixStyle: 'collage-blend',
+    mainPlaces: ['Amritsar', 'Punjab', 'Wagah Border'],
+    placeImages: [
+      { name: 'Sonamarg', url: './sonamarg-real.jpg', group: 'kashmir' },
+      { name: 'Gulmarg', url: './gulmarg-real.jpg', group: 'kashmir' },
+      { name: 'Pahalgam', url: './pahalgam-real.jpg', group: 'kashmir' },
+      { name: 'Srinagar', url: './srinagar-real.jpg', group: 'kashmir' },
+      { name: 'Dal Lake Shikara', url: './dal-lake-shikara-real.jpg', group: 'kashmir' },
+      { name: 'Golden Temple', url: './golden-temple-real.jpg', group: 'punjab' },
+      { name: 'Wagah Border', url: './wagah-border-real.jpg', group: 'punjab' }
+    ],
+    punjabHighlights: [
+      'Golden Temple (Harmandir Sahib) spiritual Darshan & Langar community meal',
+      'Wagah Border Beating Retreat ceremony on India–Pakistan frontier',
+      'Jallianwala Bagh memorial & Heritage Amritsar city walk',
+      'Authentic Amritsari Kulcha, Lassi & Makki di Roti–Sarson da Saag dinner'
+    ],
+    included: [
+      'Round-trip Cochin to Srinagar flight arrangements via Delhi',
+      'Deluxe Dal Lake Houseboat overnight stay & shikara transfers',
+      'Gulmarg Gondola (Phase 1 & 2) VIP priority cable car tickets',
+      'Sonamarg Thajiwas Glacier pony trek with warm jackets & snow gear',
+      'Golden Temple VIP Darshan entry & Wagah Border reserved viewing seats',
+      'Luxury AC coach between Srinagar, Gulmarg, Pahalgam & Amritsar',
+      'Daily breakfast & dinner with Kashmiri Wazwan & Punjabi specials',
+      'Dedicated Malayalam/English speaking OASIS tour manager throughout'
+    ],
+    itinerary: [
+      { day: 1, title: 'Cochin → Delhi → Srinagar Arrival', desc: 'Escorted flight from Cochin. Arrival at Srinagar SXR, private transfer to Dal Lake. Evening welcome Kahwa tea on the houseboat.' },
+      { day: 2, title: 'Dal Lake Shikara Ride & Mughal Gardens', desc: 'Morning shikara ride across mirror-still Dal Lake past floating vegetable market, lotus gardens & char chinar. Afternoon Nishat & Shalimar Mughal Gardens.' },
+      { day: 3, title: 'Gulmarg Meadow of Flowers & Gondola', desc: 'Drive to Gulmarg (8,700 ft). Scenic pony walks through flower meadows and the worlds 2nd highest Gulmarg Gondola to Kongdoori at 13,050 ft.' },
+      { day: 4, title: 'Pahalgam Valley & Betaab Valley Drive', desc: 'Scenic Lidder River drive to Pahalgam. Explore Betaab Valley, Baisaran meadow and pine forest picnic with snow views.' },
+      { day: 5, title: 'Sonamarg Thajiwas Glacier Adventure', desc: 'Drive along Sindh River to Sonamarg (Golden Meadow). Thajiwas glacier pony trek, snowball fights & riverside lunch.' },
+      { day: 6, title: 'Srinagar → Delhi → Amritsar Golden Temple', desc: 'Morning flight to Amritsar. Golden Temple darshan, evening Palki Sahib & sarovar parikrama. Special Amritsari dinner.' },
+      { day: 7, title: 'Wagah Border Ceremony & Return Journey', desc: 'Sunrise Golden Temple darshan, Jallianwala Bagh visit, then reserved seats at the iconic Wagah Border beating retreat before return to Thrissur.' }
     ]
   }
 ];

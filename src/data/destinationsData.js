@@ -91,10 +91,15 @@ export const DESTINATIONS = [
     category: 'Heritage',
     location: 'Varanasi, Uttar Pradesh',
     coordinates: [25.3106, 83.0139],
-    heroImage: 'https://images.unsplash.com/photo-1627894483216-2138af692e32?auto=format&fit=crop&w=1920&q=85',
+    heroImage: './kashi-vishwanath-real.jpg',
+    bgMixImages: [
+      './kashi-vishwanath-real.jpg',
+      './ayodhya-ram-mandir-real.jpg'
+    ],
+    bgMixStyle: 'collage-blend',
     galleryImages: [
-      'https://images.unsplash.com/photo-1627894483216-2138af692e32?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1200&q=80'
+      './kashi-vishwanath-real.jpg',
+      './ayodhya-ram-mandir-real.jpg'
     ],
     rating: 4.8,
     reviewsCount: 210,
@@ -130,10 +135,15 @@ export const DESTINATIONS = [
     category: 'Pilgrimage',
     location: 'Horanadu, Chikmagalur, Karnataka',
     coordinates: [13.2721, 75.3422],
-    heroImage: 'https://images.unsplash.com/photo-1609949279531-cf48d64bed89?auto=format&fit=crop&w=1920&q=85',
+    heroImage: './horanadu-annapoorneshwari-real.jpg',
+    bgMixImages: [
+      './horanadu-annapoorneshwari-real.jpg',
+      './munnar-tea-plantations-real.jpg'
+    ],
+    bgMixStyle: 'collage-blend',
     galleryImages: [
-      'https://images.unsplash.com/photo-1609949279531-cf48d64bed89?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1200&q=80'
+      './horanadu-annapoorneshwari-real.jpg',
+      './munnar-tea-plantations-real.jpg'
     ],
     rating: 4.9,
     reviewsCount: 289,
@@ -170,10 +180,14 @@ export const DESTINATIONS = [
     location: 'Ayodhya, Uttar Pradesh',
     coordinates: [26.7956, 82.1943],
     heroImage: './ayodhya-ram-mandir-real.jpg',
+    bgMixImages: [
+      './ayodhya-ram-mandir-real.jpg',
+      './kashi-vishwanath-real.jpg'
+    ],
+    bgMixStyle: 'collage-blend',
     galleryImages: [
       './ayodhya-ram-mandir-real.jpg',
-      'https://images.unsplash.com/photo-1663158021153-6112a647d34c?auto=format&fit=crop&w=1200&q=80',
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Ram_Mandir_Ayodhya.jpg/1280px-Ram_Mandir_Ayodhya.jpg'
+      './kashi-vishwanath-real.jpg'
     ],
     rating: 5.0,
     reviewsCount: 680,
@@ -209,10 +223,16 @@ export const DESTINATIONS = [
     category: 'Pilgrimage',
     location: 'Tenkasi, Tamil Nadu',
     coordinates: [8.9592, 77.3160],
-    heroImage: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1920&q=85',
+    heroImage: './thenkasi-viswanathar-real.jpg',
+    bgMixImages: [
+      './thenkasi-viswanathar-real.jpg',
+      './tiruchendur-murugan-real.jpg',
+      './tiruchendur-beach-real.jpg'
+    ],
+    bgMixStyle: 'collage-blend',
     galleryImages: [
-      'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1200&q=80',
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Tenkasi_Kasi_Viswanathar_Temple_Gopuram.jpg/1280px-Tenkasi_Kasi_Viswanathar_Temple_Gopuram.jpg'
+      './thenkasi-viswanathar-real.jpg',
+      './tiruchendur-murugan-real.jpg'
     ],
     rating: 4.8,
     reviewsCount: 195,
@@ -248,10 +268,15 @@ export const DESTINATIONS = [
     category: 'Pilgrimage',
     location: 'Tiruchendur, Tamil Nadu',
     coordinates: [8.4962, 78.1287],
-    heroImage: 'https://images.unsplash.com/photo-1621360841013-c7683c659ec6?auto=format&fit=crop&w=1920&q=85',
+    heroImage: './tiruchendur-murugan-real.jpg',
+    bgMixImages: [
+      './tiruchendur-murugan-real.jpg',
+      './tiruchendur-beach-real.jpg'
+    ],
+    bgMixStyle: 'collage-blend',
     galleryImages: [
-      'https://images.unsplash.com/photo-1621360841013-c7683c659ec6?auto=format&fit=crop&w=1200&q=80',
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Tiruchendur_Temple_Gopuram.jpg/1280px-Tiruchendur_Temple_Gopuram.jpg'
+      './tiruchendur-murugan-real.jpg',
+      './tiruchendur-beach-real.jpg'
     ],
     rating: 4.9,
     reviewsCount: 310,
@@ -287,10 +312,16 @@ export const DESTINATIONS = [
     category: 'Nature',
     location: 'Gundlupet, Chamarajanagar, Karnataka',
     coordinates: [11.8083, 76.6917],
-    heroImage: 'https://images.unsplash.com/photo-1597848212624-a19eb35e2651?auto=format&fit=crop&w=1920&q=85',
+    heroImage: './gundlupet-sunflowers-real.jpg',
+    bgMixImages: [
+      './gundlupet-sunflowers-real.jpg',
+      './parambikulam-forest-real.jpg',
+      './ooty-tea-gardens-real.jpg'
+    ],
+    bgMixStyle: 'collage-blend',
     galleryImages: [
-      'https://images.unsplash.com/photo-1597848212624-a19eb35e2651?auto=format&fit=crop&w=1200&q=80',
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Sunflower_field_in_Gundlupet.jpg/1280px-Sunflower_field_in_Gundlupet.jpg'
+      './gundlupet-sunflowers-real.jpg',
+      './parambikulam-forest-real.jpg'
     ],
     rating: 4.7,
     reviewsCount: 180,
@@ -327,10 +358,16 @@ export const DESTINATIONS = [
     location: 'Puri, Odisha',
     coordinates: [19.8049, 85.8179],
     heroImage: './puri-jagannath-entrance-real.jpg',
+    bgMixImages: [
+      './puri-jagannath-entrance-real.jpg',
+      './puri-jagannath-real.jpg',
+      './konark-sun-temple-real.jpg'
+    ],
+    bgMixStyle: 'collage-blend',
     galleryImages: [
       './puri-jagannath-entrance-real.jpg',
       './puri-jagannath-real.jpg',
-      'https://images.unsplash.com/photo-1626014903708-6979a4055278?auto=format&fit=crop&w=1200&q=80'
+      './konark-sun-temple-real.jpg'
     ],
     rating: 4.9,
     reviewsCount: 440,
@@ -366,10 +403,16 @@ export const DESTINATIONS = [
     category: 'Heritage',
     location: 'Konark, Odisha',
     coordinates: [19.8876, 86.0945],
-    heroImage: 'https://images.unsplash.com/photo-1627894483216-2138af692e32?auto=format&fit=crop&w=1920&q=85',
+    heroImage: './konark-sun-temple-real.jpg',
+    bgMixImages: [
+      './konark-sun-temple-real.jpg',
+      './puri-jagannath-real.jpg',
+      './lingaraj-temple-real.jpg'
+    ],
+    bgMixStyle: 'collage-blend',
     galleryImages: [
-      'https://images.unsplash.com/photo-1627894483216-2138af692e32?auto=format&fit=crop&w=1200&q=80',
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Konark_Sun_Temple_Wheel.jpg/1280px-Konark_Sun_Temple_Wheel.jpg'
+      './konark-sun-temple-real.jpg',
+      './puri-jagannath-real.jpg'
     ],
     rating: 4.9,
     reviewsCount: 390,
@@ -405,10 +448,16 @@ export const DESTINATIONS = [
     category: 'Heritage',
     location: 'Bhubaneswar, Odisha',
     coordinates: [20.2382, 85.8338],
-    heroImage: 'https://images.unsplash.com/photo-1600100397608-f010e423b971?auto=format&fit=crop&w=1920&q=85',
+    heroImage: './lingaraj-temple-real.jpg',
+    bgMixImages: [
+      './lingaraj-temple-real.jpg',
+      './konark-sun-temple-real.jpg',
+      './puri-jagannath-real.jpg'
+    ],
+    bgMixStyle: 'collage-blend',
     galleryImages: [
-      'https://images.unsplash.com/photo-1600100397608-f010e423b971?auto=format&fit=crop&w=1200&q=80',
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Lingaraj_Temple_Bhubaneswar.jpg/1280px-Lingaraj_Temple_Bhubaneswar.jpg'
+      './lingaraj-temple-real.jpg',
+      './konark-sun-temple-real.jpg'
     ],
     rating: 4.8,
     reviewsCount: 230,
@@ -445,10 +494,19 @@ export const DESTINATIONS = [
     location: 'Ooty, Nilgiris, Tamil Nadu',
     coordinates: [11.4102, 76.6950],
     heroImage: './ooty-toy-train-real.jpg',
+    bgMixImages: [
+      './ooty-toy-train-real.jpg',
+      './ooty-tea-gardens-real.jpg',
+      './ooty-botanical-garden-real.jpg',
+      './ooty-lake-boating-real.jpg'
+    ],
+    bgMixStyle: 'collage-blend',
     galleryImages: [
       './ooty-toy-train-real.jpg',
-      'https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?auto=format&fit=crop&w=1200&q=80',
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Nilgiri_Mountain_Railway_train.jpg/1280px-Nilgiri_Mountain_Railway_train.jpg'
+      './ooty-tea-gardens-real.jpg',
+      './ooty-botanical-garden-real.jpg',
+      './ooty-lake-boating-real.jpg',
+      'https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?auto=format&fit=crop&w=1200&q=80'
     ],
     rating: 4.9,
     reviewsCount: 520,
@@ -484,10 +542,11 @@ export const DESTINATIONS = [
     category: 'Wildlife',
     location: 'Palakkad / Parambikulam, Kerala',
     coordinates: [10.3927, 76.7758],
-    heroImage: 'https://images.unsplash.com/photo-1511497584788-8767611136f6?auto=format&fit=crop&w=1920&q=85',
+    heroImage: './parambikulam-tiger-real.jpg',
     galleryImages: [
-      'https://images.unsplash.com/photo-1511497584788-8767611136f6?auto=format&fit=crop&w=1200&q=80',
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Parambikulam_Reservoir_Kerala.jpg/1280px-Parambikulam_Reservoir_Kerala.jpg'
+      './parambikulam-tiger-real.jpg',
+      './parambikulam-forest-real.jpg',
+      './parambikulam-lake-real.jpg'
     ],
     rating: 4.8,
     reviewsCount: 265,
@@ -554,6 +613,62 @@ export const DESTINATIONS = [
     ],
     hotels: [
       { name: 'The Panoramic Getaway Munnar', rating: '5 Star Luxury', location: 'Chithirapuram' }
+    ]
+  },
+  {
+    id: 'kashmir-punjab-golden-trail',
+    name: 'Kashmir Paradise & Punjab Golden Trail',
+    tagline: 'Dal Lake Shikara Rides, Snowy Meadows & the Golden Temple',
+    category: 'Holiday',
+    location: 'Srinagar / Gulmarg / Amritsar, India',
+    coordinates: [34.1172, 74.8679],
+    heroImage: './dal-lake-shikara-real.jpg',
+    bgMixImages: [
+      './dal-lake-shikara-real.jpg',
+      './gulmarg-real.jpg',
+      './golden-temple-real.jpg',
+      './wagah-border-real.jpg'
+    ],
+    bgMixStyle: 'collage-blend',
+    galleryImages: [
+      './dal-lake-shikara-real.jpg',
+      './gulmarg-real.jpg',
+      './pahalgam-real.jpg',
+      './sonamarg-real.jpg',
+      './srinagar-real.jpg',
+      './golden-temple-real.jpg',
+      './wagah-border-real.jpg'
+    ],
+    rating: 4.98,
+    reviewsCount: 420,
+    startingPrice: 49999,
+    duration: '7 Days / 6 Nights',
+    bestTime: 'April to October (Summer), December to February (Snow)',
+    weather: { temp: '18°C', condition: 'Crisp Mountain Air & Clear Skies', humidity: '55%', bestSeason: 'April – October' },
+    description: 'A majestic Himalayan and Punjabi cultural circuit from Thrissur — shikara rides over the mirror-still Dal Lake, gondola cable car at Gulmarg, valley views of Pahalgam, glacier walks at Sonamarg, the serene Mughal gardens of Srinagar, and the resplendent Golden Temple with the Wagah Border retreat ceremony.',
+    highlights: [
+      'Romantic Shikara Ride on the emerald Dal Lake with floating market & lotus gardens',
+      'Gulmarg Gondola — the worlds second highest cable car (Kongdoori 13,050 ft)',
+      'Pahalgam & Betaab Valley scenic drives along the Lidder River',
+      'Sonamarg Thajiwas Glacier pony trek & snow adventure',
+      'Golden Temple (Harmandir Sahib) Darshan & Langar community meal in Amritsar',
+      'Wagah Border India–Pakistan Beating Retreat evening ceremony',
+      'Houseboat night stay on Dal Lake with Kashmiri Wazwan feast'
+    ],
+    travelGuide: {
+      howToReach: 'Direct flight from Cochin (COK) to Srinagar (SXR) via Delhi, escorted by OASIS tour manager from Thrissur.',
+      dressCode: 'Layered woollens for high-altitude meadows; warm pheran shawls provided at Dal Lake houseboat.',
+      localCuisine: 'Kashmiri Wazwan, Rogan Josh, Dum Aloo, Kahwa Tea, Amritsari Kulcha & Makki di Roti with Sarson da Saag.',
+      essentialTips: 'Gulmarg gondola & Dal Lake houseboats book months in advance — OASIS reserves VIP priority passes.'
+    },
+    nearbyAttractions: [
+      { name: 'Mughal Gardens — Shalimar & Nishat', distance: '9 km', type: 'Heritage Garden' },
+      { name: 'Betaab Valley, Pahalgam', distance: '25 km', type: 'Scenic Valley' }
+    ],
+    hotels: [
+      { name: 'Deluxe Dal Lake Houseboat', rating: '5 Star Heritage Houseboat', location: 'Dal Lake, Srinagar' },
+      { name: 'Hotel Welcome Grand Srinagar', rating: '4 Star', location: 'Boulevard Road' },
+      { name: 'Hotel Ritz Plaza Amritsar', rating: '4 Star', location: 'Near Golden Temple' }
     ]
   }
 ];

@@ -6,8 +6,10 @@ import {
 import confetti from 'canvas-confetti';
 import { firestoreService } from '../services/firebase';
 import OasisLogo from './OasisLogo';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function BookingModal({ initialData, onClose, onBookingSuccess }) {
+  const { t } = useLanguage();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmedBooking, setConfirmedBooking] = useState(null);
@@ -106,16 +108,16 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
           <div style={{ marginBottom: '2rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
               <span className="badge-gold">
-                <Sparkles size={14} /> Instant Tour Booking Wizard
+                <Sparkles size={14} /> {t('booking.wizard')}
               </span>
             </div>
             <h2 style={{ fontSize: '1.8rem', fontWeight: 800, fontFamily: 'var(--font-heading)' }}>
-              Reserve Your <span className="text-gold-gradient">OASIS Tour</span>
+              {t('booking.reserve')} <span className="text-gold-gradient">OASIS Tour</span>
             </h2>
 
             {/* Step Indicators */}
             <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1.2rem' }}>
-              {['1. Package & Dates', '2. Passenger Details', '3. Tier & Payment'].map((sName, idx) => (
+              {[t('booking.step1'), t('booking.step2'), t('booking.step3')].map((sName, idx) => (
                 <div key={idx} style={{ flex: 1 }}>
                   <div style={{
                     height: '4px',
@@ -138,7 +140,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
           <div>
             <div style={{ marginBottom: '1.5rem' }}>
               <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
-                Selected Tour Package
+                {t('booking.selectedPackage')}
               </label>
               <input
                 type="text"
@@ -160,7 +162,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem', marginBottom: '1.5rem' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
-                  Departure / Travel Date *
+                  {t('booking.travelDate')} *
                 </label>
                 <input
                   type="date"
@@ -181,7 +183,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
 
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
-                  Pickup Point in Kerala
+                  {t('booking.pickupPoint')}
                 </label>
                 <select
                   value={formData.pickupLocation}
@@ -207,7 +209,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem', marginBottom: '2rem' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
-                  Adult Travelers (12+ yrs)
+                  {t('booking.adults')}
                 </label>
                 <input
                   type="number"
@@ -228,7 +230,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
 
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
-                  Children (5-11 yrs)
+                  {t('booking.children')}
                 </label>
                 <input
                   type="number"
@@ -254,7 +256,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
               className="btn-gold"
               style={{ width: '100%', justifyContent: 'center', opacity: formData.travelDate ? 1 : 0.5 }}
             >
-              <span>Continue to Passenger Info</span>
+              <span>{t('booking.continue')}</span>
             </button>
           </div>
         )}
@@ -265,7 +267,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem', marginBottom: '1.2rem' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
-                  Full Name *
+                  {t('booking.name')} *
                 </label>
                 <input
                   type="text"
@@ -286,7 +288,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
 
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
-                  Phone Number (WhatsApp) *
+                  {t('booking.phoneWhatsApp')} *
                 </label>
                 <input
                   type="tel"
@@ -308,7 +310,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
 
             <div style={{ marginBottom: '1.2rem' }}>
               <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
-                Email Address *
+                {t('booking.email')} *
               </label>
               <input
                 type="email"
@@ -329,7 +331,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
 
             <div style={{ marginBottom: '2rem' }}>
               <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
-                Dietary Preference & Special Needs
+                {t('booking.dietary')}
               </label>
               <select
                 value={formData.dietary}
@@ -351,7 +353,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
 
             <div style={{ display: 'flex', gap: '1rem' }}>
               <button className="btn-glass" onClick={() => setStep(1)} style={{ flex: 1, justifyContent: 'center' }}>
-                Back
+                {t('booking.back')}
               </button>
               <button 
                 disabled={!formData.customerName || !formData.phone || !formData.email}
@@ -359,7 +361,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
                 onClick={() => setStep(3)} 
                 style={{ flex: 2, justifyContent: 'center', opacity: (formData.customerName && formData.phone) ? 1 : 0.5 }}
               >
-                Proceed to Customization
+                {t('booking.proceed')}
               </button>
             </div>
           </div>
@@ -370,7 +372,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
           <form onSubmit={handleSubmitBooking}>
             <div style={{ marginBottom: '1.5rem' }}>
               <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
-                Select Luxury Accommodation Tier
+                {t('booking.tier')}
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.8rem' }}>
                 {['Standard 3-Star', 'Deluxe 4-Star', 'Super Luxury 5-Star'].map((tier) => (
@@ -398,7 +400,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
             {/* Price Calculation Breakdown */}
             <div className="glass-card" style={{ padding: '1.5rem', marginBottom: '2rem', border: '1px solid var(--border-gold)' }}>
               <h4 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--gold-light)', marginBottom: '1rem' }}>
-                Fare Calculation Breakdown
+                {t('booking.fareBreakdown')}
               </h4>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.9rem' }}>
@@ -407,11 +409,11 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
                   <span>₹{subtotal.toLocaleString('en-IN')}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>GST & Tourism Tax (5%)</span>
+                  <span style={{ color: 'var(--text-muted)' }}>{t('booking.gst')}</span>
                   <span>₹{gst.toLocaleString('en-IN')}</span>
                 </div>
                 <div style={{ borderTop: '1px solid var(--border-gold)', paddingTop: '0.8rem', display: 'flex', justifyContent: 'space-between', fontWeight: 800, fontSize: '1.25rem', color: 'var(--gold-light)' }}>
-                  <span>Total Amount Payable:</span>
+                  <span>{t('booking.total')}:</span>
                   <span>₹{totalAmount.toLocaleString('en-IN')}</span>
                 </div>
               </div>
@@ -419,7 +421,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
 
             <div style={{ display: 'flex', gap: '1rem' }}>
               <button type="button" className="btn-glass" onClick={() => setStep(2)} style={{ flex: 1, justifyContent: 'center' }}>
-                Back
+                {t('booking.back')}
               </button>
               <button 
                 type="submit"
@@ -428,7 +430,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
                 style={{ flex: 2, justifyContent: 'center' }}
               >
                 <CreditCard size={18} />
-                <span>{isSubmitting ? 'Confirming Booking...' : 'Confirm & Generate Receipt'}</span>
+                <span>{isSubmitting ? t('booking.confirming') : t('booking.confirm')}</span>
               </button>
             </div>
           </form>
@@ -453,10 +455,10 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
                 <CheckCircle2 size={36} />
               </div>
               <h2 style={{ fontSize: '1.8rem', fontWeight: 800, fontFamily: 'var(--font-heading)', color: 'var(--gold-light)' }}>
-                Booking Confirmed!
+                {t('booking.confirmed')}
               </h2>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
-                Official Travel Voucher generated for {confirmedBooking.customerName}
+                {t('booking.voucherGenerated', { name: confirmedBooking.customerName })}
               </p>
             </div>
 
@@ -478,16 +480,16 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
                 <div>
                   <OasisLogo height={42} />
                   <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '0.3rem' }}>
-                    Swaraj Round North, Thrissur, Kerala • Reg. No: KTD/TS/2026/89
+                    {t('booking.voucherReg')}
                   </div>
                 </div>
 
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ background: '#4E6128', color: '#ffffff', fontWeight: 800, padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem', display: 'inline-block' }}>
-                    CONFIRMED VOUCHER
+                    {t('booking.voucherConfirmed')}
                   </div>
                   <div style={{ fontSize: '0.85rem', fontWeight: 700, marginTop: '0.3rem', color: '#0f172a' }}>
-                    ID: {confirmedBooking.id}
+                    {t('booking.voucherId', { id: confirmedBooking.id })}
                   </div>
                 </div>
               </div>
@@ -495,26 +497,26 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
               {/* Voucher Details */}
               <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem', marginBottom: '1.2rem' }}>
                 <div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', textTransform: 'uppercase' }}>Package Name</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', textTransform: 'uppercase' }}>{t('booking.packageName')}</div>
                   <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.8rem' }}>
                     {confirmedBooking.packageName}
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem', fontSize: '0.85rem' }}>
                     <div>
-                      <span style={{ color: '#64748b' }}>Traveler: </span>
+                      <span style={{ color: '#64748b' }}>{t('booking.voucherTraveler')}</span>
                       <strong>{confirmedBooking.customerName}</strong>
                     </div>
                     <div>
-                      <span style={{ color: '#64748b' }}>Travel Date: </span>
+                      <span style={{ color: '#64748b' }}>{t('booking.voucherTravelDate')}</span>
                       <strong>{confirmedBooking.travelDate}</strong>
                     </div>
                     <div>
-                      <span style={{ color: '#64748b' }}>Pickup Hub: </span>
+                      <span style={{ color: '#64748b' }}>{t('booking.voucherPickupHub')}</span>
                       <strong>{confirmedBooking.pickupLocation}</strong>
                     </div>
                     <div>
-                      <span style={{ color: '#64748b' }}>Tier: </span>
+                      <span style={{ color: '#64748b' }}>{t('booking.voucherTier')}</span>
                       <strong>{confirmedBooking.tier}</strong>
                     </div>
                   </div>
@@ -523,7 +525,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
                 {/* QR Code & Total */}
                 <div style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0', paddingLeft: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                   <QrCode size={80} color="#0f172a" />
-                  <div style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '0.4rem' }}>Scan at Pickup Desk</div>
+                  <div style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '0.4rem' }}>{t('booking.voucherScan')}</div>
                   <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#059669', marginTop: '0.6rem' }}>
                     ₹{confirmedBooking.totalPrice.toLocaleString('en-IN')}
                   </div>
@@ -531,7 +533,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
               </div>
 
               <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '0.8rem', fontSize: '0.75rem', color: '#64748b', textAlign: 'center' }}>
-                For instant assistance, present this voucher at Thrissur Office or call 24x7 Helpline +91 94470 00000.
+                {t('booking.voucherNote')}
               </div>
             </div>
 
@@ -543,7 +545,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
                 style={{ flex: 1, justifyContent: 'center' }}
               >
                 <Printer size={18} />
-                <span>Print Voucher</span>
+                <span>{t('booking.printVoucher')}</span>
               </button>
 
               <button 
@@ -551,7 +553,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
                 onClick={onClose}
                 style={{ flex: 1, justifyContent: 'center' }}
               >
-                <span>Done</span>
+                <span>{t('booking.done')}</span>
               </button>
             </div>
           </div>
