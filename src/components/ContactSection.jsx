@@ -30,7 +30,7 @@ export default function ContactSection({ contactData }) {
   };
 
   return (
-    <section id="contact" style={{ padding: '6rem 0', background: 'var(--bg-dark)', color: '#fff', position: 'relative' }}>
+    <section id="contact" style={{ padding: 'clamp(4rem, 7vw, 5.5rem) 0', background: 'var(--bg-dark)', color: '#fff', position: 'relative' }}>
       
       {/* Decorative Golden Light Orbs */}
       <div style={{ position: 'absolute', top: 0, left: '10%', width: '300px', height: '300px', background: 'rgba(212,175,55,0.06)', borderRadius: '50%', filter: 'blur(80px)', pointerEvents: 'none' }} />
@@ -39,7 +39,7 @@ export default function ContactSection({ contactData }) {
       <div className="container">
         
         {/* Section Header */}
-        <div style={{ textAlign: 'center', maxWidth: '750px', margin: '0 auto 4rem' }}>
+        <div style={{ textAlign: 'center', maxWidth: '750px', margin: '0 auto 3rem' }}>
           <span className="badge-gold" style={{ marginBottom: '0.8rem' }}>
             <MapPin size={14} /> Swaraj Round Main Branch
           </span>

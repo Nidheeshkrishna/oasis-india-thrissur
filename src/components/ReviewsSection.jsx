@@ -221,7 +221,7 @@ export default function ReviewsSection() {
   );
 
   return (
-    <section id="reviews" style={{ padding: '6rem 0', background: 'linear-gradient(180deg, #f2f6fb 0%, #eefbf3 60%, #ffffff 100%)', borderTop: '1px solid var(--border-subtle)', position: 'relative', overflow: 'hidden' }}>
+    <section id="reviews" style={{ padding: 'clamp(4rem, 7vw, 5.5rem) 0', background: 'linear-gradient(180deg, #f2f6fb 0%, #eefbf3 60%, #ffffff 100%)', borderTop: '1px solid var(--border-subtle)', position: 'relative', overflow: 'hidden' }}>
       {/* Colorful ambient orbs */}
       <div className="orb" style={{ width: '340px', height: '340px', background: 'var(--violet)', top: '-80px', left: '-80px' }} />
       <div className="orb" style={{ width: '300px', height: '300px', background: 'var(--emerald-accent)', bottom: '-60px', right: '-90px', animationDelay: '-7s' }} />
@@ -233,10 +233,10 @@ export default function ReviewsSection() {
           <span className="badge-aurora" style={{ marginBottom: '0.8rem' }}>
             <Star size={14} /> {t('reviews.badge')}
           </span>
-          <h2 style={{ fontSize: '2.8rem', fontWeight: 800, marginBottom: '0.8rem' }}>
+          <h2 style={{ fontSize: '2.8rem', fontWeight: 800, marginBottom: '0.8rem', color: '#0f172a' }}>
             {t('reviews.titleA')} <span className="text-aurora">{t('reviews.titleB')}</span>
           </h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>
+          <p style={{ color: '#475569', fontSize: '1.1rem' }}>
             {t('reviews.subtitle')}
           </p>
         </div>
@@ -308,13 +308,13 @@ export default function ReviewsSection() {
                 onChange={(e) => setForm({ ...form, trip: e.target.value })}
                 style={{ ...inputStyle, cursor: 'pointer' }}
               >
-                <option value="">{t('reviews.selectTour')}</option>
-                <option>Kashmir Paradise & Punjab Golden Trail</option>
-                <option>Sacred North Yatra: Kashi, Ayodhya & Prayagraj</option>
-                <option>Emerald Escapes: Munnar, Ooty & Parambikulam</option>
-                <option>Sacred South Temple Trails</option>
-                <option>Andaman Island Paradise</option>
-                <option>Other / Custom Tour</option>
+                <option value="" style={{ color: '#0f172a', background: '#ffffff' }}>{t('reviews.selectTour')}</option>
+                <option style={{ color: '#0f172a', background: '#ffffff' }}>Kashmir Paradise & Punjab Golden Trail</option>
+                <option style={{ color: '#0f172a', background: '#ffffff' }}>Sacred North Yatra: Kashi, Ayodhya & Prayagraj</option>
+                <option style={{ color: '#0f172a', background: '#ffffff' }}>Emerald Escapes: Munnar, Ooty & Parambikulam</option>
+                <option style={{ color: '#0f172a', background: '#ffffff' }}>Sacred South Temple Trails</option>
+                <option style={{ color: '#0f172a', background: '#ffffff' }}>Andaman Island Paradise</option>
+                <option style={{ color: '#0f172a', background: '#ffffff' }}>Other / Custom Tour</option>
               </select>
             </div>
 
@@ -472,7 +472,7 @@ export default function ReviewsSection() {
             </p>
           </div>
         ) : (
-          <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '3rem 0' }}>
+          <p style={{ textAlign: 'center', color: '#475569', padding: '3rem 0' }}>
             {t('reviews.noReviews')}
           </p>
         )}
@@ -484,10 +484,10 @@ export default function ReviewsSection() {
 
 const inputStyle = {
   width: '100%',
-  background: 'rgba(15,23,42,0.05)',
+  background: 'rgba(255,255,255,0.92)',
   border: '1px solid var(--border-gold)',
   borderRadius: '10px',
-  color: 'var(--text-main)',
+  color: '#0f172a',
   padding: '0.8rem 1rem',
   fontSize: '0.92rem',
   outline: 'none',

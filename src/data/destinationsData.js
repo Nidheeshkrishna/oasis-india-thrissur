@@ -3,6 +3,233 @@
 
 export const DESTINATIONS = [
   {
+    id: 'ooty-nilgiri-hills',
+    name: 'Ooty Nilgiri Hills & Heritage Toy Train',
+    tagline: 'Queen of Hill Stations, Emerald Tea Gardens & Steam Rail',
+    category: 'Hill Station',
+    location: 'Ooty, Nilgiris, Tamil Nadu',
+    coordinates: [11.4102, 76.6950],
+    heroImage: './ooty-toy-train-real.jpg',
+    bgMixImages: [
+      './ooty-toy-train-real.jpg',
+      './ooty-botanical-garden-real.jpg',
+      './ooty-lake-boating-real.jpg',
+      './ooty-tea-gardens-real.jpg'
+    ],
+    bgMixStyle: 'collage-blend',
+    galleryImages: [
+      './ooty-toy-train-real.jpg',
+      './ooty-botanical-garden-real.jpg',
+      './ooty-lake-boating-real.jpg',
+      './ooty-tea-gardens-real.jpg'
+    ],
+    rating: 4.97,
+    reviewsCount: 388,
+    startingPrice: 14999,
+    duration: '3 Days / 2 Nights',
+    bestTime: 'October to June',
+    weather: { temp: '16°C', condition: 'Crisp & Misty', humidity: '65%', bestSeason: 'Summer & Winter' },
+    description: 'Experience the romantic Queen of Hill Stations with OASIS Thrissur. Board the vintage UNESCO World Heritage Nilgiri Mountain Toy Train, stroll through 55-acre Government Botanical Gardens, boat across Ooty Lake, and explore panoramic Doddabetta Peak with direct luxury coach transfers from Thrissur Swaraj Round.',
+    highlights: [
+      'Reserved VIP Tickets for Nilgiri Mountain Heritage Toy Train',
+      'Excursion to Government Botanical Garden & Italian Glasshouse',
+      'Pedal & Speedboating on scenic 65-acre Ooty Lake',
+      'Doddabetta Peak (8,652 ft) & Pykara Waterfall Safari'
+    ],
+    travelGuide: {
+      howToReach: 'Direct luxury AC coach transfers from Thrissur Swaraj Round (195 km via Palakkad, Coimbatore & Mettupalayam ghats).',
+      dressCode: 'Warm woollen sweaters, jackets for morning/evening & comfortable walking shoes.',
+      localCuisine: 'Authentic Nilgiri Homemade Chocolates, Fresh Eucalyptus Tea, Hot Vada Pav & South Indian Thali.',
+      essentialTips: 'Toy train tickets book weeks in advance; OASIS manages reserved group seats.'
+    },
+    nearbyAttractions: [
+      { name: 'Doddabetta Peak', distance: '9 km', type: 'Viewpoint' },
+      { name: 'Pykara Falls & Lake', distance: '21 km', type: 'Waterfall' },
+      { name: 'Government Rose Garden', distance: '3 km', type: 'Garden' }
+    ],
+    hotels: [
+      { name: 'Savoy - IHCL SeleQtions Ooty', rating: '5 Star Heritage', location: 'Sylks Road' },
+      { name: 'Sterling Ooty Fern Hill Resort', rating: '4 Star Deluxe', location: 'Fern Hill' }
+    ]
+  },
+  {
+    id: 'kochi-heritage-harbor',
+    name: 'Kochi Heritage Harbor & Fort Kochi',
+    tagline: 'Queen of the Arabian Sea, Chinese Fishing Nets & Dutch Palaces',
+    category: 'Heritage & Beaches',
+    location: 'Kochi / Ernakulam, Kerala',
+    coordinates: [9.9312, 76.2673],
+    heroImage: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1920&q=85',
+    bgMixImages: [
+      'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1200&q=80'
+    ],
+    bgMixStyle: 'collage-blend',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1200&q=80'
+    ],
+    rating: 4.95,
+    reviewsCount: 412,
+    startingPrice: 8999,
+    duration: '2 Days / 1 Night',
+    bestTime: 'September to March',
+    weather: { temp: '28°C', condition: 'Tropical Coastal Breeze', humidity: '75%', bestSeason: 'Winter & Spring' },
+    description: 'Explore the historic Queen of the Arabian Sea with OASIS Thrissur. Witness the iconic 14th-century Chinese Fishing Nets at sunset, 1555 Mattancherry Dutch Palace with ancient Ramayana murals, 1568 Jewish Synagogue and Jew Town antique lanes, St. Francis Church (Vasco da Gama 1503), and Marine Drive evening harbor cruise with direct private AC transfers from Thrissur Swaraj Round.',
+    highlights: [
+      'Guided Sunset Excursion to Fort Kochi Chinese Fishing Nets',
+      'VIP Entry to Mattancherry Dutch Palace & Jewish Synagogue',
+      'Evening Marine Drive Harbor Sunset Cruise across Vembanad Lake',
+      'Private luxury AC transport from Thrissur Swaraj Round Main Branch'
+    ],
+    travelGuide: {
+      howToReach: 'Direct 72 km luxury AC coach / private car drive from Thrissur Swaraj Round via NH544 & Edappally (1.5 hrs).',
+      dressCode: 'Light cotton casuals, modest attire for synagogues and churches, sunhat & sunglasses.',
+      localCuisine: 'Authentic Cochin Seafood Thali, Karimeen Pollichathu, Appam with Stew & Jew Town Spiced Pastries.',
+      essentialTips: 'Chinese fishing nets best photographed at sunset (5:30 PM - 6:30 PM). Jewish synagogue closed on Saturdays.'
+    },
+    nearbyAttractions: [
+      { name: 'Chinese Fishing Nets', distance: '1 km', type: 'Heritage' },
+      { name: 'Mattancherry Palace', distance: '3 km', type: 'History' },
+      { name: 'Marine Drive Rainbow Bridge', distance: '5 km', type: 'Waterfront' }
+    ],
+    hotels: [
+      { name: 'Brunton Boatyard - CGH Earth', rating: '5 Star Heritage', location: 'Fort Kochi' },
+      { name: 'Grand Hyatt Kochi Bolgatty', rating: '5 Star Luxury', location: 'Bolgatty Island' }
+    ]
+  },
+  {
+    id: 'wayanad-misty-hills',
+    name: 'Wayanad Misty Hills & Heart Lake',
+    tagline: 'High Altitude Rainforests & Heritage Caves',
+    category: 'Hill Station',
+    location: 'Wayanad, Kerala',
+    coordinates: [11.6854, 76.1320],
+    heroImage: './wayanad_chembra_heart_lake_ai.png',
+    galleryImages: [
+      './wayanad_chembra_heart_lake_ai.png',
+      './wayanad_banasura_lake_ai.png'
+    ],
+    rating: 4.94,
+    reviewsCount: 245,
+    startingPrice: 16999,
+    duration: '3 Days / 2 Nights',
+    bestTime: 'October to May',
+    weather: { temp: '21°C', condition: 'Misty & Cool', humidity: '70%', bestSeason: 'Winter & Spring' },
+    description: 'Discover the misty tea plantations, prehistoric Edakkal caves, and heart-shaped Chembra Lake in Wayanad with OASIS Thrissur. Direct escorted tours departing from Swaraj Round with luxury resort stays.',
+    highlights: [
+      'Trek to Chembra Peak & Natural Heart-Shaped Lake',
+      'Speedboat Ride on Banasura Sagar Dam Lake',
+      'Prehistoric Petroglyph Exploration at Edakkal Caves',
+      'Treehouse Resort Stay with Tea Plantation Views'
+    ],
+    travelGuide: {
+      howToReach: 'Direct luxury AC transfers from Thrissur Swaraj Round (175 km via Kozhikode-Thamarassery ghats).',
+      dressCode: 'Comfortable trekking shoes, warm layers for evening & rain gear.',
+      localCuisine: 'Authentic Wayanad Bamboo Rice Payasam, Malabar Parotta & Duck Roast.',
+      essentialTips: 'Chembra peak trekking permits issued early morning. Edakkal caves closed Mondays.'
+    },
+    nearbyAttractions: [
+      { name: 'Edakkal Caves', distance: '12 km', type: 'Heritage' },
+      { name: 'Banasura Sagar Dam', distance: '21 km', type: 'Lake' },
+      { name: 'Kuruva Island', distance: '35 km', type: 'Ecotourism' }
+    ],
+    hotels: [
+      { name: 'Vythiri Resort Treehouses', rating: '5 Star Deluxe', location: 'Vythiri' },
+      { name: 'Banasura Hill Eco Resort', rating: '4 Star', location: 'Padinjarathara' }
+    ]
+  },
+  {
+    id: 'athirappilly-waterfalls',
+    name: 'Athirappilly Waterfalls & Chalakudy River',
+    tagline: 'The Niagara of India & Rainforest Paradise',
+    category: 'Nature',
+    location: 'Chalakudy, Thrissur, Kerala',
+    coordinates: [10.2851, 76.5698],
+    heroImage: './athirappilly_waterfall_main_ai.png',
+    galleryImages: [
+      './athirappilly_waterfall_main_ai.png',
+      './athirappilly_rainbow_spray_ai.png',
+      './athirappilly_chalakudy_river_ai.png',
+      './athirappilly_twilight_view_ai.png'
+    ],
+    rating: 4.98,
+    reviewsCount: 312,
+    startingPrice: 4999,
+    duration: '1 Day / Day Tour',
+    bestTime: 'June to January (Monsoon & Post-Monsoon)',
+    weather: { temp: '26°C', condition: 'Misty & Tropical', humidity: '80%', bestSeason: 'Monsoon Magic' },
+    description: 'Witness India\'s most majestic 80-foot roaring waterfall cascading through lush Sholayar rainforests with OASIS Thrissur. Located just 1.2 hours from Swaraj Round, Athirappilly offers bamboo forest walks, rainbow mist sprays, and Chalakudy river eco-tours.',
+    highlights: [
+      'Guided Trek to Base of Athirappilly Roaring Waterfall',
+      'Excursion to Vazhachal Cascades & Charpa Falls',
+      'Chalakudy Riverfront Picnic & Rainforest Canopy Stroll',
+      'Luxury AC Transport from Thrissur Swaraj Round Main Branch'
+    ],
+    travelGuide: {
+      howToReach: 'Direct 48 km AC private cab/coach drive from Thrissur Swaraj Round via Chalakudy.',
+      dressCode: 'Comfortable footwear with good grip, light cotton clothing & rainwear.',
+      localCuisine: 'Authentic Kerala Fish Curry Meals, Toddy Shop Style Cuisine & Fresh Tender Coconut.',
+      essentialTips: 'Best photography views from top viewpoint at 10 AM and base at 4 PM.'
+    },
+    nearbyAttractions: [
+      { name: 'Vazhachal Waterfalls', distance: '5 km', type: 'Nature' },
+      { name: 'Charpa Falls', distance: '3 km', type: 'Waterfall' },
+      { name: 'Thumboormuzhi Butterfly Park', distance: '14 km', type: 'Ecotourism' }
+    ],
+    hotels: [
+      { name: 'Rainforest Luxury Resort Athirappilly', rating: '5 Star Deluxe', location: 'Waterfall View' },
+      { name: 'Niramayam Jungle Resort', rating: '4 Star', location: 'Chalakudy Riverfront' }
+    ]
+  },
+  {
+    id: 'silent-valley-national-park',
+    name: 'Silent Valley National Park & Kunthi River',
+    tagline: 'Pristine Virgin Rainforest & Rare Wildlife Expedition',
+    category: 'Nature',
+    location: 'Mannarkkad, Palakkad, Kerala',
+    coordinates: [11.0833, 76.4500],
+    heroImage: './silent_valley_rainforest_ai.png',
+    galleryImages: [
+      './silent_valley_rainforest_ai.png',
+      './silent_valley_kunthi_river_ai.png',
+      './silent_valley_wildlife_ai.png',
+      './silent_valley_watchtower_ai.png'
+    ],
+    rating: 4.96,
+    reviewsCount: 168,
+    startingPrice: 18999,
+    duration: '3 Days / 2 Nights',
+    bestTime: 'September to March',
+    weather: { temp: '20°C', condition: 'Misty & Refreshing', humidity: '75%', bestSeason: 'Post-Monsoon & Winter' },
+    description: 'Explore one of the world\'s oldest, most undisturbed tropical evergreen rainforests with OASIS Thrissur. Located just 2.5 hours from Thrissur Swaraj Round, Silent Valley is home to the rare Lion-Tailed Macaque, crystal clear Kunthi river, and ancient forest canopy.',
+    highlights: [
+      'Guided Forest Trek through Sairandhri Canopy & Watchtower',
+      'Excursion to pristine Kunthi River & Suspension Bridge',
+      'Wildlife Spotting: Lion-Tailed Macaque, Malabar Giant Squirrel & Hornbills',
+      'Luxury Forest Eco-Lodge stay with Sattvic Kerala Dining'
+    ],
+    travelGuide: {
+      howToReach: 'Direct luxury AC transfers from Thrissur Swaraj Round (85 km via Palakkad-Mannarkkad road).',
+      dressCode: 'Light cotton trekking wear, sturdy hiking boots & earth-toned clothing.',
+      localCuisine: 'Authentic Palakkad Iyer Sadya, Fresh Bamboo Shoot Curry & Wild Honey Herbal Tea.',
+      essentialTips: 'Forest entry passes handled directly by OASIS escort desk. Plastic-free zone.'
+    },
+    nearbyAttractions: [
+      { name: 'Sairandhri Watchtower', distance: '1 km', type: 'Viewpoint' },
+      { name: 'Kunthi River Suspension Bridge', distance: '2 km', type: 'Nature' },
+      { name: 'Kanjirapuzha Dam & Gardens', distance: '28 km', type: 'Sightseeing' }
+    ],
+    hotels: [
+      { name: 'Silent Valley Eco Resort', rating: '4 Star Deluxe', location: 'Mukkali' },
+      { name: 'Palakkad Heritage Jungle Lodge', rating: ' luxury Eco', location: 'Mannarkkad' }
+    ]
+  },
+  {
     id: 'kashi-varanasi',
     name: 'Kashi Vishwanath Temple & Varanasi',
     tagline: 'The Eternal City of Light & Devotion',
@@ -670,5 +897,101 @@ export const DESTINATIONS = [
       { name: 'Hotel Welcome Grand Srinagar', rating: '4 Star', location: 'Boulevard Road' },
       { name: 'Hotel Ritz Plaza Amritsar', rating: '4 Star', location: 'Near Golden Temple' }
     ]
+  },
+  {
+    id: 'kodaikanal-princess-hills',
+    name: 'Kodaikanal Princess of Hill Stations',
+    tagline: 'Misty Star Lake, Pine Forest Canopy & Pillar Rock Spires',
+    category: 'Hill Station',
+    location: 'Kodaikanal, Dindigul, Tamil Nadu',
+    coordinates: [10.2381, 77.4892],
+    heroImage: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=1920&q=85',
+    bgMixImages: [
+      'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80'
+    ],
+    bgMixStyle: 'collage-blend',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80'
+    ],
+    rating: 4.96,
+    reviewsCount: 365,
+    startingPrice: 15999,
+    duration: '3 Days / 2 Nights',
+    bestTime: 'October to June (Spring & Summer)',
+    weather: { temp: '18°C', condition: 'Pleasant & Misty', humidity: '65%', bestSeason: 'Summer & Winter' },
+    description: 'Discover the Princess of Hill Stations with OASIS Thrissur. Pedal boat on the 60-acre star-shaped Kodaikanal Lake, stroll through Bryant Botanical Park with 740+ rose varieties, explore 400-foot Pillar Rocks and the famed Manjummel Guna Caves, with direct luxury AC coach transfers from Thrissur Swaraj Round.',
+    highlights: [
+      'Pedal Boating & Perimeter Cycling on 60-acre Kodaikanal Star Lake',
+      'Coaker’s Walk 180-degree Panoramic Valley View & Telescope Deck',
+      'Exploration of 400 ft Pillar Rocks & Manjummel Guna Caves',
+      'Century-old Dense Pine Forest Walk & Silver Cascade Falls Excursion'
+    ],
+    travelGuide: {
+      howToReach: 'Direct luxury AC coach transfers from Thrissur Swaraj Round (230 km via Palakkad, Pollachi & Palani ghats).',
+      dressCode: 'Warm layers, light woollens for evening mist & comfortable walking shoes.',
+      localCuisine: 'Homemade Kodai Artisan Chocolates, Fresh Organic Plums, Eucalyptus Oil & South Indian Thali.',
+      essentialTips: 'Boating at Kodaikanal Lake is most pleasant at 8:30 AM before mist rises.'
+    },
+    nearbyAttractions: [
+      { name: 'Kodaikanal Star Lake', distance: '1.2 km', type: 'Lake & Boating' },
+      { name: 'Bryant Botanical Park', distance: '1.5 km', type: 'Garden' },
+      { name: 'Pillar Rocks', distance: '7.2 km', type: 'Viewpoint' }
+    ],
+    hotels: [
+      { name: 'The Carlton Kodaikanal (5 Star Lakeside Luxury)', rating: '5 Star Deluxe', location: 'Lake Road' },
+      { name: 'Sterling Kodaikanal Valley Resort', rating: '4 Star Deluxe', location: 'Pallangi Road' }
+    ]
+  },
+  {
+    id: 'kollam-ashtamudi-lake',
+    name: 'Kollam Ashtamudi Backwaters & Jatayu Rock',
+    tagline: 'Gateway to Kerala Backwaters & Coastal Heritage',
+    category: 'Backwaters',
+    location: 'Kollam, Kerala',
+    coordinates: [8.8932, 76.6141],
+    heroImage: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1200&q=80'
+    ],
+    rating: 4.92,
+    reviewsCount: 268,
+    startingPrice: 13999,
+    duration: '2 Days / 1 Night',
+    bestTime: 'September to March (Pleasant Backwater Breeze)',
+    weather: { temp: '29°C', condition: 'Warm Coastal & Backwater', humidity: '72%', bestSeason: 'Winter Cruising' },
+    description: 'Sail the legendary 8-arm Ashtamudi backwaters of Kollam on a luxury houseboat, climb the world\'s largest bird sculpture at Jatayu Rock, and explore the 1902 Thangassery Light House with OASIS Thrissur. India\'s first ecotourism destination, Thenmala, and the hidden canals of Munroe Island complete this coastal heritage odyssey.',
+    highlights: [
+      'Luxury Ashtamudi Houseboat Cruise with On-board Kerala Seafood Sadya',
+      'Jatayu Earth\'s Center — World\'s Largest Bird Sculpture & Cable Car',
+      'Thangassery 144-ft Light House & 16th-century Fort Ruins Walk',
+      'Munroe Island Canoe Ride through Tree-canopied Backwater Canals',
+      'Luxury AC Transport & Escorted Guide from Thrissur Swaraj Round'
+    ],
+    travelGuide: {
+      howToReach: 'Direct 4-hr AC coach/cab from Thrissur via MC Road; Kollam Junction is the backwater gateway with excellent rail links.',
+      dressCode: 'Light cottons, sun hat, sunscreen; floaters or sandals for jetty and canoe rides.',
+      localCuisine: 'Backwater Kerala fish curry, Karimeen pollichathu, appam, and fresh toddy-shop fare.',
+      essentialTips: 'Book the houseboat for the 02:00 PM–09:00 AM cruise for the classic Alappuzha backwater sunrise.'
+    },
+    nearbyAttractions: [
+      { name: 'Ashtamudi Lake', distance: '2 km', type: 'Backwater Cruise' },
+      { name: 'Thangassery Light House', distance: '5 km', type: 'Heritage' },
+      { name: 'Jatayu Earth\'s Center', distance: '38 km', type: 'Adventure' },
+      { name: 'Munroe Island', distance: '26 km', type: 'Backwater Village' }
+    ],
+    hotels: [
+      { name: 'Backwater Royale Houseboat Stay', rating: 'Luxury Houseboat', location: 'Ashtamudi Lake' },
+      { name: 'Kollam Lakeshore Heritage Resort', rating: '4 Star', location: 'Kollam Beach' }
+    ]
   }
 ];
+

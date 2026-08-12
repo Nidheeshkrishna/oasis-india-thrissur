@@ -89,12 +89,50 @@ const getStorageItem = (key, defaultData) => {
   }
 };
 
+let lastWriteOk = true;
+
 const setStorageItem = (key, data) => {
   try {
     localStorage.setItem(`${PREFIX}${key}`, JSON.stringify(data));
+    lastWriteOk = true;
+    return true;
   } catch (e) {
     console.error('Storage error:', e);
+    lastWriteOk = false;
+    return false;
   }
+};
+
+// Lets the admin UI show honest success/error toasts (e.g. localStorage quota exceeded)
+export const getLastWriteOk = () => lastWriteOk;
+
+const toName = (s) => {
+  if (typeof s === 'string') return s.trim();
+  if (s && typeof s === 'object') return String(s.name || '').trim();
+  return '';
+};
+
+const toArray = (val) => {
+  if (Array.isArray(val)) return val.map(toName).filter(Boolean);
+  if (typeof val === 'string') return val.split(',').map(s => s.trim()).filter(Boolean);
+  return [];
+};
+
+// Ordered route: first stop = Start, last stop = Destination, middle = pickup/dropping stops.
+// Prefers the new routePoints model (array of {name, type} or plain names); migrates legacy pickupPoints/dropPoints on the fly.
+export const getRouteStops = (data = {}) => {
+  const rp = toArray(data.routePoints);
+  if (rp.length) return rp;
+
+  const picks = toArray(data.pickupPoints);
+  const dest = data.destinationName || data.destination || data.title || data.name || '';
+  const route = [...picks];
+  if (dest.trim() && !route.includes(dest.trim())) route.push(dest.trim());
+
+  const drops = toArray(data.dropPoints);
+  drops.forEach(d => { if (!route.includes(d)) route.push(d); });
+
+  return route.length ? route : ['Thrissur Swaraj Round', 'Kodaikanal'];
 };
 
 // Notify same-tab listeners that the catalog changed

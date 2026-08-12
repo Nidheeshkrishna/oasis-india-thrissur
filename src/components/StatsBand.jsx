@@ -52,7 +52,7 @@ export default function StatsBand() {
   }, []);
 
   return (
-    <section style={{ padding: '3.5rem 0', position: 'relative', overflow: 'hidden' }} ref={ref}>
+    <section style={{ padding: 'clamp(3rem, 5vw, 4rem) 0', position: 'relative', overflow: 'hidden' }} ref={ref}>
       <div className="orb" style={{ width: '300px', height: '300px', background: 'var(--indigo)', top: '-120px', left: '30%' }} />
       <div className="container">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', position: 'relative', zIndex: 2 }}>

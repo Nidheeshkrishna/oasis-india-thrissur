@@ -1,22 +1,25 @@
 import React, { useState } from 'react';
-import { Calendar, MapPin, Users, Search, Sparkles } from 'lucide-react';
+import { Calendar, MapPin, Users, Search, Sparkles, Navigation, Layers, ChevronDown } from 'lucide-react';
 import { DESTINATIONS } from '../data/destinationsData';
 import { useLanguage } from '../i18n/LanguageContext';
+import PickupPointsMap, { MAJOR_PICKUP_POINTS } from './PickupPointsMap';
 
 const QUICK_SUGGESTIONS = ['Kashi & Varanasi', 'Kashmir Paradise', 'Munnar & Ooty', 'Puri Jagannath'];
 
 export default function TripPlanner({ onBook }) {
   const { t } = useLanguage();
   const [destinationId, setDestinationId] = useState(DESTINATIONS[0].id);
+  const [selectedPickup, setSelectedPickup] = useState(MAJOR_PICKUP_POINTS[0]);
+  const [showMap, setShowMap] = useState(false);
   const [travelDate, setTravelDate] = useState('');
   const [guests, setGuests] = useState(2);
 
   const today = new Date().toISOString().split('T')[0];
+  const selectedDestObj = DESTINATIONS.find(d => d.id === destinationId) || DESTINATIONS[0];
 
   const handleSearch = () => {
-    const dest = DESTINATIONS.find(d => d.id === destinationId);
-    if (!dest) return;
-    onBook({ ...dest, travelDate, guests });
+    if (!selectedDestObj) return;
+    onBook({ ...selectedDestObj, pickupPoint: selectedPickup, travelDate, guests });
   };
 
   const handleSuggestion = (name) => {
@@ -34,7 +37,7 @@ export default function TripPlanner({ onBook }) {
     border: '1px solid var(--border-gold)',
     borderRadius: '14px',
     padding: '0.7rem 1rem',
-    color: 'var(--text-main)',
+    color: '#0f172a',
     boxShadow: '0 4px 14px rgba(15,23,42,0.06)'
   };
 
@@ -42,7 +45,7 @@ export default function TripPlanner({ onBook }) {
     border: 'none',
     outline: 'none',
     background: 'transparent',
-    color: 'var(--text-main)',
+    color: '#0f172a',
     fontSize: '0.95rem',
     fontWeight: 600,
     flex: 1,
@@ -55,7 +58,7 @@ export default function TripPlanner({ onBook }) {
     border: 'none',
     outline: 'none',
     background: 'transparent',
-    color: 'var(--text-main)',
+    color: '#0f172a',
     fontSize: '0.95rem',
     fontWeight: 600,
     flex: 1,
@@ -65,7 +68,7 @@ export default function TripPlanner({ onBook }) {
   };
 
   return (
-    <section style={{ padding: '1rem 0 0', position: 'relative', zIndex: 5 }}>
+    <section style={{ padding: '2rem 0', position: 'relative', zIndex: 5 }}>
       <div className="container">
         <div className="glass-card" style={{ padding: '1.8rem', position: 'relative', overflow: 'hidden' }}>
           {/* Colorful top accents */}
@@ -98,8 +101,6 @@ export default function TripPlanner({ onBook }) {
                       cursor: 'pointer',
                       transition: 'all 0.3s ease'
                     }}
-                    onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 14px rgba(212,160,23,0.35)'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
                   >
                     {s}
                   </button>
@@ -108,11 +109,32 @@ export default function TripPlanner({ onBook }) {
             </div>
 
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'stretch' }}>
+              
+              {/* STARTING PICKUP LOCATION SELECTOR */}
+              <div style={{ ...fieldStyle, border: '2px solid var(--gold-primary)' }}>
+                <Navigation size={18} color="#d97706" style={{ flexShrink: 0 }} />
+                <select 
+                  value={selectedPickup.id} 
+                  onChange={(e) => {
+                    const found = MAJOR_PICKUP_POINTS.find(p => p.id === e.target.value);
+                    if (found) setSelectedPickup(found);
+                  }} 
+                  style={selectStyle}
+                >
+                  {MAJOR_PICKUP_POINTS.map((pt) => (
+                    <option key={pt.id} value={pt.id} style={{ color: '#0f172a', background: '#ffffff' }}>
+                      Starting: {pt.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* DESTINATION SELECTOR */}
               <div style={fieldStyle}>
                 <MapPin size={18} color="#f59e0b" style={{ flexShrink: 0 }} />
                 <select value={destinationId} onChange={(e) => setDestinationId(e.target.value)} style={selectStyle}>
                   {DESTINATIONS.map((d) => (
-                    <option key={d.id} value={d.id}>{d.name}</option>
+                    <option key={d.id} value={d.id} style={{ color: '#0f172a', background: '#ffffff' }}>Destination: {d.name}</option>
                   ))}
                 </select>
               </div>
@@ -150,10 +172,67 @@ export default function TripPlanner({ onBook }) {
               </button>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '1rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-              <Sparkles size={13} color="var(--emerald-accent)" />
-              <span>{t('tripPlanner.guarantee')}</span>
+            {/* ✨ NEARBY PICKUP POINTS BASED ON STARTING POINT */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.45rem',
+              marginTop: '0.9rem',
+              flexWrap: 'wrap',
+              fontSize: '0.76rem'
+            }}>
+              <span style={{ color: 'var(--gold-deep)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                <Sparkles size={13} color="var(--gold-primary)" />
+                Nearby Hubs from {selectedPickup.name.split(' ')[0]}:
+              </span>
+              {MAJOR_PICKUP_POINTS.filter(p => p.id !== selectedPickup.id).slice(0, 4).map((pt) => (
+                <button
+                  key={pt.id}
+                  onClick={() => setSelectedPickup(pt)}
+                  style={{
+                    background: 'rgba(245,158,11,0.1)',
+                    border: '1px solid rgba(212,175,55,0.3)',
+                    color: 'var(--gold-deep)',
+                    borderRadius: '14px',
+                    padding: '0.2rem 0.6rem',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  📍 {pt.name.split(' ')[0]} {pt.name.includes('Airport') ? 'Airport' : pt.name.includes('Station') ? 'Station' : 'Hub'}
+                </button>
+              ))}
             </div>
+
+            {/* MAP TOGGLE BUTTON */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '1.2rem', flexWrap: 'wrap', gap: '0.6rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                <Sparkles size={13} color="var(--emerald-accent)" />
+                <span>{t('tripPlanner.guarantee')}</span>
+              </div>
+
+              <button
+                onClick={() => setShowMap(prev => !prev)}
+                className="btn-glass"
+                style={{ padding: '0.45rem 1rem', fontSize: '0.78rem', color: 'var(--gold-light)', gap: '0.4rem' }}
+              >
+                <Navigation size={14} color="var(--gold-primary)" />
+                <span>{showMap ? 'Hide Pickup Map' : '📍 View Pickup Points Map'}</span>
+                <ChevronDown size={13} style={{ transform: showMap ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.3s' }} />
+              </button>
+            </div>
+
+            {/* EXPANDABLE INTERACTIVE PICKUP MAP */}
+            {showMap && (
+              <PickupPointsMap
+                selectedPointId={selectedPickup.id}
+                onSelectPickupPoint={(point) => setSelectedPickup(point)}
+                destinationName={selectedDestObj.name}
+              />
+            )}
+
           </div>
         </div>
       </div>

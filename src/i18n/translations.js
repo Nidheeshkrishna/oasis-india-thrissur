@@ -236,6 +236,8 @@ export const translations = {
       groupHighlights: '{group} Highlights (with Photos)',
       included: "What's Included in This Package",
       itinerary: 'Day-by-Day Itinerary',
+      sightseeing: 'Sightseeing — Image & Video',
+      highlights: 'Tour Highlights Gallery',
       day: 'Day',
       book: 'Book This Package',
       browse: 'Continue Browsing'
@@ -516,6 +518,8 @@ export const translations = {
       groupHighlights: '{group} ഹൈലൈറ്റുകൾ (ഫോട്ടോകളോടെ)',
       included: 'ഈ പാക്കേജിൽ എന്തൊക്കെ ഉൾപ്പെടുന്നു',
       itinerary: 'ദിവസം തോറുമുള്ള യാത്രാപദ്ധതി',
+      sightseeing: 'കാഴ്ചകൾ — ചിത്രവും വീഡിയോയും',
+      highlights: 'ടൂർ ഹൈലൈറ്റുകൾ ഗാലറി',
       day: 'ദിവസം',
       book: 'ഈ പാക്കേജ് ബുക്ക് ചെയ്യൂ',
       browse: 'ബ്രൗസിംഗ് തുടരുക'
@@ -792,6 +796,8 @@ export const translations = {
       groupHighlights: '{group} சிறப்பம்சங்கள் (புகைப்படங்களுடன்)',
       included: 'இந்த தொகுப்பில் என்ன சேர்க்கப்பட்டுள்ளது',
       itinerary: 'நாள் வாரியான பயணத்திட்டம்',
+      sightseeing: 'காட்சிகள் — படம் & வீடியோ',
+      highlights: 'சுற்றுலா சிறப்பம்சங்கள் கேலரி',
       day: 'நாள்',
       book: 'இந்த தொகுப்பை முன்பதிவு செய்',
       browse: 'தொடர்ந்து உலாவு'

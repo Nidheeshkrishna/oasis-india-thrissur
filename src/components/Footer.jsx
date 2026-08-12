@@ -3,7 +3,7 @@ import { MapPin, Phone, Mail, ShieldCheck, Heart, ArrowUp, MailPlus, CheckCircle
 import OasisLogo from './OasisLogo';
 import { useLanguage } from '../i18n/LanguageContext';
 
-export default function Footer({ setActiveTab, onOpenAdmin }) {
+export default function Footer({ setActiveTab, onOpenAdmin, onSelectDestination }) {
   const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
@@ -21,8 +21,17 @@ export default function Footer({ setActiveTab, onOpenAdmin }) {
   };
 
   return (
-    <footer style={{ background: '#03060c', borderTop: '1px solid var(--border-gold)', color: 'var(--text-muted)', paddingTop: '5rem', paddingBottom: '2rem', position: 'relative' }}>
-      <div className="container">
+    <footer className="footer-cinematic" style={{ background: '#03060c', borderTop: '1px solid var(--border-gold)', color: 'var(--text-muted)', paddingTop: 'clamp(3.5rem, 6vw, 5rem)', paddingBottom: '2rem', position: 'relative', overflow: 'hidden' }}>
+      {/* Ambient particle layer inside footer */}
+      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'radial-gradient(ellipse at 50% 100%, rgba(245,158,11,0.06), transparent 60%), radial-gradient(ellipse at 20% 50%, rgba(139,92,246,0.04), transparent 50%)',
+          animation: 'footerAmbient 12s ease-in-out infinite alternate',
+          pointerEvents: 'none',
+        }} />
+      </div>
+      <div className="container" style={{ position: 'relative', zIndex: 2 }}>
 
         {/* Newsletter Signup Band */}
         <div
@@ -151,14 +160,27 @@ export default function Footer({ setActiveTab, onOpenAdmin }) {
               {t('footer.quickLinks')}
             </h4>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', fontSize: '0.85rem' }}>
-              <span style={{ cursor: 'pointer' }} onClick={() => setActiveTab('destinations')}>Kashi Vishwanath</span>
-              <span style={{ cursor: 'pointer' }} onClick={() => setActiveTab('destinations')}>Ayodhya Ram Mandir</span>
-              <span style={{ cursor: 'pointer' }} onClick={() => setActiveTab('destinations')}>Puri Jagannath</span>
-              <span style={{ cursor: 'pointer' }} onClick={() => setActiveTab('destinations')}>Munnar Tea Plantations</span>
-              <span style={{ cursor: 'pointer' }} onClick={() => setActiveTab('destinations')}>Ooty Toy Railway</span>
-              <span style={{ cursor: 'pointer' }} onClick={() => setActiveTab('destinations')}>Konark Sun Temple</span>
-              <span style={{ cursor: 'pointer' }} onClick={() => setActiveTab('destinations')}>Thenkasi Viswanathar</span>
-              <span style={{ cursor: 'pointer' }} onClick={() => setActiveTab('destinations')}>Tiruchendur Shrine</span>
+              {[
+                { id: 'kashi-varanasi', label: 'Kashi Vishwanath' },
+                { id: 'ayodhya-ram-mandir', label: 'Ayodhya Ram Mandir' },
+                { id: 'puri-jagannath', label: 'Puri Jagannath' },
+                { id: 'munnar-tea-plantations', label: 'Munnar Tea Plantations' },
+                { id: 'ooty-tea-railway', label: 'Ooty Toy Railway' },
+                { id: 'konark-sun-temple', label: 'Konark Sun Temple' },
+                { id: 'thenkasi-viswanathar', label: 'Thenkasi Viswanathar' },
+                { id: 'tiruchendur-murugan', label: 'Tiruchendur Shrine' },
+              ].map((d) => (
+                <span
+                  key={d.id}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => {
+                    setActiveTab('home');
+                    onSelectDestination(d.id);
+                  }}
+                >
+                  {d.label}
+                </span>
+              ))}
             </div>
           </div>
 
@@ -214,6 +236,12 @@ export default function Footer({ setActiveTab, onOpenAdmin }) {
         </div>
 
       </div>
+      <style>{`
+        @keyframes footerAmbient {
+          0%   { opacity: 0.6; transform: scale(1); }
+          100% { opacity: 1; transform: scale(1.04); }
+        }
+      `}</style>
     </footer>
   );
 }

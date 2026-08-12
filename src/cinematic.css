@@ -1,0 +1,774 @@
+/* ═══════════════════════════════════════════════════════════════
+   cinematic.css  ·  Ultra-premium luxury animation system
+   ───────────────────────────────────────────────────────────────
+   Import this AFTER index.css for the full cinematic layer.
+   All animations are GPU-accelerated via transform/opacity only.
+   Easing: cubic-bezier(0.22, 1, 0.36, 1) throughout.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── CSS CUSTOM PROPERTIES ──────────────────────────────────── */
+:root {
+  --ease-luxury: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-silk:   cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --dur-instant:    0.15s;
+  --dur-hover:      0.30s;
+  --dur-reveal:     0.90s;
+  --dur-hero:       1.40s;
+  --dur-cinematic:  2.00s;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION REVEAL — viewport-triggered animations
+   ─────────────────────────────────────────────────────────────── */
+
+/* Base hidden state — applied before element enters viewport */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  filter: blur(8px);
+  transition:
+    opacity var(--dur-reveal) var(--ease-luxury),
+    transform var(--dur-reveal) var(--ease-luxury),
+    filter var(--dur-reveal) var(--ease-luxury);
+  will-change: opacity, transform, filter;
+}
+
+/* Visible state — JS adds this class via IntersectionObserver */
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0px);
+}
+
+/* Stagger helpers — add delay via data attribute or these classes */
+.reveal-delay-1 { transition-delay: 0.08s; }
+.reveal-delay-2 { transition-delay: 0.16s; }
+.reveal-delay-3 { transition-delay: 0.24s; }
+.reveal-delay-4 { transition-delay: 0.32s; }
+.reveal-delay-5 { transition-delay: 0.40s; }
+.reveal-delay-6 { transition-delay: 0.48s; }
+
+/* Slide-from-left variant */
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  filter: blur(8px);
+  transition:
+    opacity var(--dur-reveal) var(--ease-luxury),
+    transform var(--dur-reveal) var(--ease-luxury),
+    filter var(--dur-reveal) var(--ease-luxury);
+  will-change: opacity, transform, filter;
+}
+.reveal-left.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+  filter: blur(0px);
+}
+
+/* Slide-from-right variant */
+.reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  filter: blur(8px);
+  transition:
+    opacity var(--dur-reveal) var(--ease-luxury),
+    transform var(--dur-reveal) var(--ease-luxury),
+    filter var(--dur-reveal) var(--ease-luxury);
+  will-change: opacity, transform, filter;
+}
+.reveal-right.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+  filter: blur(0px);
+}
+
+/* Image reveal — scale from 1.05 → 1.0 */
+.reveal-image {
+  opacity: 0;
+  transform: scale(1.05);
+  transition:
+    opacity 1.1s var(--ease-luxury),
+    transform 1.1s var(--ease-luxury);
+  will-change: opacity, transform;
+}
+.reveal-image.is-visible {
+  opacity: 1;
+  transform: scale(1.0);
+}
+
+/* Card lift reveal */
+.reveal-card {
+  opacity: 0;
+  transform: translateY(24px) scale(0.98);
+  transition:
+    opacity var(--dur-reveal) var(--ease-luxury),
+    transform var(--dur-reveal) var(--ease-luxury);
+  will-change: opacity, transform;
+}
+.reveal-card.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TEXT REVEALS
+   ─────────────────────────────────────────────────────────────── */
+
+/* Blur-mask text reveal — line by line */
+.text-reveal-line {
+  overflow: hidden;
+  display: block;
+}
+.text-reveal-line .text-reveal-inner {
+  display: block;
+  opacity: 0;
+  transform: translateY(100%);
+  transition:
+    opacity 0.85s var(--ease-luxury),
+    transform 0.85s var(--ease-luxury);
+}
+.text-reveal-line.is-visible .text-reveal-inner {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Gradient shimmer text */
+.text-shimmer {
+  background: linear-gradient(
+    120deg,
+    rgba(245,158,11,0.9) 0%,
+    rgba(255,255,255,1) 40%,
+    rgba(245,158,11,0.9) 60%,
+    rgba(212,175,55,0.9) 100%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: textShimmer 4s ease-in-out infinite;
+}
+
+@keyframes textShimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+/* Glow pulse text */
+.text-glow-pulse {
+  animation: textGlowPulse 3.5s ease-in-out infinite;
+}
+
+@keyframes textGlowPulse {
+  0%, 100% { text-shadow: 0 0 20px rgba(245,158,11,0.0); }
+  50%       { text-shadow: 0 0 30px rgba(245,158,11,0.35), 0 0 60px rgba(245,158,11,0.15); }
+}
+
+/* Word by word fade */
+.word-fade > span {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(16px);
+  filter: blur(4px);
+  transition:
+    opacity 0.7s var(--ease-luxury),
+    transform 0.7s var(--ease-luxury),
+    filter 0.7s var(--ease-luxury);
+}
+.word-fade.is-visible > span {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0px);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CARD HOVER — premium 3D lift & glow
+   ─────────────────────────────────────────────────────────────── */
+
+.card-cinematic {
+  position: relative;
+  transform-style: preserve-3d;
+  transition:
+    transform 0.45s var(--ease-luxury),
+    box-shadow 0.45s var(--ease-luxury);
+  will-change: transform, box-shadow;
+}
+
+.card-cinematic:hover {
+  transform: translateY(-8px) perspective(900px) scale(1.012);
+  box-shadow:
+    0 28px 60px -12px rgba(0,0,0,0.55),
+    0 0 40px rgba(245,158,11,0.14),
+    0 0 80px rgba(139,92,246,0.08);
+}
+
+/* Inner glass reflection that moves with cursor — controlled via JS */
+.card-cinematic .card-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.12) 0%,
+    rgba(255,255,255,0) 60%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-luxury);
+}
+
+.card-cinematic:hover .card-glare {
+  opacity: 1;
+}
+
+/* ── Soft glow edge on hover ─────────────────────────────────── */
+.card-cinematic::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: transparent;
+  box-shadow: inset 0 0 0 1px rgba(245,158,11,0);
+  transition: box-shadow 0.45s var(--ease-luxury);
+  pointer-events: none;
+}
+.card-cinematic:hover::after {
+  box-shadow: inset 0 0 0 1px rgba(245,158,11,0.35);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BUTTON INTERACTIONS
+   ─────────────────────────────────────────────────────────────── */
+
+/* Magnetic wrapper — JS handles the translate, CSS handles hover state */
+.btn-magnetic {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  will-change: transform;
+  transition: transform 0.1s var(--ease-luxury);
+}
+
+/* Scale + glow on hover */
+.btn-cinematic {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform var(--dur-hover) var(--ease-spring),
+    box-shadow var(--dur-hover) var(--ease-luxury),
+    opacity var(--dur-hover) var(--ease-luxury);
+  will-change: transform;
+}
+
+.btn-cinematic:hover {
+  transform: scale(1.04) translateY(-2px);
+}
+
+.btn-cinematic:active {
+  transform: scale(0.97) translateY(1px);
+}
+
+/* Ripple on click */
+.btn-cinematic .ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  background: rgba(255,255,255,0.22);
+  animation: btnRipple 0.7s var(--ease-luxury) forwards;
+  pointer-events: none;
+}
+
+@keyframes btnRipple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Soft glow pulse on CTA buttons */
+.btn-glow-pulse {
+  animation: btnGlowPulse 2.8s ease-in-out infinite;
+}
+
+@keyframes btnGlowPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245,158,11,0); }
+  50%       { box-shadow: 0 0 24px 4px rgba(245,158,11,0.28); }
+}
+
+/* ── CTA scale-in reveal (95% → 100%) ──────────────────────── */
+.cta-reveal {
+  opacity: 0;
+  transform: scale(0.95);
+  transition:
+    opacity 0.8s var(--ease-luxury),
+    transform 0.8s var(--ease-luxury);
+}
+.cta-reveal.is-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── Scroll indicator bounce ──────────────────────────────────── */
+.scroll-indicator {
+  opacity: 0;
+  animation: scrollIndicatorReveal 1s var(--ease-luxury) 2.5s forwards;
+}
+
+@keyframes scrollIndicatorReveal {
+  to { opacity: 1; }
+}
+
+.scroll-indicator-dot {
+  animation: scrollBounce 1.8s var(--ease-spring) infinite;
+}
+
+@keyframes scrollBounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(8px); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   IMAGE ANIMATIONS — Ken Burns, parallax masks
+   ─────────────────────────────────────────────────────────────── */
+
+/* Ken Burns slow zoom — apply to img or background-div */
+.ken-burns {
+  animation: kenBurns 18s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes kenBurns {
+  0%   { transform: scale(1)    translateX(0)    translateY(0); }
+  33%  { transform: scale(1.06) translateX(-1%)  translateY(-0.5%); }
+  66%  { transform: scale(1.04) translateX(1%)   translateY(0.5%); }
+  100% { transform: scale(1.08) translateX(-0.5%) translateY(-1%); }
+}
+
+/* Masked image reveal — wipe from left */
+.mask-reveal {
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 1.2s var(--ease-luxury);
+}
+.mask-reveal.is-visible {
+  clip-path: inset(0 0% 0 0);
+}
+
+/* Rounded corner morph on hover */
+.img-morph-corners {
+  border-radius: 12px;
+  transition:
+    border-radius 0.5s var(--ease-luxury),
+    transform 0.5s var(--ease-luxury);
+}
+.img-morph-corners:hover {
+  border-radius: 24px;
+  transform: scale(1.02);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ICON ANIMATIONS
+   ─────────────────────────────────────────────────────────────── */
+
+/* SVG stroke draw — requires stroke-dasharray/offset to be set inline */
+.icon-draw {
+  stroke-dashoffset: 1000;
+  animation: iconDraw 1.2s var(--ease-luxury) forwards;
+}
+
+@keyframes iconDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Gentle idle float */
+.icon-float {
+  animation: iconFloat 4s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+
+/* Glow pulse every few seconds */
+.icon-glow {
+  animation: iconGlow 3s ease-in-out infinite;
+}
+
+@keyframes iconGlow {
+  0%, 100% { filter: drop-shadow(0 0 0px rgba(245,158,11,0)); }
+  50%       { filter: drop-shadow(0 0 10px rgba(245,158,11,0.55)); }
+}
+
+/* Rotate on hover */
+.icon-hover-rotate {
+  transition: transform 0.4s var(--ease-luxury);
+}
+.icon-hover-rotate:hover {
+  transform: rotate(15deg);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PARALLAX LAYERS — depth system
+   ─────────────────────────────────────────────────────────────── */
+
+/* The JS parallaxTransform() helper applies translateY via style.
+   These classes set up will-change for GPU hints. */
+.parallax-far    { will-change: transform; }
+.parallax-mid    { will-change: transform; }
+.parallax-near   { will-change: transform; }
+.parallax-fg     { will-change: transform; }
+
+/* ═══════════════════════════════════════════════════════════════
+   AMBIENT LOOPING EFFECTS
+   ─────────────────────────────────────────────────────────────── */
+
+/* Breathing animation on major elements */
+.breathe {
+  animation: breathe 5s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.012); }
+}
+
+/* Slow glow pulse (background orbs, hero elements) */
+.glow-pulse {
+  animation: glowPulse 4s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.5; filter: blur(40px); }
+  50%       { opacity: 0.75; filter: blur(55px); }
+}
+
+/* Soft environmental fog drift */
+.fog-drift {
+  animation: fogDrift 22s ease-in-out infinite alternate;
+}
+
+@keyframes fogDrift {
+  0%   { transform: translateX(0) scaleX(1); opacity: 0.3; }
+  50%  { opacity: 0.45; }
+  100% { transform: translateX(3%) scaleX(1.05); opacity: 0.3; }
+}
+
+/* Animated gradient background */
+.gradient-drift {
+  background-size: 200% 200%;
+  animation: gradientDrift 14s ease-in-out infinite;
+}
+
+@keyframes gradientDrift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLL TRANSITIONS — section overlap fades
+   ─────────────────────────────────────────────────────────────── */
+
+/* Section wrapper with slight fade based on scroll position.
+   JS drives opacity via style.opacity for smooth inertia. */
+.scroll-section {
+  will-change: opacity;
+  transition: opacity 0.3s var(--ease-luxury);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   GALLERY INTERACTIONS
+   ─────────────────────────────────────────────────────────────── */
+
+.gallery-item {
+  overflow: hidden;
+  transition:
+    transform 0.55s var(--ease-luxury),
+    box-shadow 0.55s var(--ease-luxury);
+  will-change: transform;
+}
+
+.gallery-item:hover {
+  transform: scale(1.03);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+  z-index: 2;
+}
+
+.gallery-item img {
+  transition: transform 0.7s var(--ease-luxury);
+  will-change: transform;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.06);
+}
+
+/* Neighbours shrink slightly for depth effect */
+.gallery-item:hover ~ .gallery-item,
+.gallery-item:has(~ .gallery-item:hover) {
+  transform: scale(0.98);
+}
+
+/* Fullscreen zoom reveal */
+.gallery-fullscreen-enter {
+  animation: galleryZoomIn 0.65s var(--ease-luxury) forwards;
+}
+
+@keyframes galleryZoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.88);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0px);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TESTIMONIAL CAROUSEL
+   ─────────────────────────────────────────────────────────────── */
+
+.testimonial-slide {
+  opacity: 0;
+  transform: translateX(30px);
+  transition:
+    opacity 0.7s var(--ease-luxury),
+    transform 0.7s var(--ease-luxury);
+}
+
+.testimonial-slide.active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PAGE TRANSITION OVERLAY
+   ─────────────────────────────────────────────────────────────── */
+
+.page-transition-overlay {
+  position: fixed;
+  inset: 0;
+  background: #000000;
+  z-index: 98000;
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    opacity 0.55s var(--ease-luxury),
+    filter 0.55s var(--ease-luxury);
+}
+
+.page-transition-overlay.entering {
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FOOTER REVEAL
+   ─────────────────────────────────────────────────────────────── */
+
+.footer-cinematic {
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    opacity 1.2s var(--ease-luxury),
+    transform 1.2s var(--ease-luxury);
+}
+
+.footer-cinematic.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Social icon glow on hover */
+.social-icon-cinematic {
+  transition:
+    transform var(--dur-hover) var(--ease-spring),
+    filter var(--dur-hover) var(--ease-luxury),
+    color var(--dur-hover) var(--ease-luxury);
+}
+
+.social-icon-cinematic:hover {
+  transform: translateY(-3px) scale(1.15);
+  filter: drop-shadow(0 0 8px rgba(245,158,11,0.55));
+}
+
+/* Footer ambient fade-to-dark */
+.footer-ambient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.6));
+  pointer-events: none;
+  animation: footerFadeIn 1.5s var(--ease-luxury) 0.3s both;
+}
+
+@keyframes footerFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   COUNTER BOUNCE
+   ─────────────────────────────────────────────────────────────── */
+
+.counter-bounce {
+  animation: counterBounce 0.4s var(--ease-spring) forwards;
+}
+
+@keyframes counterBounce {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HERO CINEMATIC LAYERS
+   ─────────────────────────────────────────────────────────────── */
+
+/* Hero background push-in (camera forward) */
+.hero-bg-push {
+  transform: scale(1.12);
+  animation: heroBgPush 3s var(--ease-luxury) 0.3s forwards;
+  will-change: transform;
+}
+
+@keyframes heroBgPush {
+  to { transform: scale(1); }
+}
+
+/* Volumetric light rays */
+.light-ray {
+  position: absolute;
+  top: -10%;
+  width: 2px;
+  height: 130%;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(245,158,11,0.06) 30%,
+    rgba(255,255,255,0.04) 50%,
+    rgba(245,158,11,0.03) 70%,
+    transparent
+  );
+  filter: blur(8px);
+  transform-origin: top center;
+  animation: lightRayDrift 12s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.light-ray:nth-child(2) { animation-delay: -4s; animation-duration: 15s; }
+.light-ray:nth-child(3) { animation-delay: -8s; animation-duration: 10s; }
+
+@keyframes lightRayDrift {
+  0%, 100% { transform: rotate(-3deg) scaleX(1); opacity: 0.6; }
+  50%       { transform: rotate(3deg) scaleX(1.5); opacity: 1; }
+}
+
+/* Foreground float drift */
+.hero-float {
+  animation: heroFloat 7s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33%       { transform: translateY(-8px) rotate(0.5deg); }
+  66%       { transform: translateY(-4px) rotate(-0.3deg); }
+}
+
+/* Hero headline reveal — words fade up with blur */
+.hero-headline-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(24px);
+  filter: blur(8px);
+  animation: heroWordReveal 0.85s var(--ease-luxury) both;
+  will-change: opacity, transform, filter;
+}
+
+@keyframes heroWordReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0px);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   VIDEO TRANSITIONS
+   ─────────────────────────────────────────────────────────────── */
+
+/* Crossfade */
+.video-crossfade {
+  animation: videoCrossfade 0.9s var(--ease-luxury) forwards;
+}
+
+@keyframes videoCrossfade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Blur dissolve */
+.video-blur-dissolve {
+  animation: videoBlurDissolve 1.1s var(--ease-luxury) forwards;
+}
+
+@keyframes videoBlurDissolve {
+  from {
+    opacity: 0;
+    filter: blur(20px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0px);
+  }
+}
+
+/* Depth zoom reveal */
+.video-depth-reveal {
+  animation: videoDepthReveal 1.2s var(--ease-luxury) forwards;
+}
+
+@keyframes videoDepthReveal {
+  from {
+    opacity: 0;
+    transform: scale(1.08);
+    filter: blur(14px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0px);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   REDUCED MOTION — accessibility
+   ─────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal,
+  .reveal-left,
+  .reveal-right,
+  .reveal-image,
+  .reveal-card {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}

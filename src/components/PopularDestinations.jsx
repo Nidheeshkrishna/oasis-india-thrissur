@@ -20,7 +20,7 @@ export default function PopularDestinations({ destinations, onSelectDestination,
     : destinations.filter(d => d.category === selectedCategory);
 
   return (
-    <section id="destinations" style={{ padding: '6rem 0', position: 'relative', overflow: 'hidden' }}>
+    <section id="destinations" style={{ padding: 'clamp(4rem, 7vw, 5.5rem) 0', position: 'relative', overflow: 'hidden' }}>
       {/* Colorful ambient orbs */}
       <div className="orb" style={{ width: '340px', height: '340px', background: 'var(--violet)', top: '-80px', left: '-100px' }} />
       <div className="orb" style={{ width: '300px', height: '300px', background: 'var(--cyan)', bottom: '10%', right: '-90px', animationDelay: '-4s' }} />
@@ -29,7 +29,7 @@ export default function PopularDestinations({ destinations, onSelectDestination,
       <div className="container">
         
         {/* Section Title */}
-        <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto 3rem' }}>
+        <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto 2.5rem' }}>
           <span className="badge-aurora" style={{ marginBottom: '0.8rem' }}>
             <ShieldCheck size={14} /> {t('hero.authenticBadge')}
           </span>
@@ -48,7 +48,7 @@ export default function PopularDestinations({ destinations, onSelectDestination,
           justifyContent: 'center',
           gap: '0.8rem',
           flexWrap: 'wrap',
-          marginBottom: '3.5rem'
+          marginBottom: '2.5rem'
         }}>
           {categories.map((cat, i) => (
             <button

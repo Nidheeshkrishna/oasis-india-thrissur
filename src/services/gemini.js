@@ -144,13 +144,60 @@ export const geminiService = {
 // Poster storage helpers (localStorage)
 const POSTERS_KEY = 'oasis_ai_posters';
 
+const DEFAULT_POSTERS = [
+  {
+    id: 'ai-poster-athirappilly',
+    slogan: 'Athirappilly Waterfalls: The Niagara of India Rainforest Expedition',
+    prompt: 'Breathtaking 4K HDR luxury travel photograph of Athirappilly Waterfalls Kerala, 80-foot high roaring waterfall cascading down cliff',
+    style: 'cinematic',
+    imageUrl: './athirappilly_waterfall_main_ai.png',
+    createdAt: '2026-08-07T10:20:00.000Z'
+  },
+  {
+    id: 'ai-poster-silent-valley',
+    slogan: 'Silent Valley Rainforest & Kunthi River Expedition',
+    prompt: 'Cinematic 4K luxury travel photograph of Silent Valley National Park Kerala, pristine ancient tropical rainforest',
+    style: 'cinematic',
+    imageUrl: './silent_valley_rainforest_ai.png',
+    createdAt: '2026-08-07T10:15:00.000Z'
+  },
+  {
+    id: 'ai-poster-kashi',
+    slogan: 'Kashi Vishwanath & Ganga Aarti Sacred Yatra',
+    prompt: 'Cinematic 4K luxury travel poster of Kashi Vishwanath Temple and Varanasi Ganga Aarti at golden hour sunset',
+    style: 'cinematic',
+    imageUrl: './kashi_yatra_ai.png',
+    createdAt: '2026-08-07T10:00:00.000Z'
+  },
+  {
+    id: 'ai-poster-kashmir',
+    slogan: 'Heaven on Earth: Kashmir Dal Lake & Himalayan Retreat',
+    prompt: 'Breathtaking 4K HDR luxury travel banner of Dal Lake Srinagar Kashmir with traditional Shikara boat',
+    style: 'photorealistic',
+    imageUrl: './kashmir_paradise_ai.png',
+    createdAt: '2026-08-07T10:05:00.000Z'
+  },
+  {
+    id: 'ai-poster-ayodhya',
+    slogan: 'Shri Ram Janmabhoomi Ayodhya Heritage & Saryu Aarti',
+    prompt: 'Grand 4K cinematic luxury travel poster of Shri Ram Janmabhoomi temple in Ayodhya at twilight',
+    style: 'cinematic',
+    imageUrl: './ayodhya_ram_mandir_ai.png',
+    createdAt: '2026-08-07T10:10:00.000Z'
+  }
+];
+
 export const posterStorage = {
   getPosters() {
     try {
       const saved = localStorage.getItem(POSTERS_KEY);
-      return saved ? JSON.parse(saved) : [];
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+      return DEFAULT_POSTERS;
     } catch {
-      return [];
+      return DEFAULT_POSTERS;
     }
   },
 

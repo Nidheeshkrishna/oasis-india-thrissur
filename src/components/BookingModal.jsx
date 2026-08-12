@@ -1,32 +1,76 @@
 import React, { useState } from 'react';
 import { 
   X, Calendar, Users, MapPin, Sparkles, CheckCircle2, 
-  CreditCard, ShieldCheck, Download, Printer, QrCode, Phone, Mail 
+  Printer, QrCode, MessageCircle 
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { firestoreService } from '../services/firebase';
+import { buildBookingMessage, openWhatsApp } from '../services/whatsapp';
 import OasisLogo from './OasisLogo';
 import { useLanguage } from '../i18n/LanguageContext';
+import RouteMapVisualizer from './RouteMapVisualizer';
+import { searchLocationsAndNearby, resolveLocationCoords } from '../data/nearbyLocationsData';
 
 export default function BookingModal({ initialData, onClose, onBookingSuccess }) {
   const { t } = useLanguage();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [confirmedBooking, setConfirmedBooking] = useState(null);
+
+  const DEFAULT_HUBS = [
+    'Thrissur Swaraj Round Main Hub',
+    'Cochin International Airport (COK)',
+    'Ernakulam Junction',
+    'Palakkad Junction',
+    'Calicut International Airport',
+    'Coimbatore Junction'
+  ];
+
+  const toName = (s) => typeof s === 'string' ? s.trim() : (s && typeof s === 'object' ? String(s.name || '').trim() : '');
+
+  const normalizeList = (val, fallback) => {
+    const arr = Array.isArray(val) ? val : typeof val === 'string' ? val.split(',') : [];
+    const l = arr.map(toName).filter(Boolean);
+    return l.length ? l : fallback;
+  };
+
+  // New ordered route model: first = Start, last = Destination
+  const hasRoutePoints = Array.isArray(initialData?.routePoints) && initialData.routePoints.length;
+  const routeStops = hasRoutePoints ? normalizeList(initialData.routePoints, []) : [];
+
+  const availablePickups = hasRoutePoints
+    ? routeStops.slice(0, routeStops.length - 1)
+    : normalizeList(initialData?.pickupPoints, DEFAULT_HUBS);
+
+  const availableDrops = hasRoutePoints
+    ? routeStops
+    : normalizeList(initialData?.dropPoints, DEFAULT_HUBS);
+
+  const defaultPickup = availablePickups[0] || 'Thrissur Swaraj Round Main Hub';
+  const defaultDrop = availableDrops[availableDrops.length - 1] || defaultPickup;
+
+  const src = initialData || {};
+  const srcFullTour = src.fullTour || src;
+  const srcMainPlaces = Array.isArray(srcFullTour?.mainPlaces)
+    ? srcFullTour.mainPlaces.join(', ')
+    : (Array.isArray(src.mainPlaces) ? src.mainPlaces.join(', ') : '');
 
   // Form State
   const [formData, setFormData] = useState({
-    packageName: initialData?.title || initialData?.name || 'Sacred North Yatra: Kashi, Ayodhya & Prayagraj',
-    destination: initialData?.name || 'Kashi Vishwanath Temple & Varanasi',
-    travelDate: '',
-    adults: 2,
+    packageName: src.title || src.packageName || (src.name ? `${src.name} Tour Package` : 'Custom Tour Package'),
+    destination: src.location || src.destination || srcMainPlaces || src.name || 'Thrissur Departure',
+    travelDate: src.travelDate || '',
+    adults: src.guests || src.adults || 2,
     children: 0,
     tier: 'Deluxe 4-Star',
-    pickupLocation: 'Thrissur Swaraj Round Main Office',
+    pickupLocation: src.pickupPoint?.name || defaultPickup,
+    dropLocation: defaultDrop,
     customerName: '',
     email: '',
     phone: '',
-    dietary: 'Pure Veg (Jain / South Indian Available)'
+    dietary: 'Pure Veg (Jain / South Indian Available)',
+    specialRequirements: ''
   });
 
   const basePricePerPerson = initialData?.price || initialData?.startingPrice || 24999;
@@ -36,33 +80,47 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
   const gst = Math.round(subtotal * 0.05);
   const totalAmount = subtotal + gst;
 
+  const isValidEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((v || '').trim());
+  const isValidPhone = (v) => /^[+\d][\d\s\-()]{7,14}$/.test((v || '').trim());
+  const canProceedStep2 = formData.customerName.trim() && isValidEmail(formData.email) && isValidPhone(formData.phone);
+
   const handleSubmitBooking = async (e) => {
     e.preventDefault();
+    setSubmitError('');
     setIsSubmitting(true);
 
+    const bookingData = {
+      ...formData,
+      duration: src.duration || '',
+      requirements: formData.specialRequirements || '',
+      totalPrice: totalAmount,
+      basePrice: basePricePerPerson
+    };
+
+    // Save the enquiry so the agency always has a record.
     try {
-      const result = await firestoreService.createBooking({
-        ...formData,
-        totalPrice: totalAmount,
-        basePrice: basePricePerPerson
-      });
-
-      setConfirmedBooking(result);
-      setStep(4); // Success Voucher Step
-
-      // Trigger Confetti Celebration
-      confetti({
-        particleCount: 120,
-        spread: 70,
-        origin: { y: 0.6 }
-      });
-
-      if (onBookingSuccess) onBookingSuccess();
+      await firestoreService.createBooking(bookingData);
     } catch (err) {
-      console.error(err);
-    } finally {
-      setIsSubmitting(false);
+      // Never block the WhatsApp contact if saving fails
+      console.warn('Booking save failed (continuing to WhatsApp):', err);
     }
+
+    // Open WhatsApp with the fully pre-filled booking message
+    const whatsappUrl = buildBookingMessage(bookingData);
+    openWhatsApp(whatsappUrl);
+
+    setConfirmedBooking({ ...bookingData, id: bookingData.id || `OASIS-BK-${Math.floor(1000 + Math.random() * 9000)}` });
+    setStep(4); // Success screen
+
+    // Trigger Confetti Celebration
+    confetti({
+      particleCount: 120,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+
+    if (onBookingSuccess) onBookingSuccess();
+    setIsSubmitting(false);
   };
 
   return (
@@ -159,7 +217,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
               />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
                   {t('booking.travelDate')} *
@@ -182,28 +240,118 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
-                  {t('booking.pickupPoint')}
+                <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--gold-light)', fontWeight: 700, marginBottom: '0.4rem' }}>
+                  Select Pickup Point *
                 </label>
                 <select
                   value={formData.pickupLocation}
                   onChange={(e) => setFormData({ ...formData, pickupLocation: e.target.value })}
                   style={{
                     width: '100%',
-                    background: '#0b172a',
+                    background: '#091426',
                     border: '1px solid var(--border-gold)',
-                    color: '#fff',
+                    color: '#fef08a',
                     padding: '0.85rem 1rem',
-                    borderRadius: '10px'
+                    borderRadius: '10px',
+                    fontWeight: 700,
+                    cursor: 'pointer'
                   }}
                 >
-                  <option value="Thrissur Swaraj Round Main Office">Thrissur Swaraj Round Office</option>
-                  <option value="Thrissur Junction Railway Station (TCR)">Thrissur Junction Railway Station</option>
-                  <option value="Cochin International Airport (COK)">Cochin International Airport (COK)</option>
-                  <option value="Ernakulam Junction (ERS)">Ernakulam Junction</option>
+                  {Array.from(new Set([formData.pickupLocation, ...availablePickups])).filter(Boolean).map((p, i) => (
+                    <option key={i} value={p} style={{ background: '#091426', color: '#fef08a' }}>
+                      📍 {p}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--gold-light)', fontWeight: 700, marginBottom: '0.4rem' }}>
+                  Select Dropping Point *
+                </label>
+                <select
+                  value={formData.dropLocation}
+                  onChange={(e) => setFormData({ ...formData, dropLocation: e.target.value })}
+                  style={{
+                    width: '100%',
+                    background: '#091426',
+                    border: '1px solid var(--border-gold)',
+                    color: '#fef08a',
+                    padding: '0.85rem 1rem',
+                    borderRadius: '10px',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}
+                >
+                  {Array.from(new Set([formData.dropLocation, ...availableDrops])).filter(Boolean).map((d, i) => (
+                    <option key={i} value={d} style={{ background: '#091426', color: '#fef08a' }}>
+                      🏁 {d}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
+
+            {/* Nearby Boarding Hub Discovery based on Starting Point */}
+            {(() => {
+              const activeStart = formData.pickupLocation || availablePickups[0] || 'Thrissur';
+              const resolved = resolveLocationCoords(activeStart);
+              const searchRes = searchLocationsAndNearby(activeStart, 5);
+              const nearbyList = Array.from(new Set([...(resolved.nearby || []), ...(searchRes.nearbySuggestions || [])])).slice(0, 5);
+
+              if (!nearbyList.length) return null;
+
+              return (
+                <div style={{
+                  background: 'linear-gradient(135deg, rgba(212,175,55,0.08), rgba(16,185,129,0.06))',
+                  border: '1px solid rgba(212,175,55,0.22)',
+                  borderRadius: '12px',
+                  padding: '0.55rem 0.85rem',
+                  marginBottom: '1.2rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  flexWrap: 'wrap'
+                }}>
+                  <span style={{ fontSize: '0.74rem', fontWeight: 800, color: 'var(--gold-light)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <Sparkles size={13} color="var(--gold-primary)" />
+                    Nearby Pickup Hubs from {activeStart.split(' ')[0]}:
+                  </span>
+                  {nearbyList.map((nb, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setFormData(f => ({ ...f, pickupLocation: nb }))}
+                      style={{
+                        background: formData.pickupLocation === nb ? 'var(--gold-primary)' : 'rgba(212,175,55,0.12)',
+                        color: formData.pickupLocation === nb ? '#000' : '#fef08a',
+                        border: '1px solid var(--border-gold)',
+                        borderRadius: '14px',
+                        padding: '0.2rem 0.55rem',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
+                    >
+                      📍 {nb}
+                    </button>
+                  ))}
+                </div>
+              );
+            })()}
+
+            {/* Interactive Route & Pickup Map on Booking Time */}
+            <RouteMapVisualizer
+              routePoints={routeStops}
+              pickupPoints={availablePickups}
+              dropPoints={availableDrops}
+              destinationName={formData.destination || formData.packageName}
+              initialPickup={formData.pickupLocation}
+              initialDrop={formData.dropLocation}
+              onPickupChange={(p) => setFormData(f => ({ ...f, pickupLocation: p }))}
+              onDropChange={(d) => setFormData(f => ({ ...f, dropLocation: d }))}
+            />
 
             {/* Travelers Count */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem', marginBottom: '2rem' }}>
@@ -329,7 +477,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
               />
             </div>
 
-            <div style={{ marginBottom: '2rem' }}>
+            <div style={{ marginBottom: '1.2rem' }}>
               <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
                 {t('booking.dietary')}
               </label>
@@ -351,28 +499,55 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
               </select>
             </div>
 
+            <div style={{ marginBottom: '2rem' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
+                Special Requirements
+              </label>
+              <textarea
+                placeholder="e.g. Airport pickup, adjoining family rooms, wheelchair assistance..."
+                value={formData.specialRequirements}
+                onChange={(e) => setFormData({ ...formData, specialRequirements: e.target.value })}
+                rows={3}
+                style={{
+                  width: '100%',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid var(--border-gold)',
+                  color: '#fff',
+                  padding: '0.85rem 1rem',
+                  borderRadius: '10px',
+                  resize: 'vertical',
+                  fontFamily: 'var(--font-body)'
+                }}
+              />
+            </div>
+
             <div style={{ display: 'flex', gap: '1rem' }}>
               <button className="btn-glass" onClick={() => setStep(1)} style={{ flex: 1, justifyContent: 'center' }}>
                 {t('booking.back')}
               </button>
               <button 
-                disabled={!formData.customerName || !formData.phone || !formData.email}
+                disabled={!canProceedStep2}
                 className="btn-gold" 
-                onClick={() => setStep(3)} 
-                style={{ flex: 2, justifyContent: 'center', opacity: (formData.customerName && formData.phone) ? 1 : 0.5 }}
+                onClick={() => { setSubmitError(''); setStep(3); }} 
+                style={{ flex: 2, justifyContent: 'center', opacity: canProceedStep2 ? 1 : 0.5 }}
               >
                 {t('booking.proceed')}
               </button>
             </div>
+            {!canProceedStep2 && formData.customerName && (
+              <p style={{ color: '#fca5a5', fontSize: '0.8rem', marginTop: '0.8rem' }}>
+                Enter a valid email and 8+ digit phone number to continue.
+              </p>
+            )}
           </div>
         )}
 
-        {/* STEP 3: TIER & PAYMENT SUMMARY */}
+        {/* STEP 3: REVIEW & CONTINUE ON WHATSAPP */}
         {step === 3 && (
           <form onSubmit={handleSubmitBooking}>
             <div style={{ marginBottom: '1.5rem' }}>
               <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
-                {t('booking.tier')}
+                Hotel Preference
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.8rem' }}>
                 {['Standard 3-Star', 'Deluxe 4-Star', 'Super Luxury 5-Star'].map((tier) => (
@@ -427,12 +602,24 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
                 type="submit"
                 disabled={isSubmitting}
                 className="btn-gold" 
-                style={{ flex: 2, justifyContent: 'center' }}
+                style={{
+                  flex: 2, justifyContent: 'center',
+                  background: 'linear-gradient(135deg, #25D366, #128C7E)',
+                  boxShadow: '0 4px 20px rgba(37,211,102,0.35)'
+                }}
               >
-                <CreditCard size={18} />
-                <span>{isSubmitting ? t('booking.confirming') : t('booking.confirm')}</span>
+                <MessageCircle size={18} />
+                <span>{isSubmitting ? 'Saving...' : 'Continue to WhatsApp'}</span>
               </button>
             </div>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginTop: '0.9rem', textAlign: 'center' }}>
+              Your booking request is saved and WhatsApp opens with your full details ready to send. No payment taken online.
+            </p>
+            {submitError && (
+              <p style={{ color: '#fca5a5', fontSize: '0.85rem', marginTop: '0.9rem', textAlign: 'center' }}>
+                {submitError}
+              </p>
+            )}
           </form>
         )}
 
@@ -459,6 +646,18 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
               </h2>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
                 {t('booking.voucherGenerated', { name: confirmedBooking.customerName })}
+              </p>
+              <p style={{
+                color: 'var(--emerald-accent)',
+                fontSize: '0.9rem',
+                fontWeight: 700,
+                background: 'rgba(16,185,129,0.12)',
+                border: '1px solid rgba(16,185,129,0.35)',
+                borderRadius: '10px',
+                padding: '0.6rem 1rem',
+                marginTop: '0.8rem'
+              }}>
+                WhatsApp opened with your booking message — press <strong>Send</strong> there to confirm. Our Kerala-based travel specialist will call / WhatsApp you to confirm your seats and collect payment.
               </p>
             </div>
 
@@ -538,20 +737,29 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
             </div>
 
             {/* Actions */}
-            <div style={{ display: 'flex', gap: '1rem' }}>
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
               <button 
                 className="btn-glass" 
                 onClick={() => window.print()}
-                style={{ flex: 1, justifyContent: 'center' }}
+                style={{ flex: 1, justifyContent: 'center', minWidth: '140px' }}
               >
                 <Printer size={18} />
                 <span>{t('booking.printVoucher')}</span>
               </button>
 
+              <button
+                className="btn-gold"
+                onClick={() => openWhatsApp(buildBookingMessage(confirmedBooking))}
+                style={{ flex: 1, justifyContent: 'center', minWidth: '140px', background: 'linear-gradient(135deg, #25D366, #128C7E)', boxShadow: '0 4px 20px rgba(37,211,102,0.35)' }}
+              >
+                <MessageCircle size={18} />
+                <span>Open WhatsApp</span>
+              </button>
+
               <button 
                 className="btn-gold" 
                 onClick={onClose}
-                style={{ flex: 1, justifyContent: 'center' }}
+                style={{ flex: 1, justifyContent: 'center', minWidth: '120px' }}
               >
                 <span>{t('booking.done')}</span>
               </button>

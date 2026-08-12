@@ -35,7 +35,7 @@ export default function GalleryView() {
   };
 
   return (
-    <section id="gallery" style={{ padding: '6rem 0', background: 'linear-gradient(180deg, #eef2f8 0%, #faeef9 50%, #eaf7f2 100%)', position: 'relative', overflow: 'hidden' }}>
+    <section id="gallery" style={{ padding: 'clamp(4rem, 7vw, 5.5rem) 0', background: 'linear-gradient(180deg, #eef2f8 0%, #faeef9 50%, #eaf7f2 100%)', position: 'relative', overflow: 'hidden' }}>
       {/* Colorful ambient orbs */}
       <div className="orb" style={{ width: '320px', height: '320px', background: 'var(--pink)', top: '-80px', right: '-80px' }} />
       <div className="orb" style={{ width: '300px', height: '300px', background: 'var(--cyan)', bottom: '-60px', left: '-100px', animationDelay: '-6s' }} />
@@ -43,14 +43,14 @@ export default function GalleryView() {
       <div className="container">
         
         {/* Gallery Title Header */}
-        <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto 3rem' }}>
+        <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto 2.5rem' }}>
           <span className="badge-aurora" style={{ marginBottom: '0.8rem' }}>
             <ShieldCheck size={14} /> {t('gallery.badge')}
           </span>
-          <h2 style={{ fontSize: '2.8rem', fontWeight: 800, marginBottom: '0.8rem' }}>
+          <h2 style={{ fontSize: '2.8rem', fontWeight: 800, marginBottom: '0.8rem', color: '#0f172a' }}>
             {t('gallery.title')}
           </h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>
+          <p style={{ color: '#475569', fontSize: '1.1rem' }}>
             {t('gallery.subtitle')}
           </p>
         </div>
@@ -70,8 +70,8 @@ export default function GalleryView() {
               style={{
                 background: mediaFilter === f.id
                   ? 'linear-gradient(135deg, #8b5cf6, #6d28d9)'
-                  : 'rgba(255,255,255,0.05)',
-                color: mediaFilter === f.id ? '#fff' : 'var(--text-muted)',
+                  : 'rgba(255,255,255,0.85)',
+                color: mediaFilter === f.id ? '#fff' : '#334155',
                 border: '1px solid var(--border-gold)',
                 padding: '0.55rem 1.2rem',
                 borderRadius: '30px',
@@ -106,8 +106,8 @@ export default function GalleryView() {
               style={{
                 background: activeFilter === f
                   ? `linear-gradient(135deg, ${['#d4af37', '#10b981', '#f43f5e', '#8b5cf6', '#06b6d4'][i % 5]} 0%, ${['#aa841c', '#047857', '#be123c', '#6d28d9', '#0e7490'][i % 5]} 100%)`
-                  : 'rgba(255,255,255,0.05)',
-                color: activeFilter === f ? '#060c17' : 'var(--text-muted)',
+                  : 'rgba(255,255,255,0.85)',
+                color: activeFilter === f ? '#060c17' : '#334155',
                 border: '1px solid var(--border-gold)',
                 padding: '0.6rem 1.3rem',
                 borderRadius: '30px',

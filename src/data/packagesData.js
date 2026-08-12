@@ -1,6 +1,120 @@
 // Handcrafted Tour Packages curated by OASIS India Thrissur
 export const PACKAGES = [
   {
+    id: 'wayanad-heart-lake-trail',
+    title: 'Wayanad Rainforest & Heart Lake Trail',
+    subtitle: 'Thrissur Direct Pickup Hill Station & Treehouse Retreat',
+    destinationId: 'wayanad-misty-hills',
+    duration: '3 Days / 2 Nights',
+    price: 16999,
+    originalPrice: 19999,
+    discountPercent: 15,
+    rating: 4.94,
+    reviews: 245,
+    badge: 'New AI Curated Hill Tour',
+    image: './wayanad_chembra_heart_lake_ai.png',
+    bgMixImages: [
+      './wayanad_chembra_heart_lake_ai.png',
+      './wayanad_banasura_lake_ai.png'
+    ],
+    bgMixStyle: 'collage-blend',
+    mainPlaces: ['Wayanad', 'Chembra Peak', 'Banasura Lake'],
+    placeImages: [
+      { name: 'Chembra Heart Lake 4K AI', url: './wayanad_chembra_heart_lake_ai.png', group: 'Wayanad' },
+      { name: 'Banasura Sagar Dam Lake 4K AI', url: './wayanad_banasura_lake_ai.png', group: 'Lake' }
+    ],
+    included: [
+      'Private Luxury AC Vehicle from Thrissur Swaraj Round',
+      '4-Star / Treehouse Eco Resort Stay with Breakfast & Dinner',
+      'Trek Permits for Chembra Peak Heart Lake & Edakkal Caves',
+      'Speedboat Boating Tickets on Banasura Sagar Dam Lake',
+      'Malayalam speaking senior-citizen friendly tour manager'
+    ],
+    itinerary: [
+      { day: 1, title: 'Thrissur Departure → Lakkidi Viewpoint → Treehouse Check-in', desc: 'Scenic drive up Thamarassery Ghat pass. Stop at Lakkidi viewpoint. Resort check-in and evening tea plantation walk.' },
+      { day: 2, title: 'Chembra Heart Lake Trek & Banasura Sagar Boating', desc: 'Early morning trek to Chembra Peak natural heart-shaped lake. Afternoon speedboat ride on Banasura Sagar Dam.' },
+      { day: 3, title: 'Edakkal Prehistoric Caves & Return to Thrissur', desc: 'Explore ancient petroglyph carvings at Edakkal Caves. Spice shopping and return drive to Thrissur.' }
+    ]
+  },
+  {
+    id: 'athirappilly-falls-trail',
+    title: 'Niagara of India: Athirappilly & Vazhachal Falls Day Trail',
+    subtitle: 'Thrissur Direct Pickup Eco-Excursion & Rainforest Safari',
+    destinationId: 'athirappilly-waterfalls',
+    duration: '1 Day / Full Day Tour',
+    price: 4999,
+    originalPrice: 6999,
+    discountPercent: 28,
+    rating: 4.98,
+    reviews: 312,
+    badge: 'Popular Local Getaway',
+    image: './athirappilly_waterfall_main_ai.png',
+    bgMixImages: [
+      './athirappilly_waterfall_main_ai.png',
+      './athirappilly_rainbow_spray_ai.png',
+      './athirappilly_chalakudy_river_ai.png',
+      './athirappilly_twilight_view_ai.png'
+    ],
+    bgMixStyle: 'collage-blend',
+    mainPlaces: ['Athirappilly', 'Vazhachal', 'Charpa Falls'],
+    placeImages: [
+      { name: 'Athirappilly Roaring Waterfall 4K AI', url: './athirappilly_waterfall_main_ai.png', group: 'Athirappilly' },
+      { name: 'Rainbow Spray Mist 4K AI', url: './athirappilly_rainbow_spray_ai.png', group: 'Waterfall' },
+      { name: 'Chalakudy Riverfront 4K AI', url: './athirappilly_chalakudy_river_ai.png', group: 'River' },
+      { name: 'Twilight Canopy View 4K AI', url: './athirappilly_twilight_view_ai.png', group: 'Panorama' }
+    ],
+    included: [
+      'Private Luxury AC Innova / Coach from Thrissur Swaraj Round',
+      'All Entry Tickets & Forest Department Permit Fees',
+      'Authentic Kerala Sadya Lunch at Riverfront Resort',
+      'Trek to Waterfall Base & Thumboormuzhi Hanging Bridge',
+      'Professional OASIS Escort & Refreshment Kit'
+    ],
+    itinerary: [
+      { day: 1, title: 'Thrissur Departure → Thumboormuzhi → Athirappilly Base → Vazhachal', desc: '8:00 AM departure from Thrissur Swaraj Round. Visit Thumboormuzhi Dam & Butterfly Park. Proceed to Athirappilly base trek, lunch at riverfront resort, and afternoon visit to Vazhachal & Charpa falls. Return to Thrissur by 7:00 PM.' }
+    ]
+  },
+  {
+    id: 'silent-valley-expedition',
+    title: 'Silent Valley Rainforest & Wilderness Expedition',
+    subtitle: 'Thrissur Direct Pickup Ecotourism & Rainforest Trail',
+    destinationId: 'silent-valley-national-park',
+    duration: '3 Days / 2 Nights',
+    price: 18999,
+    originalPrice: 22999,
+    discountPercent: 17,
+    rating: 4.96,
+    reviews: 168,
+    badge: 'New AI Curated Tour',
+    image: './silent_valley_rainforest_ai.png',
+    bgMixImages: [
+      './silent_valley_rainforest_ai.png',
+      './silent_valley_kunthi_river_ai.png',
+      './silent_valley_wildlife_ai.png',
+      './silent_valley_watchtower_ai.png'
+    ],
+    bgMixStyle: 'collage-blend',
+    mainPlaces: ['Silent Valley', 'Kunthi River', 'Sairandhri'],
+    placeImages: [
+      { name: 'Rainforest Canopy 4K AI', url: './silent_valley_rainforest_ai.png', group: 'Silent Valley' },
+      { name: 'Kunthi River Stream 4K AI', url: './silent_valley_kunthi_river_ai.png', group: 'Kunthi River' },
+      { name: 'Lion-Tailed Macaque Wildlife 4K AI', url: './silent_valley_wildlife_ai.png', group: 'Wildlife' },
+      { name: 'Sairandhri Watchtower View 4K AI', url: './silent_valley_watchtower_ai.png', group: 'Viewpoint' }
+    ],
+    included: [
+      'Luxury AC vehicle transfer departing from Thrissur Swaraj Round',
+      'Forest Department Entry Passes & Official Escort Guide',
+      '4-Star Eco Lodge Stay with authentic Kerala vegetarian Sadya',
+      'Trek to Kunthi River Suspension Bridge & Sairandhri Tower',
+      'Malayalam speaking senior-citizen friendly tour escort'
+    ],
+    itinerary: [
+      { day: 1, title: 'Thrissur to Mukkali Base Camp & Jungle Check-in', desc: 'Scenic 2.5 hr drive from Thrissur via Mannarkkad to Mukkali base camp. Resort check-in and evening jungle orientation.' },
+      { day: 2, title: 'Deep Rainforest Trek, Sairandhri Tower & Kunthi River', desc: 'Forest safari vehicle to Sairandhri watchtower. Guided trek through pristine canopy down to the roaring Kunthi River.' },
+      { day: 3, title: 'Wildlife Spotting & Return to Thrissur', desc: 'Early morning bird watching walk. Visit Kanjirapuzha Dam gardens on the return drive to Thrissur.' }
+    ]
+  },
+  {
     id: 'kasi-ayodhya-yatra',
     title: 'Sacred North Yatra: Kashi, Ayodhya & Prayagraj',
     subtitle: 'Thrissur Departure Special Pilgrimage Package',
@@ -14,12 +128,16 @@ export const PACKAGES = [
     badge: 'Bestseller Pilgrimage',
     image: './kashi-vishwanath-real.jpg',
     bgMixImages: [
+      './kashi_yatra_ai.png',
+      './ayodhya_ram_mandir_ai.png',
       './kashi-vishwanath-real.jpg',
       './ayodhya-ram-mandir-real.jpg'
     ],
     bgMixStyle: 'collage-blend',
     mainPlaces: ['Varanasi', 'Ayodhya', 'Prayagraj'],
     placeImages: [
+      { name: 'Kashi Vishwanath 4K AI Poster', url: './kashi_yatra_ai.png', group: 'Kashi' },
+      { name: 'Ayodhya Ram Mandir 4K AI Poster', url: './ayodhya_ram_mandir_ai.png', group: 'Ayodhya' },
       { name: 'Kashi Vishwanath Temple', url: './kashi-vishwanath-real.jpg', group: 'Kashi' },
       { name: 'Shri Ram Janmabhoomi Ayodhya', url: './ayodhya-ram-mandir-real.jpg', group: 'Ayodhya' }
     ],
@@ -174,23 +292,20 @@ export const PACKAGES = [
     rating: 4.98,
     reviews: 178,
     badge: 'Luxury Himalayan Escape',
-    image: './dal-lake-shikara-real.jpg',
+    image: './kashmir_paradise_ai.png',
     bgMixImages: [
+      './kashmir_paradise_ai.png',
       './dal-lake-shikara-real.jpg',
       './gulmarg-real.jpg',
-      './golden-temple-real.jpg',
-      './wagah-border-real.jpg'
+      './golden-temple-amritsar-real.jpg'
     ],
     bgMixStyle: 'collage-blend',
-    mainPlaces: ['Amritsar', 'Punjab', 'Wagah Border'],
+    mainPlaces: ['Srinagar', 'Gulmarg', 'Amritsar'],
     placeImages: [
-      { name: 'Sonamarg', url: './sonamarg-real.jpg', group: 'kashmir' },
-      { name: 'Gulmarg', url: './gulmarg-real.jpg', group: 'kashmir' },
-      { name: 'Pahalgam', url: './pahalgam-real.jpg', group: 'kashmir' },
-      { name: 'Srinagar', url: './srinagar-real.jpg', group: 'kashmir' },
-      { name: 'Dal Lake Shikara', url: './dal-lake-shikara-real.jpg', group: 'kashmir' },
-      { name: 'Golden Temple', url: './golden-temple-real.jpg', group: 'punjab' },
-      { name: 'Wagah Border', url: './wagah-border-real.jpg', group: 'punjab' }
+      { name: 'Dal Lake Shikara 4K AI Poster', url: './kashmir_paradise_ai.png', group: 'Kashmir' },
+      { name: 'Dal Lake Houseboat', url: './dal-lake-shikara-real.jpg', group: 'Kashmir' },
+      { name: 'Gulmarg Gondola Snow Peaks', url: './gulmarg-real.jpg', group: 'Kashmir' },
+      { name: 'Amritsar Golden Temple', url: './golden-temple-amritsar-real.jpg', group: 'Punjab' }
     ],
     punjabHighlights: [
       'Golden Temple (Harmandir Sahib) spiritual Darshan & Langar community meal',

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { 
+import {
   X, MapPin, Sun, Star, Clock, Compass,
   Sparkles, CheckCircle2, Navigation, Hotel, Utensils, Info, 
   Eye, Maximize2, ShieldCheck, Package as PackageIcon,
-  Camera, Layers
+  Camera, Layers, MessageCircle
 } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { catalogService } from '../services/catalog';
+import { getWhatsAppNumber, buildQuickEnquiryMessage } from '../services/whatsapp';
 import { useCatalog } from '../hooks/useCatalog';
 import { useLanguage } from '../i18n/LanguageContext';
 import MixedBackground from './MixedBackground';
@@ -325,6 +326,15 @@ export default function DestinationModal({ destination, onClose, onBookTour }) {
                 <button className="btn-gold" style={{ padding: '0.7rem 1.5rem' }} onClick={() => { onClose(); onBookTour(matchingPackage); }}>
                   <Sparkles size={18} /> {t('destination.bookThisPackage')}
                 </button>
+                <a
+                  className="btn-glass"
+                  href={`https://wa.me/${getWhatsAppNumber()}?text=${encodeURIComponent(buildQuickEnquiryMessage(matchingPackage || destination))}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ padding: '0.7rem 1.5rem', textDecoration: 'none', border: '1px solid rgba(37,211,102,0.5)', color: '#4ade80' }}
+                >
+                  <MessageCircle size={18} /> WhatsApp Enquiry
+                </a>
               </div>
             </div>
           )}

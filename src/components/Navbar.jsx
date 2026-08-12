@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Phone, ShieldCheck, MapPin, UserCheck, Sparkles, Globe, Check, ChevronDown, Menu, X } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Phone, ShieldCheck, MapPin, UserCheck, Sparkles, Globe, Check, ChevronDown, Menu, X, MessageCircle } from 'lucide-react';
 import OasisLogo from './OasisLogo';
+import { getWhatsAppNumber } from '../services/whatsapp';
 import { useLanguage, LANGUAGES } from '../i18n/LanguageContext';
 
-export default function Navbar({ activeTab, setActiveTab, onOpenAdmin, onBookClick }) {
+export default function Navbar({ activeTab, setActiveTab, onOpenAdmin, onBookClick, onOpenGuide }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const langRef = useRef(null);
   const { t, lang, setLang } = useLanguage();
 
   useEffect(() => {
@@ -16,10 +18,17 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAdmin, onBookCli
   }, []);
 
   useEffect(() => {
-    const close = () => setLangOpen(false);
-    window.addEventListener('click', close);
-    return () => window.removeEventListener('click', close);
-  }, []);
+    if (!langOpen) return;
+    const close = (e) => {
+      // Only close if the click is outside the language switcher area
+      if (langRef.current && !langRef.current.contains(e.target)) {
+        setLangOpen(false);
+      }
+    };
+    // Use mousedown so it fires before onClick — prevents the race condition
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, [langOpen]);
 
   const navLinks = [
     { id: 'home',         label: t('nav.home') },
@@ -198,7 +207,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAdmin, onBookCli
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem', flexShrink: 0 }}>
 
           {/* Language Switcher */}
-          <div style={{ position: 'relative' }} onClick={(e) => e.stopPropagation()}>
+          <div ref={langRef} style={{ position: 'relative' }}>
             <button
               onClick={() => setLangOpen(o => !o)}
               title={t('language')}
@@ -285,6 +294,26 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAdmin, onBookCli
             <UserCheck size={14} />
             <span>{t('adminPortal')}</span>
           </button>
+
+          {/* WhatsApp Button */}
+          <a
+            href={`https://wa.me/${getWhatsAppNumber()}?text=${encodeURIComponent('Hello OASIS India Thrissur, I want to plan a tour package.')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Chat with us on WhatsApp"
+            style={{ ...glassPill, border: '1px solid rgba(37,211,102,0.55)', color: '#4ade80', textDecoration: 'none' }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(37,211,102,0.18)';
+              e.currentTarget.style.borderColor = 'rgba(37,211,102,0.8)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(255,255,255,0.08)';
+              e.currentTarget.style.borderColor = 'rgba(245,158,11,0.4)';
+            }}
+          >
+            <MessageCircle size={14} />
+            <span>WhatsApp</span>
+          </a>
 
           {/* Book Now CTA */}
           <button

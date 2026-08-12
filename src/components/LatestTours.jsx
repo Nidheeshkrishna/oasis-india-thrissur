@@ -1,25 +1,61 @@
-import React, { useState } from 'react';
-import { Star, Clock, CheckCircle2, ChevronLeft, ChevronRight, Sparkles, MapPin, Eye } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Star, Clock, CheckCircle2, ChevronLeft, ChevronRight, Sparkles, MapPin, Eye, MessageCircle } from 'lucide-react';
 import { catalogService } from '../services/catalog';
+import { getWhatsAppNumber, buildQuickEnquiryMessage } from '../services/whatsapp';
 import { useCatalog } from '../hooks/useCatalog';
 import { useLanguage } from '../i18n/LanguageContext';
 import MixedBackground from './MixedBackground';
 
 export default function LatestTours({ onBookTour, onSelectDestination, onViewDetails }) {
   const { t } = useLanguage();
-  const [scrollIndex, setScrollIndex] = useState(0);
-  const tours = useCatalog(catalogService.getTours);
+  const trackRef = useRef(null);
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(true);
+  const rawTours = useCatalog(catalogService.getTours) || [];
+  const tours = [...rawTours].sort((a, b) => {
+    const dateA = new Date(a.departureDate || a.addedDate || '2026-08-01').getTime();
+    const dateB = new Date(b.departureDate || b.addedDate || '2026-08-01').getTime();
+    return dateB - dateA;
+  });
+
+  const CARD_STEP = 400;
+
+  // Normalize admin-entered list fields (arrays, comma/line separated strings, or empty)
+  const toList = (val) => {
+    if (Array.isArray(val)) return val.map(String).filter(Boolean);
+    if (typeof val === 'string') return val.split(',').map(s => s.trim()).filter(Boolean);
+    return [];
+  };
+  const highlightedTours = tours.map(pkg => ({
+    ...pkg,
+    mainPlaces: toList(pkg.mainPlaces),
+    included: toList(pkg.included),
+    punjabHighlights: toList(pkg.punjabHighlights)
+  }));
+
+  const updateArrowState = () => {
+    const el = trackRef.current;
+    if (!el) return;
+    setCanPrev(el.scrollLeft > 5);
+    setCanNext(el.scrollLeft < el.scrollWidth - el.clientWidth - 5);
+  };
+
+  useEffect(() => {
+    updateArrowState();
+    window.addEventListener('resize', updateArrowState);
+    return () => window.removeEventListener('resize', updateArrowState);
+  }, [tours.length]);
 
   const handlePrev = () => {
-    setScrollIndex((prev) => Math.max(0, prev - 1));
+    trackRef.current?.scrollBy({ left: -CARD_STEP, behavior: 'smooth' });
   };
 
   const handleNext = () => {
-    setScrollIndex((prev) => Math.min(tours.length - 1, prev + 1));
+    trackRef.current?.scrollBy({ left: CARD_STEP, behavior: 'smooth' });
   };
 
   return (
-    <section style={{ padding: '6rem 0', position: 'relative', background: 'linear-gradient(180deg, #ffffff 0%, #f6efff 50%, #eaf7ff 100%)', overflow: 'hidden' }}>
+    <section style={{ padding: 'clamp(4rem, 7vw, 5.5rem) 0', position: 'relative', background: 'linear-gradient(180deg, #ffffff 0%, #f6efff 50%, #eaf7ff 100%)', overflow: 'hidden' }}>
       {/* Colorful ambient orbs */}
       <div className="orb" style={{ width: '360px', height: '360px', background: 'var(--saffron)', top: '-120px', right: '-80px' }} />
       <div className="orb" style={{ width: '300px', height: '300px', background: 'var(--rose)', bottom: '-60px', left: '-100px', animationDelay: '-5s' }} />
@@ -33,10 +69,10 @@ export default function LatestTours({ onBookTour, onSelectDestination, onViewDet
             <div className="badge-aurora" style={{ marginBottom: '0.6rem' }}>
               {t('tours.badge')}
             </div>
-            <h2 style={{ fontSize: '2.5rem', fontWeight: 800 }}>
+            <h2 style={{ fontSize: '2.5rem', fontWeight: 800, color: '#0f172a' }}>
               {t('tours.title')}
             </h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', marginTop: '0.4rem' }}>
+            <p style={{ color: '#475569', fontSize: '1.05rem', marginTop: '0.4rem' }}>
               {t('tours.subtitle')}
             </p>
           </div>
@@ -45,15 +81,15 @@ export default function LatestTours({ onBookTour, onSelectDestination, onViewDet
           <div style={{ display: 'flex', gap: '0.8rem' }}>
             <button 
               onClick={handlePrev} 
-              disabled={scrollIndex === 0}
+              disabled={!canPrev}
               style={{
                 width: '46px',
                 height: '46px',
                 borderRadius: '50%',
-                background: scrollIndex === 0 ? 'rgba(255,255,255,0.03)' : 'rgba(212,175,55,0.15)',
+                background: canPrev ? 'rgba(212,175,55,0.15)' : 'rgba(255,255,255,0.03)',
                 border: '1px solid var(--border-gold)',
-                color: scrollIndex === 0 ? '#444' : 'var(--gold-deep)',
-                cursor: scrollIndex === 0 ? 'not-allowed' : 'pointer',
+                color: canPrev ? 'var(--gold-deep)' : '#444',
+                cursor: canPrev ? 'pointer' : 'not-allowed',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -65,15 +101,15 @@ export default function LatestTours({ onBookTour, onSelectDestination, onViewDet
 
             <button 
               onClick={handleNext}
-              disabled={scrollIndex >= tours.length - 2}
+              disabled={!canNext}
               style={{
                 width: '46px',
                 height: '46px',
                 borderRadius: '50%',
-                background: scrollIndex >= tours.length - 2 ? 'rgba(255,255,255,0.03)' : 'rgba(212,175,55,0.15)',
+                background: canNext ? 'rgba(212,175,55,0.15)' : 'rgba(255,255,255,0.03)',
                 border: '1px solid var(--border-gold)',
-                color: scrollIndex >= tours.length - 2 ? '#444' : 'var(--gold-deep)',
-                cursor: scrollIndex >= tours.length - 2 ? 'not-allowed' : 'pointer',
+                color: canNext ? 'var(--gold-deep)' : '#444',
+                cursor: canNext ? 'pointer' : 'not-allowed',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -87,12 +123,19 @@ export default function LatestTours({ onBookTour, onSelectDestination, onViewDet
 
         {/* Multi-Card Tour Carousel */}
         <div style={{ overflow: 'hidden' }}>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-            gap: '2rem'
-          }}>
-            {tours.map((pkg) => (
+          <div
+            ref={trackRef}
+            onScroll={updateArrowState}
+            style={{
+              display: 'flex',
+              gap: '2rem',
+              overflowX: 'auto',
+              scrollSnapType: 'x mandatory',
+              scrollbarWidth: 'thin',
+              paddingBottom: '0.5rem',
+            }}
+          >
+            {highlightedTours.map((pkg) => (
               <div 
                 key={pkg.id} 
                 className="glass-card"
@@ -100,6 +143,9 @@ export default function LatestTours({ onBookTour, onSelectDestination, onViewDet
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
+                  flex: '0 0 auto',
+                  width: 'min(380px, 88vw)',
+                  scrollSnapAlign: 'start',
                   height: '100%',
                   overflow: 'hidden',
                   cursor: onViewDetails ? 'pointer' : 'default'
@@ -193,35 +239,47 @@ export default function LatestTours({ onBookTour, onSelectDestination, onViewDet
                       {pkg.subtitle}
                     </p>
 
-                    {/* Main Places Chips */}
-                    {pkg.mainPlaces && pkg.mainPlaces.length > 0 && (
-                      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
-                        {pkg.mainPlaces.map((place, idx) => (
-                          <span key={idx} style={{
-                            background: 'rgba(245,158,11,0.18)',
-                            border: '1px solid rgba(245,158,11,0.4)',
-                            color: '#fef08a',
-                            fontSize: '0.72rem',
-                            fontWeight: 700,
-                            padding: '0.25rem 0.7rem',
-                            borderRadius: '20px'
-                          }}>
-                            <MapPin size={11} style={{ verticalAlign: '-1px', marginRight: '3px' }} />
-                            {place}
-                          </span>
-                        ))}
+                    {/* Main Places — Sightseeing */}
+                    {pkg.mainPlaces.length > 0 && (
+                      <div style={{ marginBottom: '1rem' }}>
+                        <div style={{ fontSize: '0.75rem', color: '#fef08a', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
+                          Sightseeing
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                          {pkg.mainPlaces.map((place, idx) => (
+                            <span key={idx} style={{
+                              background: 'rgba(245,158,11,0.18)',
+                              border: '1px solid rgba(245,158,11,0.4)',
+                              color: '#fef08a',
+                              fontSize: '0.72rem',
+                              fontWeight: 700,
+                              padding: '0.25rem 0.7rem',
+                              borderRadius: '20px'
+                            }}>
+                              <MapPin size={11} style={{ verticalAlign: '-1px', marginRight: '3px' }} />
+                              {place}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     )}
 
-                    {/* Included Key Features */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', marginBottom: '1.5rem' }}>
-                      {pkg.included.slice(0, 3).map((item, idx) => (
-                        <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', fontSize: '0.85rem', color: 'rgba(255, 255, 255, 0.9)', fontWeight: 500 }}>
-                          <CheckCircle2 size={15} color="#10b981" style={{ flexShrink: 0, marginTop: '2px' }} />
-                          <span>{item}</span>
+                    {/* Included Highlights */}
+                    {pkg.included.length > 0 && (
+                      <div style={{ marginBottom: '1.5rem' }}>
+                        <div style={{ fontSize: '0.75rem', color: '#10b981', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
+                          Highlights
                         </div>
-                      ))}
-                    </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+                          {pkg.included.slice(0, 4).map((item, idx) => (
+                            <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', fontSize: '0.85rem', color: 'rgba(255, 255, 255, 0.9)', fontWeight: 500 }}>
+                              <CheckCircle2 size={15} color="#10b981" style={{ flexShrink: 0, marginTop: '2px' }} />
+                              <span>{item}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     {/* Punjab Highlights */}
                     {pkg.punjabHighlights && pkg.punjabHighlights.length > 0 && (
@@ -256,14 +314,42 @@ export default function LatestTours({ onBookTour, onSelectDestination, onViewDet
                       </div>
                     </div>
 
-                    <button 
-                      className="btn-gold" 
-                      onClick={(e) => { e.stopPropagation(); onBookTour(pkg); }}
-                      style={{ padding: '0.6rem 1.2rem', fontSize: '0.82rem' }}
-                    >
-                      <Sparkles size={15} />
-                      <span>{t('tours.bookNow')}</span>
-                    </button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <a
+                        href={`https://wa.me/${getWhatsAppNumber()}?text=${encodeURIComponent(buildQuickEnquiryMessage(pkg))}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Ask about this package on WhatsApp"
+                        onClick={(e) => e.stopPropagation()}
+                        style={{
+                          width: '40px',
+                          height: '40px',
+                          borderRadius: '10px',
+                          border: '1px solid rgba(37,211,102,0.5)',
+                          background: 'rgba(37,211,102,0.15)',
+                          color: '#4ade80',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                          flexShrink: 0
+                        }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(37,211,102,0.3)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(37,211,102,0.15)'; }}
+                      >
+                        <MessageCircle size={18} />
+                      </a>
+
+                      <button 
+                        className="btn-gold" 
+                        onClick={(e) => { e.stopPropagation(); onBookTour(pkg); }}
+                        style={{ padding: '0.6rem 1.2rem', fontSize: '0.82rem' }}
+                      >
+                        <Sparkles size={15} />
+                        <span>{t('tours.bookNow')}</span>
+                      </button>
+                    </div>
                   </div>
 
                   {/* View Details Link */}

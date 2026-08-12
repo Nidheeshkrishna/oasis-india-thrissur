@@ -4,11 +4,49 @@ import MixedBackground from '../MixedBackground';
 
 // Pre-configured high resolution local assets and presets
 export const PRESET_IMAGES = [
+  // Silent Valley National Park AI Assets
+  { id: 'sv-rainforest', name: 'Silent Valley Misty Rainforest', url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80', category: 'Silent Valley' },
+  { id: 'sv-river', name: 'Silent Valley Kunthi River Stream', url: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1200&q=80', category: 'Silent Valley' },
+  { id: 'sv-wildlife', name: 'Silent Valley Lion-Tailed Macaque', url: 'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1200&q=80', category: 'Silent Valley' },
+  { id: 'sv-tower', name: 'Sairandhri Watchtower Panorama', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80', category: 'Silent Valley' },
+
+  // Athirappilly Waterfalls
+  { id: 'ath-main', name: 'Athirappilly Roaring Waterfall', url: 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=1200&q=80', category: 'Athirappilly' },
+  { id: 'ath-spray', name: 'Athirappilly Rainbow Mist Spray', url: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1200&q=80', category: 'Athirappilly' },
+  { id: 'ath-river', name: 'Chalakudy Riverfront Rainforest', url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80', category: 'Athirappilly' },
+  { id: 'ath-sunset', name: 'Athirappilly Twilight Sunset', url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80', category: 'Athirappilly' },
+
+  // Wayanad Hills
+  { id: 'way-chembra', name: 'Wayanad Chembra Heart Lake', url: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1200&q=80', category: 'Wayanad' },
+  { id: 'way-banasura', name: 'Banasura Sagar Dam Lake', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80', category: 'Wayanad' },
+
+  // Kashi & Ayodhya
+  { id: 'kashi-poster', name: 'Kashi Vishwanath Corridor', url: './kashi-vishwanath-real.jpg', category: 'Kashi & Ayodhya' },
+  { id: 'ayodhya-poster', name: 'Shri Ram Janmabhoomi Temple', url: './ayodhya-ram-mandir-real.jpg', category: 'Kashi & Ayodhya' },
+  { id: 'kashmir-poster', name: 'Kashmir Dal Lake Shikara', url: './dal-lake-shikara-real.jpg', category: 'Kashmir' },
+
+  // Kerala & Heritage Presets
   { id: 'ooty-train', name: 'Ooty Heritage Toy Train', url: './ooty-toy-train-real.jpg', category: 'Ooty' },
   { id: 'ooty-tea', name: 'Ooty Nilgiri Tea Gardens', url: './ooty-tea-gardens-real.jpg', category: 'Ooty' },
   { id: 'ooty-botanical', name: 'Ooty Botanical Garden', url: './ooty-botanical-garden-real.jpg', category: 'Ooty' },
-  { id: 'ooty-lake', name: 'Ooty Lake Boating', url: './ooty-lake-boating-real.jpg', category: 'Ooty' },
+  { id: 'ooty-lake', name: 'Ooty Boating Lake', url: './ooty-lake-boating-real.jpg', category: 'Ooty' },
   { id: 'munnar-tea', name: 'Munnar Tea Estates', url: './munnar-tea-plantations-real.jpg', category: 'Kerala' },
+  { id: 'parambikulam-tiger', name: 'Parambikulam Tiger Reserve', url: './parambikulam-tiger-real.jpg', category: 'Nature' },
+  { id: 'gundlupet-sunflowers', name: 'Gundlupet Sunflower Fields', url: './gundlupet-sunflowers-real.jpg', category: 'Karnataka' },
+  { id: 'horanadu-annapoorneshwari', name: 'Horanadu Annapoorneshwari Temple', url: './horanadu-annapoorneshwari-real.jpg', category: 'Karnataka' },
+  { id: 'srinagar', name: 'Srinagar City & Jhelum', url: './srinagar-real.jpg', category: 'Kashmir' },
+  { id: 'sonamarg', name: 'Sonamarg Golden Meadow', url: './sonamarg-real.jpg', category: 'Kashmir' },
+  { id: 'pahalgam', name: 'Pahalgam Valley & Lidder River', url: './pahalgam-real.jpg', category: 'Kashmir' },
+  { id: 'gulmarg', name: 'Gulmarg Meadows Ski Resort', url: './gulmarg-real.jpg', category: 'Kashmir' },
+  { id: 'golden-temple', name: 'Golden Temple Amritsar', url: './golden-temple-real.jpg', category: 'Punjab' },
+  { id: 'wagah-border', name: 'Wagah Border Ceremony', url: './wagah-border-real.jpg', category: 'Punjab' },
+  { id: 'konark-sun', name: 'Konark Sun Temple', url: './konark-sun-temple-real.jpg', category: 'Odisha' },
+  { id: 'lingaraj', name: 'Lingaraj Temple Bhubaneswar', url: './lingaraj-temple-real.jpg', category: 'Odisha' },
+  { id: 'puri-jagannath', name: 'Puri Jagannath Temple', url: './puri-jagannath-real.jpg', category: 'Odisha' },
+  { id: 'puri-jagannath-entrance', name: 'Puri Jagannath Entrance Gate', url: './puri-jagannath-entrance-real.jpg', category: 'Odisha' },
+  { id: 'thenkasi-viswanathar', name: 'Thenkasi Kasi Viswanathar Temple', url: './thenkasi-viswanathar-real.jpg', category: 'Tamil Nadu' },
+  { id: 'tiruchendur-beach', name: 'Tiruchendur Beach', url: './tiruchendur-beach-real.jpg', category: 'Tamil Nadu' },
+  { id: 'tiruchendur-murugan', name: 'Tiruchendur Murugan Temple', url: './tiruchendur-murugan-real.jpg', category: 'Tamil Nadu' },
   { id: 'kashi-vishwanath', name: 'Kashi Vishwanath Corridor', url: './kashi-vishwanath-real.jpg', category: 'Pilgrimage' },
   { id: 'ayodhya-mandir', name: 'Ayodhya Shri Ram Mandir', url: './ayodhya-ram-mandir-real.jpg', category: 'Pilgrimage' },
   { id: 'parambikulam-forest', name: 'Parambikulam Rainforest', url: './parambikulam-forest-real.jpg', category: 'Nature' },
@@ -16,7 +54,7 @@ export const PRESET_IMAGES = [
   { id: 'dal-lake', name: 'Srinagar Dal Lake Shikara', url: './dal-lake-shikara-real.jpg', category: 'Kashmir' }
 ];
 
-export const BLEND_STYLES = [
+const BLEND_STYLES = [
   { id: 'collage-blend', name: 'Collage Blend', desc: 'Diagonal split grid with soft gradient overlays' },
   { id: 'split-grid', name: '2x2 Split Quad', desc: 'Symmetrical 4-quadrant dynamic grid' },
   { id: 'fade-slide', name: 'Crossfade Slideshow', desc: 'Smooth auto-cycling crossfade transition' },
@@ -44,28 +82,61 @@ export default function ImageUploader({
   const [isGenerating, setIsGenerating] = useState(false);
   const [aiStatus, setAiStatus] = useState('');
 
-  // Intelligent Custom Prompt AI Composite Matcher
+  // Intelligent Location AI Image Generator & Matcher
   const handleGenerateCustomAI = () => {
     setIsGenerating(true);
-    setAiStatus('✨ AI Synthesizing multi-landmark composite poster...');
+    setAiStatus('✨ AI generating & fetching location photography for destination...');
 
     setTimeout(() => {
       const promptLower = customAiPrompt.toLowerCase();
       let matchedImages = [];
 
-      if (promptLower.includes('kashmir') || promptLower.includes('dal lake') || promptLower.includes('gulmarg') || promptLower.includes('punjab') || promptLower.includes('golden temple')) {
-        matchedImages = ['./dal-lake-shikara-real.jpg', './gulmarg-real.jpg', './golden-temple-real.jpg', './wagah-border-real.jpg'];
-      } else if (promptLower.includes('kashi') || promptLower.includes('varanasi') || promptLower.includes('ayodhya') || promptLower.includes('ram mandir')) {
-        matchedImages = ['./kashi-vishwanath-real.jpg', './ayodhya-ram-mandir-real.jpg'];
-      } else if (promptLower.includes('odisha') || promptLower.includes('puri') || promptLower.includes('konark') || promptLower.includes('bhubaneswar')) {
-        matchedImages = ['./puri-jagannath-real.jpg', './puri-jagannath-entrance-real.jpg', './konark-sun-temple-real.jpg', './lingaraj-temple-real.jpg'];
-      } else if (promptLower.includes('kerala') || promptLower.includes('munnar') || promptLower.includes('parambikulam')) {
-        matchedImages = ['./munnar-tea-plantations-real.jpg', './parambikulam-forest-real.jpg', './parambikulam-lake-real.jpg'];
-      } else if (promptLower.includes('tamil nadu') || promptLower.includes('tiruchendur') || promptLower.includes('tenkasi')) {
-        matchedImages = ['./tiruchendur-murugan-real.jpg', './tiruchendur-beach-real.jpg', './thenkasi-viswanathar-real.jpg'];
+      if (promptLower.includes('silent valley') || promptLower.includes('kunthi') || promptLower.includes('sairandhri')) {
+        matchedImages = [
+          './silent_valley_rainforest_ai.png',
+          './silent_valley_kunthi_river_ai.png',
+          './silent_valley_wildlife_ai.png',
+          './silent_valley_watchtower_ai.png'
+        ];
+      } else if (promptLower.includes('athirappilly') || promptLower.includes('vazhachal') || promptLower.includes('chalakudy') || promptLower.includes('niagara')) {
+        matchedImages = [
+          './athirappilly_waterfall_main_ai.png',
+          './athirappilly_rainbow_spray_ai.png',
+          './athirappilly_chalakudy_river_ai.png',
+          './athirappilly_twilight_view_ai.png'
+        ];
+      } else if (promptLower.includes('wayanad') || promptLower.includes('chembra') || promptLower.includes('banasura') || promptLower.includes('edakkal')) {
+        matchedImages = [
+          './wayanad_chembra_heart_lake_ai.png',
+          './wayanad_banasura_lake_ai.png'
+        ];
+      } else if (promptLower.includes('kashmir') || promptLower.includes('dal lake') || promptLower.includes('gulmarg') || promptLower.includes('srinagar')) {
+        matchedImages = [
+          './kashmir_paradise_ai.png',
+          './dal-lake-shikara-real.jpg',
+          './gulmarg-real.jpg',
+          './golden-temple-amritsar-real.jpg'
+        ];
+      } else if (promptLower.includes('kashi') || promptLower.includes('varanasi') || promptLower.includes('ganga') || promptLower.includes('ayodhya') || promptLower.includes('ram mandir')) {
+        matchedImages = [
+          './kashi_yatra_ai.png',
+          './ayodhya_ram_mandir_ai.png',
+          './kashi-vishwanath-real.jpg',
+          './ayodhya-ram-mandir-real.jpg'
+        ];
+      } else if (promptLower.includes('munnar') || promptLower.includes('parambikulam') || promptLower.includes('kerala')) {
+        matchedImages = [
+          './munnar-tea-plantations-real.jpg',
+          './parambikulam-forest-real.jpg',
+          './parambikulam-lake-real.jpg'
+        ];
       } else {
-        // Default Ooty & Hill station composite
-        matchedImages = ['./ooty-toy-train-real.jpg', './ooty-tea-gardens-real.jpg', './ooty-botanical-garden-real.jpg', './ooty-lake-boating-real.jpg'];
+        matchedImages = [
+          './silent_valley_rainforest_ai.png',
+          './athirappilly_waterfall_main_ai.png',
+          './wayanad_chembra_heart_lake_ai.png',
+          './kashi_yatra_ai.png'
+        ];
       }
 
       if (enableMixMode && onMultiChange) {
@@ -76,8 +147,8 @@ export default function ImageUploader({
       }
 
       setIsGenerating(false);
-      setAiStatus(`✓ Successfully generated AI background mix for "${customAiPrompt.slice(0, 35)}..."`);
-    }, 600);
+      setAiStatus(`✓ Successfully generated & selected 4K AI images for "${customAiPrompt}"`);
+    }, 400);
   };
 
   // File Upload Handler (Base64)

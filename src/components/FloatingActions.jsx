@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { MessageCircle, ArrowUp } from 'lucide-react';
+import { MessageCircle, ArrowUp, Phone } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
+import { getWhatsAppNumber, getPhoneNumber } from '../services/whatsapp';
 
 export default function FloatingActions() {
   const { t } = useLanguage();
@@ -16,7 +17,7 @@ export default function FloatingActions() {
     <>
       {/* Floating WhatsApp Action Button */}
       <a
-        href="https://wa.me/919447000000?text=Hello%20OASIS%20India%20Thrissur%2C%20I%20want%20to%20plan%20a%20tour%20package."
+        href={`https://wa.me/${getWhatsAppNumber()}?text=${encodeURIComponent('Hello OASIS India Thrissur, I want to plan a tour package.')}`}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat with us on WhatsApp"
@@ -24,6 +25,15 @@ export default function FloatingActions() {
       >
         <span className="float-whatsapp-label">{t('floating.chat')}</span>
         <MessageCircle size={28} />
+      </a>
+
+      {/* Floating Call Now Button */}
+      <a
+        href={`tel:${getPhoneNumber()}`}
+        aria-label="Call us now"
+        className="float-call"
+      >
+        <Phone size={26} />
       </a>
 
       {showTop && (

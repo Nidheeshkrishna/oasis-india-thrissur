@@ -12,12 +12,12 @@ export default function BlogSection() {
   if (blogs.length === 0) return null;
 
   return (
-    <section id="travel-stories" style={{ padding: '6rem 0', position: 'relative', overflow: 'hidden' }}>
+    <section id="travel-stories" style={{ padding: 'clamp(4rem, 7vw, 5.5rem) 0', position: 'relative', overflow: 'hidden' }}>
       <div className="orb" style={{ width: '340px', height: '340px', background: 'var(--pink)', top: '-100px', right: '-80px' }} />
       <div className="orb" style={{ width: '300px', height: '300px', background: 'var(--saffron)', bottom: '-80px', left: '-100px', animationDelay: '-6s' }} />
 
       <div className="container" style={{ position: 'relative', zIndex: 2 }}>
-        <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto 3rem' }}>
+        <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto 2.5rem' }}>
           <span className="badge-aurora" style={{ marginBottom: '0.8rem' }}>
             <BookOpen size={14} /> {t('blog.badge')}
           </span>

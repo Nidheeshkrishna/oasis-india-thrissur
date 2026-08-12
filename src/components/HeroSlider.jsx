@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Star, Clock, Calendar, ArrowRight, Sparkles, ChevronLeft, ChevronRight, MapPin, Shield, Wand2 } from 'lucide-react';
+import { Star, Clock, Calendar, ArrowRight, Sparkles, ChevronLeft, ChevronRight, MapPin, Shield, Wand2, Check, MessageCircle } from 'lucide-react';
 import { posterStorage } from '../services/gemini';
 import { catalogService } from '../services/catalog';
+import { getWhatsAppNumber, buildQuickEnquiryMessage } from '../services/whatsapp';
 import { useCatalog } from '../hooks/useCatalog';
 import { useLanguage } from '../i18n/LanguageContext';
 import MixedBackground from './MixedBackground';
@@ -9,6 +10,7 @@ import MixedBackground from './MixedBackground';
 // AI Poster Design Banner Carousel — shows the latest 4 AI-generated posters
 // from the admin console as framed poster designs at the top of the page.
 function PosterDesignCarousel({ posters, onBookTour, compact }) {
+  const { t } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -138,41 +140,6 @@ function PosterDesignCarousel({ posters, onBookTour, compact }) {
       `}</style>
 
       <div className="container" style={{ position: 'relative', zIndex: 5, paddingTop: compact ? '4.5rem' : '110px', paddingBottom: '40px' }}>
-
-        {/* Banner Header */}
-        <div style={{ textAlign: 'center', marginBottom: '2.2rem', animation: 'slideUpFade 0.7s ease-out both' }}>
-          <span style={{
-            background: 'linear-gradient(135deg, rgba(168,85,247,0.25), rgba(212,175,55,0.25))',
-            border: '1px solid rgba(168,85,247,0.5)',
-            color: '#c084fc',
-            padding: '0.4rem 1rem',
-            borderRadius: '30px',
-            fontSize: '0.78rem',
-            fontWeight: 700,
-            letterSpacing: '0.06em',
-            textTransform: 'uppercase',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.4rem',
-            marginBottom: '0.8rem',
-            animation: 'glowPulse 3s ease-in-out infinite'
-          }}>
-            <Wand2 size={14} className="animate-pulse-slow" /> AI Poster Gallery — Powered by Google Gemini
-          </span>
-          <h1 style={{
-            fontSize: 'clamp(2rem, 4vw, 3.4rem)',
-            fontWeight: 800,
-            fontFamily: 'var(--font-heading)',
-            background: 'linear-gradient(120deg, #d4af37, #f5e08c, #a855f7)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent'
-          }}>
-            OASIS AI Travel Poster Banner
-          </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '1rem', marginTop: '0.4rem' }}>
-            {posters.length} AI posters generated from the Admin Console — auto-rotating poster designs
-          </p>
-        </div>
 
         {/* Poster Design Stage */}
         <div style={{ display: 'flex', gap: '2rem', alignItems: 'stretch', justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -387,42 +354,48 @@ function PosterDesignCarousel({ posters, onBookTour, compact }) {
 
 export default function HeroSlider({ destinations, onSelectDestination, onBookTour }) {
   const { t } = useLanguage();
-  // Hero slides are managed from the Admin Console (Hero Banner tab).
-  // They auto-fill from a linked destination but every field can be customized.
-  const catalogSlides = useCatalog(catalogService.getSlides);
+  const catalogSlides = useCatalog(catalogService.getSlides) || [];
+  const catalogTours = useCatalog(catalogService.getTours) || [];
 
-  // Enrich each admin slide with the full destination record so the
-  // "Explore Destination Guide" and "Book Now" flows keep working.
+  // Convert ALL tour packages into featured Hero Slides.
+  // A tour is "upcoming" when its departure date is today or in the future;
+  // otherwise it's a "completed" tour (image + title + subtitle + Explore only).
+  const todayMidnight = new Date();
+  todayMidnight.setHours(0, 0, 0, 0);
+  const upcomingTourSlides = catalogTours.map((t) => {
+    const dest = destinations.find(d => d.id === t.destinationId);
+    const departure = t.departureDate || new Date().toISOString().slice(0, 10);
+    const isUpcoming = new Date(`${departure}T00:00:00`) >= todayMidnight;
+    return {
+      id: t.id,
+      name: t.title,
+      tagline: t.subtitle,
+      description: Array.isArray(t.included) ? t.included.slice(0, 3).join(' • ') : (t.included || ''),
+      heroImage: t.image,
+      bgMixImages: t.bgMixImages || [t.image],
+      bgMixStyle: t.bgMixStyle || 'collage-blend',
+      location: (t.mainPlaces || []).join(', ') || dest?.location || 'Thrissur Departure',
+      duration: t.duration || '3 Days / 2 Nights',
+      startingPrice: t.price,
+      originalPrice: t.originalPrice,
+      rating: t.rating || 4.95,
+      reviewsCount: t.reviews || 180,
+      badge: t.badge || (isUpcoming ? '⚡ Upcoming Departure' : '✅ Completed Tour'),
+      departureDate: t.departureDate || '2026-08-25',
+      destinationId: t.destinationId,
+      fullTour: t,
+      isUpcomingTour: isUpcoming,
+      isCompletedTour: !isUpcoming
+    };
+  });
+
+  // Enrich each admin slide with the full destination record
   const enrichedSlides = catalogSlides.map((s) => {
     const dest = destinations.find(d => d.id === s.destinationId);
     return dest ? { ...dest, ...s, id: dest.id } : s;
   });
 
-  // AI-generated posters from localStorage
-  const [aiPosters, setAiPosters] = useState([]);
-
-  useEffect(() => {
-    const posters = posterStorage.getPosters();
-    // Only show posters that have valid images
-    setAiPosters(posters.filter(p => p.imageUrl));
-    
-    // Listen for storage changes to update in real-time
-    const handleStorageChange = () => {
-      const updated = posterStorage.getPosters();
-      setAiPosters(updated.filter(p => p.imageUrl));
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    // Also poll for changes (for same-tab updates)
-    const interval = setInterval(handleStorageChange, 2000);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      clearInterval(interval);
-    };
-  }, []);
-
-  // Fallback to the classic featured destinations if all hero slides were deleted
+  // Fallback to classic featured destinations if catalog is empty
   const fallbackSlides = [
     'ayodhya-ram-mandir', 'kashi-varanasi', 'ganga-aarti', 'manikarnika-ghat',
     'annapoorneshwari-horanadu', 'munnar-tea-plantations', 'puri-jagannath',
@@ -433,9 +406,44 @@ export default function HeroSlider({ destinations, onSelectDestination, onBookTo
     .map(id => destinations.find(d => d.id === id))
     .filter(Boolean);
 
-  // The full-screen top hero always shows the authentic real destination
-  // photography slides. AI posters are displayed in the section below.
-  const allSlides = enrichedSlides.length > 0 ? enrichedSlides : fallbackSlides;
+  // Combine ALL upcoming tours + Admin Hero Slides + Destination fallback slides
+  const combinedSlides = [
+    ...upcomingTourSlides,
+    ...enrichedSlides,
+    ...fallbackSlides
+  ];
+
+  // Unique slides by ID
+  const uniqueSlidesMap = new Map();
+  combinedSlides.forEach(s => {
+    const key = s.id || s.name;
+    if (!uniqueSlidesMap.has(key)) {
+      uniqueSlidesMap.set(key, s);
+    }
+  });
+  const uniqueSlides = Array.from(uniqueSlidesMap.values());
+
+  // Strict sorting: upcoming tour slides FIRST, then featured/destination slides,
+  // and completed tours LAST (most recent completed first within each group).
+  const allSlides = uniqueSlides.sort((a, b) => {
+    const rank = (s) => {
+      if (s.isUpcomingTour) return 2;
+      if (s.isCompletedTour) return 0;
+      return 1;
+    };
+    const rankA = rank(a), rankB = rank(b);
+    if (rankA !== rankB) return rankB - rankA;
+
+    const timeA = typeof a.id === 'string' && a.id.startsWith('tour-')
+      ? parseInt(a.id.replace('tour-', '')) || 0
+      : (a.departureDate ? new Date(a.departureDate).getTime() : 0);
+
+    const timeB = typeof b.id === 'string' && b.id.startsWith('tour-')
+      ? parseInt(b.id.replace('tour-', '')) || 0
+      : (b.departureDate ? new Date(b.departureDate).getTime() : 0);
+
+    return timeB - timeA; // Latest added / newest departure date FIRST
+  });
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -449,10 +457,6 @@ export default function HeroSlider({ destinations, onSelectDestination, onBookTo
   }, [allSlides.length, isPaused]);
 
   const slide = allSlides[currentIndex] || allSlides[0];
-
-  // AI posters exist in the admin console — shown as a poster gallery
-  // section BELOW the authentic full-screen real photo hero.
-  const latestPosters = aiPosters.slice(0, 4);
 
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev - 1 + allSlides.length) % allSlides.length);
@@ -477,7 +481,7 @@ export default function HeroSlider({ destinations, onSelectDestination, onBookTo
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* Background Slides */}
+      {/* Background Slides — with Ken Burns motion */}
       {allSlides.map((item, idx) => (
         <div
           key={item.id}
@@ -485,10 +489,15 @@ export default function HeroSlider({ destinations, onSelectDestination, onBookTo
             position: 'absolute',
             inset: 0,
             opacity: idx === currentIndex ? 1 : 0,
-            transition: 'opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
-            zIndex: 1
+            transition: 'opacity 1.4s cubic-bezier(0.22, 1, 0.36, 1)',
+            zIndex: 1,
           }}
         >
+          {/* Ken Burns wrapper */}
+          <div
+            className={idx === currentIndex ? 'ken-burns' : ''}
+            style={{ width: '100%', height: '100%' }}
+          >
           <MixedBackground
             images={item.bgMixImages}
             fallbackImage={item.heroImage}
@@ -496,9 +505,47 @@ export default function HeroSlider({ destinations, onSelectDestination, onBookTo
             height="100%"
             overlayOpacity={0.25}
           />
+          </div>
         </div>
       ))}
 
+      {/* ── Volumetric light rays ──────────────────────────── */}
+      <div className="light-ray" style={{ left: '20%', opacity: 0.7 }} />
+      <div className="light-ray" style={{ left: '55%', opacity: 0.5 }} />
+      <div className="light-ray" style={{ left: '80%', opacity: 0.4 }} />
+
+      {/* ── Foreground atmospheric glow ───────────────────── */}
+      <div
+        className="hero-float"
+        style={{
+          position: 'absolute',
+          bottom: '15%',
+          left: '5%',
+          width: '380px',
+          height: '380px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(245,158,11,0.07), transparent 70%)',
+          filter: 'blur(50px)',
+          pointerEvents: 'none',
+          zIndex: 3,
+        }}
+      />
+      <div
+        className="hero-float"
+        style={{
+          position: 'absolute',
+          top: '20%',
+          right: '8%',
+          width: '300px',
+          height: '300px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(139,92,246,0.06), transparent 70%)',
+          filter: 'blur(40px)',
+          pointerEvents: 'none',
+          zIndex: 3,
+          animationDelay: '-3.5s',
+        }}
+      />
       {/* Auto-Slide Progress Bar */}
       <div style={{
         position: 'absolute',
@@ -529,8 +576,8 @@ export default function HeroSlider({ destinations, onSelectDestination, onBookTo
       `}</style>
 
       {/* Slide Content */}
-      <div 
-        className="container" 
+      <div
+        className="container"
         style={{
           position: 'relative',
           zIndex: 10,
@@ -539,7 +586,7 @@ export default function HeroSlider({ destinations, onSelectDestination, onBookTo
           flexDirection: 'column',
           justifyContent: 'center',
           paddingTop: '110px',
-          paddingBottom: '130px'
+          paddingBottom: '130px',
         }}
       >
         <div style={{ maxWidth: '780px' }}>
@@ -568,6 +615,24 @@ export default function HeroSlider({ destinations, onSelectDestination, onBookTo
 
           {/* Top Pills */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', flexWrap: 'wrap', marginBottom: '1.2rem' }}>
+            {slide.isCompletedTour && (
+              <span style={{
+                background: 'rgba(148, 163, 184, 0.25)',
+                border: '1px solid rgba(148, 163, 184, 0.5)',
+                color: '#cbd5e1',
+                padding: '0.4rem 0.85rem',
+                borderRadius: '30px',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem'
+              }}>
+                <Check size={13} /> Completed Tour
+              </span>
+            )}
             {!slide.isAIPoster && (
               <span className="badge-gold">
                 <Shield size={14} /> {t('hero.authenticBadge')}
@@ -576,7 +641,7 @@ export default function HeroSlider({ destinations, onSelectDestination, onBookTo
             <span className="badge-emerald" style={{ background: 'rgba(16, 185, 129, 0.2)' }}>
               <MapPin size={14} /> {slide.location}
             </span>
-            {!slide.isAIPoster && (
+            {!slide.isAIPoster && !slide.isCompletedTour && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', color: '#facc15', fontSize: '0.9rem', fontWeight: 700 }}>
                 <Star size={16} fill="#facc15" stroke="none" />
                 <span>{slide.rating} ({slide.reviewsCount} Authentic Reviews)</span>
@@ -623,8 +688,8 @@ export default function HeroSlider({ destinations, onSelectDestination, onBookTo
             {slide.description}
           </p>
 
-          {/* Info Bar - only for non-AI slides */}
-          {!slide.isAIPoster && (
+          {/* Info Bar - only for non-AI slides, and hidden for completed tours */}
+          {!slide.isAIPoster && !slide.isCompletedTour && (
             <div className="glass-card" style={{
               padding: '1.2rem 1.8rem',
               display: 'inline-flex',
@@ -671,19 +736,36 @@ export default function HeroSlider({ destinations, onSelectDestination, onBookTo
             </div>
           )}
 
-          {/* Action Buttons */}
+          {/* Action Buttons: upcoming tours → Book Now + Explore; completed tours → Explore only */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', flexWrap: 'wrap' }}>
-            <button 
-              className="btn-gold"
-              onClick={() => onBookTour(slide)}
+            {slide.isUpcomingTour && (
+              <button
+                className="btn-gold btn-cinematic"
+                data-ripple
+                data-magnetic
+                onClick={() => onBookTour(slide)}
+              >
+                <Sparkles size={18} />
+                <span>{t('bookNow')}</span>
+              </button>
+            )}
+
+            <a
+              className="btn-glass btn-cinematic"
+              data-ripple
+              href={`https://wa.me/${getWhatsAppNumber()}?text=${encodeURIComponent(buildQuickEnquiryMessage(slide))}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ textDecoration: 'none', border: '1px solid rgba(37,211,102,0.55)', color: '#4ade80' }}
             >
-              <Sparkles size={18} />
-              <span>{t('bookNow')}</span>
-            </button>
+              <MessageCircle size={18} />
+              <span>WhatsApp</span>
+            </a>
 
             {!slide.isAIPoster && (
-              <button 
-                className="btn-glass"
+              <button
+                className="btn-glass btn-cinematic"
+                data-ripple
                 onClick={() => onSelectDestination(slide)}
               >
                 <span>{t('exploreGuide')}</span>
@@ -779,12 +861,58 @@ export default function HeroSlider({ destinations, onSelectDestination, onBookTo
           </button>
         </div>
       </div>
-    </section>
 
-    {/* AI Poster Gallery Section (below the authentic hero) */}
-    {latestPosters.length > 0 && (
-      <PosterDesignCarousel posters={latestPosters} onBookTour={onBookTour} compact />
-    )}
+      {/* ── Cinematic scroll indicator ─────────────────────── */}
+      <div
+        className="scroll-indicator"
+        style={{
+          position: 'absolute',
+          bottom: '90px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 15,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '6px',
+          pointerEvents: 'none',
+        }}
+      >
+        <div
+          style={{
+            width: '24px',
+            height: '36px',
+            border: '1.5px solid rgba(245,158,11,0.5)',
+            borderRadius: '12px',
+            display: 'flex',
+            alignItems: 'flex-start',
+            justifyContent: 'center',
+            paddingTop: '5px',
+          }}
+        >
+          <div
+            className="scroll-indicator-dot"
+            style={{
+              width: '4px',
+              height: '8px',
+              borderRadius: '2px',
+              background: 'rgba(245,158,11,0.8)',
+              boxShadow: '0 0 8px rgba(245,158,11,0.5)',
+            }}
+          />
+        </div>
+        <p style={{
+          fontSize: '0.6rem',
+          letterSpacing: '0.2em',
+          textTransform: 'uppercase',
+          color: 'rgba(245,158,11,0.5)',
+          margin: 0,
+          fontFamily: 'var(--font-body)',
+        }}>
+          Scroll
+        </p>
+      </div>
+    </section>
     </>
   );
 }

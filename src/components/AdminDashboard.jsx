@@ -8,15 +8,19 @@ import {
 } from 'lucide-react';
 import { firestoreService } from '../services/firebase';
 import { geminiService, posterStorage } from '../services/gemini';
-import { catalogService } from '../services/catalog';
+import { catalogService, getLastWriteOk } from '../services/catalog';
 import { AdminFormModal, TourForm, GalleryForm, BlogForm, HeroSlideForm } from './admin/CatalogForms';
 import ImageUploader from './admin/ImageUploader';
 import MixedBackground from './MixedBackground';
 
 const ADMIN_PIN = '2026';
+const SESSION_KEY = 'oasis_admin_session';
 
 export default function AdminDashboard({ contactData, onUpdateContact, onClose }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  // Restore session from sessionStorage — cleared on tab close, persists on refresh
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    try { return sessionStorage.getItem(SESSION_KEY) === 'true'; } catch { return false; }
+  });
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState('');
   const [activeTab, setActiveTab] = useState('posters');
@@ -47,6 +51,7 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
 
   // Catalog Editor States
   const [tourFormOpen, setTourFormOpen] = useState(false);
+  const [tourDirty, setTourDirty] = useState(false);
   const [galleryFormOpen, setGalleryFormOpen] = useState(false);
   const [blogFormOpen, setBlogFormOpen] = useState(false);
   const [slideFormOpen, setSlideFormOpen] = useState(false);
@@ -107,7 +112,12 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
     setTours(updated);
     setTourFormOpen(false);
     setEditingTour(null);
-    showCatalogMsg(editingTour ? 'Tour package updated on the website!' : 'New tour package published to the website!');
+    setTourDirty(false);
+    if (getLastWriteOk()) {
+      showCatalogMsg(editingTour ? 'Tour package updated on the website!' : 'New tour package published to the website!');
+    } else {
+      showCatalogMsg('⚠️ Could not save — package images are too large for browser storage. Use smaller images.');
+    }
   };
 
   const handleDeleteTour = (id) => {
@@ -178,8 +188,9 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
     if (pinInput === ADMIN_PIN) {
       setIsAuthenticated(true);
       setPinError('');
+      try { sessionStorage.setItem(SESSION_KEY, 'true'); } catch {}
     } else {
-      setPinError('Invalid PIN. Access denied.');
+      setPinError('Incorrect PIN. Access denied.');
       setPinInput('');
     }
   };
@@ -334,69 +345,96 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
     });
   };
 
-  // AUTH GATE - PIN Login Screen
+  // AUTH GATE - Premium PIN Login Screen
   if (!isAuthenticated) {
     return (
-      <div className="modal-overlay" style={{ zIndex: 10000 }}>
-        <div 
-          className="glass-card"
+      <div
+        className="modal-overlay"
+        style={{ zIndex: 10000, background: 'rgba(3,6,12,0.96)', backdropFilter: 'blur(20px)' }}
+      >
+        <style>{`
+          @keyframes adminGlowPulse {
+            0%, 100% { box-shadow: 0 0 40px rgba(212,175,55,0.2), 0 0 80px rgba(212,175,55,0.08); }
+            50%       { box-shadow: 0 0 60px rgba(212,175,55,0.4), 0 0 120px rgba(212,175,55,0.15); }
+          }
+          @keyframes adminShake {
+            0%, 100% { transform: translateX(0); }
+            15%       { transform: translateX(-8px); }
+            30%       { transform: translateX(8px); }
+            45%       { transform: translateX(-6px); }
+            60%       { transform: translateX(6px); }
+            75%       { transform: translateX(-3px); }
+            90%       { transform: translateX(3px); }
+          }
+          @keyframes adminFadeIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+          }
+          .admin-login-card { animation: adminFadeIn 0.5s cubic-bezier(0.22,1,0.36,1) both; }
+          .admin-shake       { animation: adminShake 0.5s cubic-bezier(0.36,0.07,0.19,0.97) both; }
+        `}</style>
+
+        {/* Ambient glow orbs */}
+        <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', top: '15%', left: '20%', width: '400px', height: '400px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(212,175,55,0.06), transparent 70%)', filter: 'blur(60px)' }} />
+          <div style={{ position: 'absolute', bottom: '15%', right: '20%', width: '350px', height: '350px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(139,92,246,0.05), transparent 70%)', filter: 'blur(60px)' }} />
+        </div>
+
+        <div
+          className="admin-login-card"
           style={{
             width: '100%',
-            maxWidth: '420px',
-            padding: '2.5rem',
+            maxWidth: '400px',
+            padding: '2.8rem 2.4rem 2.2rem',
             textAlign: 'center',
-            background: '#060d1a',
-            border: '1px solid var(--border-gold)'
+            background: 'linear-gradient(160deg, rgba(10,18,36,0.98) 0%, rgba(6,10,22,0.99) 100%)',
+            border: '1px solid rgba(212,175,55,0.25)',
+            borderRadius: '24px',
+            boxShadow: '0 40px 100px rgba(0,0,0,0.8), inset 0 1px 0 rgba(212,175,55,0.1)',
+            position: 'relative',
           }}
         >
-          {/* Logo & Title */}
+          {/* Top gold line accent */}
+          <div style={{ position: 'absolute', top: 0, left: '20%', right: '20%', height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.6), transparent)', borderRadius: '1px' }} />
+
+          {/* Shield icon */}
           <div style={{
-            width: '72px',
-            height: '72px',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, #d4af37, #aa841c)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto 1.5rem',
-            boxShadow: '0 0 30px rgba(212,175,55,0.3)'
+            width: '76px', height: '76px', borderRadius: '50%',
+            background: 'linear-gradient(135deg, #1a1200, #2d1f00)',
+            border: '2px solid rgba(212,175,55,0.35)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            margin: '0 auto 1.6rem',
+            animation: 'adminGlowPulse 3s ease-in-out infinite',
           }}>
-            <ShieldCheck size={36} color="#060c17" />
+            <ShieldCheck size={36} color="#d4af37" strokeWidth={1.5} />
           </div>
 
-          <h2 style={{ 
-            fontSize: '1.6rem', 
-            fontWeight: 800, 
-            fontFamily: 'var(--font-heading)',
-            color: 'var(--gold-light)',
-            marginBottom: '0.4rem'
-          }}>
-            OASIS Admin Portal
+          <h2 style={{ fontSize: '1.55rem', fontWeight: 800, fontFamily: 'var(--font-heading)', color: '#f5e08c', marginBottom: '0.3rem', letterSpacing: '-0.01em' }}>
+            Admin Portal
           </h2>
-          <p style={{ 
-            color: 'var(--text-muted)', 
-            fontSize: '0.9rem', 
-            marginBottom: '2rem' 
-          }}>
-            Enter your admin PIN to access the dashboard
+          <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.82rem', marginBottom: '2rem', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+            OASIS India Thrissur · Secure Access
           </p>
 
-          {/* PIN Input Form */}
+          {/* PIN Form */}
           <form onSubmit={handlePinSubmit}>
-            <div style={{ marginBottom: '1.5rem' }}>
+            {/* PIN input field */}
+            <div
+              className={pinError ? 'admin-shake' : ''}
+              style={{ marginBottom: '0.8rem' }}
+            >
               <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                background: 'rgba(255,255,255,0.05)',
-                border: pinError ? '2px solid #ef4444' : '2px solid var(--border-gold)',
-                borderRadius: '16px',
-                padding: '0.8rem 1.2rem',
-                transition: 'border-color 0.3s'
+                display: 'flex', alignItems: 'center', gap: '0.8rem',
+                background: 'rgba(255,255,255,0.04)',
+                border: `1.5px solid ${pinError ? 'rgba(239,68,68,0.6)' : 'rgba(212,175,55,0.3)'}`,
+                borderRadius: '14px',
+                padding: '0.85rem 1.2rem',
+                transition: 'border-color 0.3s',
               }}>
-                <Lock size={20} color={pinError ? '#ef4444' : 'var(--gold-primary)'} />
+                <Lock size={18} color={pinError ? '#ef4444' : '#d4af37'} style={{ flexShrink: 0 }} />
                 <input
                   type="password"
-                  placeholder="Enter 4-digit PIN"
+                  placeholder="Enter PIN"
                   value={pinInput}
                   onChange={(e) => {
                     setPinInput(e.target.value.replace(/\D/g, '').slice(0, 6));
@@ -405,53 +443,79 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
                   maxLength={6}
                   autoFocus
                   style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#fff',
-                    fontSize: '1.3rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.4em',
-                    width: '100%',
-                    outline: 'none',
-                    textAlign: 'center',
-                    fontFamily: 'monospace'
+                    background: 'none', border: 'none', outline: 'none',
+                    color: '#ffffff',
+                    fontSize: '1.4rem', fontWeight: 700,
+                    letterSpacing: '0.5em',
+                    width: '100%', textAlign: 'center',
+                    fontFamily: 'monospace',
+                    caretColor: '#d4af37',
                   }}
                 />
               </div>
-              {pinError && (
-                <p style={{ color: '#ef4444', fontSize: '0.82rem', marginTop: '0.6rem', fontWeight: 600 }}>
-                  {pinError}
-                </p>
-              )}
+
+              {/* Dot indicators */}
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '10px' }}>
+                {[0,1,2,3].map(i => (
+                  <div key={i} style={{
+                    width: '8px', height: '8px', borderRadius: '50%',
+                    background: i < pinInput.length ? '#d4af37' : 'rgba(255,255,255,0.15)',
+                    transition: 'background 0.2s ease',
+                    boxShadow: i < pinInput.length ? '0 0 8px rgba(212,175,55,0.5)' : 'none',
+                  }} />
+                ))}
+              </div>
             </div>
+
+            {/* Error message */}
+            {pinError && (
+              <div style={{
+                background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)',
+                borderRadius: '8px', padding: '0.6rem 0.9rem',
+                color: '#f87171', fontSize: '0.8rem', fontWeight: 600,
+                marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem',
+              }}>
+                <AlertCircle size={14} /> {pinError}
+              </div>
+            )}
 
             <button
               type="submit"
-              className="btn-gold"
-              style={{ width: '100%', justifyContent: 'center', padding: '0.9rem' }}
+              disabled={pinInput.length < 4}
+              style={{
+                width: '100%', padding: '0.9rem',
+                background: pinInput.length >= 4
+                  ? 'linear-gradient(135deg, #d4af37, #aa841c)'
+                  : 'rgba(212,175,55,0.1)',
+                border: `1px solid ${pinInput.length >= 4 ? 'rgba(212,175,55,0.4)' : 'rgba(212,175,55,0.15)'}`,
+                borderRadius: '12px',
+                color: pinInput.length >= 4 ? '#000' : 'rgba(212,175,55,0.4)',
+                fontSize: '0.9rem', fontWeight: 800,
+                cursor: pinInput.length >= 4 ? 'pointer' : 'not-allowed',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+                transition: 'all 0.3s ease',
+                letterSpacing: '0.04em',
+              }}
             >
-              <Lock size={18} />
-              <span>Access Admin Console</span>
+              <ShieldCheck size={16} />
+              Unlock Admin Console
             </button>
           </form>
 
-          {/* Close Button */}
+          {/* Cancel link */}
           <button
             onClick={onClose}
             style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--text-muted)',
-              cursor: 'pointer',
-              marginTop: '1.2rem',
-              fontSize: '0.85rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              margin: '1.2rem auto 0'
+              background: 'none', border: 'none', color: 'rgba(255,255,255,0.25)',
+              cursor: 'pointer', marginTop: '1.4rem', fontSize: '0.8rem',
+              display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
+              transition: 'color 0.2s',
+              letterSpacing: '0.04em',
             }}
+            onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}
+            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.25)'}
           >
-            <X size={16} /> Cancel
+            <X size={14} /> Cancel &amp; go back
           </button>
         </div>
       </div>
@@ -518,7 +582,11 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
             <button
-              onClick={() => { setIsAuthenticated(false); setPinInput(''); }}
+              onClick={() => {
+                setIsAuthenticated(false);
+                setPinInput('');
+                try { sessionStorage.removeItem(SESSION_KEY); } catch {}
+              }}
               style={{
                 background: 'rgba(239,68,68,0.15)',
                 border: '1px solid rgba(239,68,68,0.3)',
@@ -753,7 +821,11 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
             const handleUpdateMix = (patch) => {
               const updated = catalogService.updateDestination(currentDest.id, patch);
               setDestinations(updated);
-              showCatalogMsg(`Mixed background updated for ${currentDest.name}!`);
+              if (getLastWriteOk()) {
+                showCatalogMsg(`Mixed background updated for ${currentDest.name}!`);
+              } else {
+                showCatalogMsg(`⚠️ Could not save — image files are too large for the browser storage. Use smaller photos.`);
+              }
             };
 
             return (
@@ -819,11 +891,21 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
                     <button
                       type="button"
                       className="btn-gold"
-                      onClick={() => showCatalogMsg(`Live background mix saved for ${currentDest.name}!`)}
+                      onClick={() => {
+                        catalogService.updateDestination(currentDest.id, {});
+                        if (getLastWriteOk()) {
+                          showCatalogMsg(`Live background mix published for ${currentDest.name}! Changes are now on the website hero.`);
+                        } else {
+                          showCatalogMsg(`⚠️ Could not save — image files are too large for the browser storage. Use smaller photos.`);
+                        }
+                      }}
                       style={{ width: '100%', justifyContent: 'center', marginTop: '1rem', padding: '0.85rem' }}
                     >
                       <Save size={18} /> Publish Background Blend to Website
                     </button>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: '0.5rem' }}>
+                      Tip: every image change is auto-saved. This button re-saves & confirms it is live.
+                    </p>
                   </div>
 
                   {/* Right Column: Live Website Card Preview */}
@@ -1443,7 +1525,7 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
                     Changes publish instantly to the website Tour Packages section.
                   </p>
                 </div>
-                <button className="btn-gold" style={{ padding: '0.5rem 1.2rem', fontSize: '0.85rem' }} onClick={() => { setEditingTour(null); setTourFormOpen(true); }}>
+                <button className="btn-gold" style={{ padding: '0.5rem 1.2rem', fontSize: '0.85rem' }} onClick={() => { setEditingTour(null); setTourDirty(false); setTourFormOpen(true); }}>
                   <Plus size={16} /> Add New Tour
                 </button>
               </div>
@@ -1475,7 +1557,7 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '0.8rem' }}>
                       <button
-                        onClick={() => { setEditingTour(p); setTourFormOpen(true); }}
+                        onClick={() => { setEditingTour(p); setTourDirty(false); setTourFormOpen(true); }}
                         className="btn-glass"
                         style={{ flex: 1, justifyContent: 'center', padding: '0.45rem', fontSize: '0.8rem' }}
                       >
@@ -1507,7 +1589,7 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
                   </p>
                 </div>
                 <button className="btn-gold" style={{ padding: '0.5rem 1.2rem', fontSize: '0.85rem' }} onClick={() => { setEditingGallery(null); setGalleryFormOpen(true); }}>
-                  <ImagePlus size={16} /> Upload Photo Metadata
+                  <ImagePlus size={16} /> Add Gallery Photo
                 </button>
               </div>
 
@@ -1620,12 +1702,18 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
           <AdminFormModal
             title={editingTour ? 'Edit Tour Package' : 'Add New Tour Package'}
             icon={Package}
-            onClose={() => { setTourFormOpen(false); setEditingTour(null); }}
+            fullscreen
+            dirty={tourDirty}
+            onClose={() => { setTourFormOpen(false); setEditingTour(null); setTourDirty(false); }}
           >
             <TourForm
               initial={editingTour}
               onSave={handleSaveTour}
-              onCancel={() => { setTourFormOpen(false); setEditingTour(null); }}
+              onDirtyChange={() => setTourDirty(true)}
+              onCancel={() => {
+                if (tourDirty && !window.confirm('You have unsaved changes in this tour. Discard them and close?')) return;
+                setTourFormOpen(false); setEditingTour(null); setTourDirty(false);
+              }}
             />
           </AdminFormModal>
         )}
@@ -1633,7 +1721,7 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
         {/* Gallery Item Add/Edit Modal */}
         {galleryFormOpen && (
           <AdminFormModal
-            title={editingGallery ? 'Edit Gallery Photo' : 'Upload Photo Metadata'}
+            title={editingGallery ? 'Edit Gallery Photo' : 'Add Gallery Photo'}
             icon={ImageIcon}
             onClose={() => { setGalleryFormOpen(false); setEditingGallery(null); }}
           >
