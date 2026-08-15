@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Calendar, MapPin, Users, Search, Sparkles, Navigation, Layers, ChevronDown } from 'lucide-react';
 import { DESTINATIONS } from '../data/destinationsData';
+import { catalogService } from '../services/catalog';
+import { useCatalog } from '../hooks/useCatalog';
 import { useLanguage } from '../i18n/LanguageContext';
 import PickupPointsMap, { MAJOR_PICKUP_POINTS } from './PickupPointsMap';
 
@@ -8,14 +10,15 @@ const QUICK_SUGGESTIONS = ['Kashi & Varanasi', 'Kashmir Paradise', 'Munnar & Oot
 
 export default function TripPlanner({ onBook }) {
   const { t } = useLanguage();
-  const [destinationId, setDestinationId] = useState(DESTINATIONS[0].id);
+  const destinations = useCatalog(catalogService.getDestinations) || DESTINATIONS;
+  const [destinationId, setDestinationId] = useState(destinations[0]?.id || 'ooty-nilgiri-hills');
   const [selectedPickup, setSelectedPickup] = useState(MAJOR_PICKUP_POINTS[0]);
   const [showMap, setShowMap] = useState(false);
   const [travelDate, setTravelDate] = useState('');
   const [guests, setGuests] = useState(2);
 
   const today = new Date().toISOString().split('T')[0];
-  const selectedDestObj = DESTINATIONS.find(d => d.id === destinationId) || DESTINATIONS[0];
+  const selectedDestObj = destinations.find(d => d.id === destinationId) || destinations[0];
 
   const handleSearch = () => {
     if (!selectedDestObj) return;
@@ -23,7 +26,7 @@ export default function TripPlanner({ onBook }) {
   };
 
   const handleSuggestion = (name) => {
-    const match = DESTINATIONS.find(d => d.name.includes(name) || d.tagline.includes(name));
+    const match = destinations.find(d => d.name?.includes(name) || d.tagline?.includes(name));
     if (match) setDestinationId(match.id);
   };
 
@@ -133,7 +136,7 @@ export default function TripPlanner({ onBook }) {
               <div style={fieldStyle}>
                 <MapPin size={18} color="#f59e0b" style={{ flexShrink: 0 }} />
                 <select value={destinationId} onChange={(e) => setDestinationId(e.target.value)} style={selectStyle}>
-                  {DESTINATIONS.map((d) => (
+                  {destinations.map((d) => (
                     <option key={d.id} value={d.id} style={{ color: '#0f172a', background: '#ffffff' }}>Destination: {d.name}</option>
                   ))}
                 </select>

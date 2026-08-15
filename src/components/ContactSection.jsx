@@ -1,21 +1,42 @@
 import React, { useState } from 'react';
-import { Phone, Mail, MapPin, Clock, MessageSquare, Send, CheckCircle2, ShieldCheck, Sparkles } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, MessageSquare, Send, CheckCircle2, ShieldCheck, Sparkles, Loader2 } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
+import { firestoreService } from '../services/firebase';
+import { catalogService } from '../services/catalog';
+import { useCatalog } from '../hooks/useCatalog';
+import { DESTINATIONS } from '../data/destinationsData';
 
 export default function ContactSection({ contactData }) {
   const { t } = useLanguage();
+  const destinations = useCatalog(catalogService.getDestinations) || DESTINATIONS;
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     name: '',
     phone: '',
     email: '',
-    destination: 'Ooty & Nilgiri Hills',
+    destination: destinations[0]?.name || 'Ooty Nilgiri Hills & Heritage Toy Train',
     message: ''
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setSubmitting(true);
+    try {
+      await firestoreService.createInquiry({
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        destination: form.destination,
+        message: form.message,
+        source: 'Website Contact Form'
+      });
+    } catch (err) {
+      console.warn('Inquiry save to Firestore note:', err);
+    } finally {
+      setSubmitting(false);
+      setSubmitted(true);
+    }
   };
 
   const c = contactData || {
@@ -213,11 +234,11 @@ export default function ContactSection({ contactData }) {
                       outline: 'none'
                     }}
                   >
-                    <option value="Ooty & Nilgiri Hills">Ooty & Nilgiri Hills Tour</option>
-                    <option value="Sacred Kashi & Ayodhya Yatra">Sacred Kashi & Ayodhya Yatra</option>
-                    <option value="Kashmir Paradise & Punjab">Kashmir Paradise & Punjab</option>
-                    <option value="Divine Odisha & Puri Jagannath">Divine Odisha & Puri Jagannath</option>
-                    <option value="Tamil Nadu Sacred Trail">Tamil Nadu Sacred Trail (Tenkasi / Tiruchendur)</option>
+                    {destinations.map((d) => (
+                      <option key={d.id} value={d.name} style={{ background: '#091426', color: '#fef08a' }}>
+                        {d.name} ({d.category})
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -244,8 +265,14 @@ export default function ContactSection({ contactData }) {
                   />
                 </div>
 
-                <button type="submit" className="btn-gold" style={{ width: '100%', justifyContent: 'center', padding: '0.75rem', fontSize: '0.9rem', marginTop: '0.5rem' }}>
-                  <Send size={16} /> Send Tour Inquiry
+                <button 
+                  type="submit" 
+                  disabled={submitting}
+                  className="btn-gold" 
+                  style={{ width: '100%', justifyContent: 'center', padding: '0.75rem', fontSize: '0.9rem', marginTop: '0.5rem', opacity: submitting ? 0.7 : 1 }}
+                >
+                  {submitting ? <Loader2 size={16} className="animate-pulse-slow" /> : <Send size={16} />}
+                  <span>{submitting ? 'Sending Inquiry...' : 'Send Tour Inquiry'}</span>
                 </button>
               </form>
             )}

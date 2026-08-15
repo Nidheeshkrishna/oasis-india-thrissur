@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { getWhatsAppNumber, buildQuickEnquiryMessage } from '../services/whatsapp';
+import { getValidOriginalPrice, getDiscountPercent } from '../utils/price';
 import MixedBackground from './MixedBackground';
 import RouteMapVisualizer from './RouteMapVisualizer';
 
@@ -38,6 +39,9 @@ export default function PackageModal({ pkg, onClose, onBookTour }) {
 
   const sightseeingList = Array.isArray(pkg.sightseeing) ? pkg.sightseeing : [];
   const highlightsList = Array.isArray(pkg.highlights) ? pkg.highlights : [];
+
+  const validOriginalPrice = getValidOriginalPrice(pkg.price, pkg.originalPrice);
+  const savePercent = getDiscountPercent(pkg.price, pkg.originalPrice);
 
   const getEmbedUrl = (url) => {
     if (!url) return null;
@@ -173,25 +177,27 @@ export default function PackageModal({ pkg, onClose, onBookTour }) {
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <span style={{
-                background: '#10b981',
-                color: '#000',
-                fontWeight: 800,
-                fontSize: '0.75rem',
-                padding: '0.3rem 0.7rem',
-                borderRadius: '12px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.3rem',
-                marginBottom: '0.5rem'
-              }}>
-                <BadgePercent size={13} /> {t('package.save', { percent: pkg.discountPercent || 15 })}
-              </span>
+              {savePercent > 0 && (
+                <span style={{
+                  background: '#10b981',
+                  color: '#000',
+                  fontWeight: 800,
+                  fontSize: '0.75rem',
+                  padding: '0.3rem 0.7rem',
+                  borderRadius: '12px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.3rem',
+                  marginBottom: '0.5rem'
+                }}>
+                  <BadgePercent size={13} /> {t('package.save', { percent: savePercent })}
+                </span>
+              )}
               <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--gold-deep)' }}>
                 ₹{pkg.price ? pkg.price.toLocaleString('en-IN') : '0'}{' '}
-                {pkg.originalPrice && (
+                {validOriginalPrice > 0 && (
                   <span style={{ fontSize: '1rem', color: 'var(--text-dim)', textDecoration: 'line-through' }}>
-                    ₹{pkg.originalPrice.toLocaleString('en-IN')}
+                    ₹{validOriginalPrice.toLocaleString('en-IN')}
                   </span>
                 )}
               </div>
@@ -314,8 +320,26 @@ export default function PackageModal({ pkg, onClose, onBookTour }) {
                       </div>
                       <div style={{ flex: '2 1 320px', padding: '1.2rem 1.4rem', display: 'flex', flexDirection: 'column', gap: '0.7rem' }}>
                         {s.name && (
-                          <div style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <Camera size={17} color="var(--gold-primary)" style={{ flexShrink: 0 }} /> {s.name}
+                          <div style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                              <Camera size={17} color="var(--gold-primary)" style={{ flexShrink: 0 }} /> {s.name}
+                            </span>
+                            {s.location && (
+                              <span style={{
+                                background: 'rgba(212,175,55,0.15)',
+                                border: '1px solid var(--border-gold)',
+                                color: '#fef08a',
+                                fontSize: '0.72rem',
+                                fontWeight: 800,
+                                padding: '0.2rem 0.55rem',
+                                borderRadius: '12px',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.25rem'
+                              }}>
+                                <MapPin size={11} /> {s.location}
+                              </span>
+                            )}
                           </div>
                         )}
                         {s.text && (
@@ -378,6 +402,20 @@ export default function PackageModal({ pkg, onClose, onBookTour }) {
                         </>
                       ) : (
                         <div style={{ width: '100%', height: '175px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.04)', fontSize: '0.85rem' }}>No image</div>
+                      )}
+                      {h.location && (
+                        <span style={{
+                          position: 'absolute', top: '0.5rem', left: '0.5rem', zIndex: 10,
+                          background: 'rgba(6,12,23,0.85)',
+                          border: '1px solid var(--border-gold)',
+                          color: '#fef08a',
+                          fontSize: '0.68rem',
+                          fontWeight: 800,
+                          padding: '0.2rem 0.55rem',
+                          borderRadius: '12px'
+                        }}>
+                          📍 {h.location}
+                        </span>
                       )}
                       <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '2.2rem 0.9rem 0.8rem', background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)', fontWeight: 800, fontSize: '0.95rem', color: '#fff' }}>
                         {h.title}

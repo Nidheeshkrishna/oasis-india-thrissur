@@ -4,6 +4,7 @@ import { catalogService } from '../services/catalog';
 import { getWhatsAppNumber, buildQuickEnquiryMessage } from '../services/whatsapp';
 import { useCatalog } from '../hooks/useCatalog';
 import { useLanguage } from '../i18n/LanguageContext';
+import { getValidOriginalPrice, getDiscountPercent } from '../utils/price';
 import MixedBackground from './MixedBackground';
 
 export default function LatestTours({ onBookTour, onSelectDestination, onViewDetails }) {
@@ -30,7 +31,9 @@ export default function LatestTours({ onBookTour, onSelectDestination, onViewDet
     ...pkg,
     mainPlaces: toList(pkg.mainPlaces),
     included: toList(pkg.included),
-    punjabHighlights: toList(pkg.punjabHighlights)
+    punjabHighlights: toList(pkg.punjabHighlights),
+    validOriginalPrice: getValidOriginalPrice(pkg.price, pkg.originalPrice),
+    discountPercent: getDiscountPercent(pkg.price, pkg.originalPrice)
   }));
 
   const updateArrowState = () => {
@@ -207,16 +210,18 @@ export default function LatestTours({ onBookTour, onSelectDestination, onViewDet
                       }}>
                         {pkg.badge}
                       </span>
-                      <span style={{
-                        background: '#10b981',
-                        color: '#000',
-                        fontWeight: 800,
-                        fontSize: '0.75rem',
-                        padding: '0.3rem 0.7rem',
-                        borderRadius: '12px'
-                      }}>
-                        {t('tours.off')} {pkg.discountPercent}%
-                      </span>                    </div>
+                      {pkg.validOriginalPrice > 0 && pkg.discountPercent > 0 && (
+                        <span style={{
+                          background: '#10b981',
+                          color: '#000',
+                          fontWeight: 800,
+                          fontSize: '0.75rem',
+                          padding: '0.3rem 0.7rem',
+                          borderRadius: '12px'
+                        }}>
+                          {t('tours.off')} {pkg.discountPercent}%
+                        </span>
+                      )}                    </div>
 
                     {/* Rating & Duration */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
@@ -308,9 +313,11 @@ export default function LatestTours({ onBookTour, onSelectDestination, onViewDet
                       </div>
                       <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#f59e0b' }}>
                         ₹{pkg.price.toLocaleString('en-IN')}{' '}
-                        <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', textDecoration: 'line-through' }}>
-                          ₹{pkg.originalPrice.toLocaleString('en-IN')}
-                        </span>
+                        {pkg.validOriginalPrice > 0 && (
+                          <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', textDecoration: 'line-through' }}>
+                            ₹{pkg.validOriginalPrice.toLocaleString('en-IN')}
+                          </span>
+                        )}
                       </div>
                     </div>
 

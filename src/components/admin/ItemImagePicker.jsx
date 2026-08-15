@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Upload, Sparkles, Trash2, Check, Search, MapPin as MapPinIcon } from 'lucide-react';
+import { Upload, Sparkles, Trash2, Check, Search, MapPin as MapPinIcon, Wand2, Loader2 } from 'lucide-react';
 import { PRESET_IMAGES } from './ImageUploader';
 import { findTopPlaces } from '../../data/topPlacesData';
+import { geminiService } from '../../services/gemini';
 
 const GOOGLE_KEY_STORAGE = 'oasis_google_img_key';
 const GOOGLE_CX_STORAGE = 'oasis_google_img_cx';
@@ -136,6 +137,45 @@ export default function ItemImagePicker({
   const [gResults, setGResults] = useState([]);
   const [gLoading, setGLoading] = useState(false);
   const [gError, setGError] = useState('');
+
+  // Gemini AI Image Generator state
+  const [genPrompt, setGenPrompt] = useState(hint ? hint.replace(/^e\.g\.\s*/i, '') : '');
+  const [genStyle, setGenStyle] = useState('photorealistic');
+  const [genLoading, setGenLoading] = useState(false);
+  const [genError, setGenError] = useState('');
+  const [genSuccess, setGenSuccess] = useState('');
+
+  useEffect(() => {
+    if (hint && !genPrompt) {
+      setGenPrompt(hint.replace(/^e\.g\.\s*/i, ''));
+    }
+  }, [hint]);
+
+  const handleGenerateWithGemini = async () => {
+    const promptToUse = genPrompt.trim() || hint.replace(/^e\.g\.\s*/i, '');
+    if (!promptToUse) {
+      setGenError('Please enter a description for the image.');
+      return;
+    }
+    setGenLoading(true);
+    setGenError('');
+    setGenSuccess('');
+    try {
+      const styleMap = {
+        photorealistic: 'Create a stunning photorealistic 4K travel photograph',
+        artistic: 'Create a vibrant artistic travel illustration',
+        cinematic: 'Create a dramatic cinematic travel scene with golden hour lighting'
+      };
+      const fullPrompt = `${styleMap[genStyle] || styleMap.photorealistic} of ${promptToUse}. Suitable for a luxury travel agency poster banner.`;
+      const generatedUrl = await geminiService.generatePosterImage(fullPrompt, genStyle);
+      addUrl(generatedUrl);
+      setGenSuccess('✓ Generated and applied successfully!');
+    } catch (err) {
+      setGenError(err.message || 'AI Generation failed');
+    } finally {
+      setGenLoading(false);
+    }
+  };
 
   useEffect(() => {
     localStorage.setItem(GOOGLE_KEY_STORAGE, gKey);
@@ -278,7 +318,8 @@ export default function ItemImagePicker({
       <div style={{ display: 'flex', gap: '0.4rem', background: 'rgba(0,0,0,0.3)', padding: '0.2rem', borderRadius: '16px', marginBottom: '0.6rem', width: 'fit-content', flexWrap: 'wrap' }}>
         {[
           { id: 'upload', label: 'Upload File' },
-          { id: 'ai', label: '✨ AI Image List' },
+          { id: 'generate', label: '✨ AI Generate (Gemini)' },
+          { id: 'ai', label: '🗂️ Preset Library' },
           { id: 'google', label: '🔍 Google Images' }
         ].map(tab => (
           <button
@@ -286,7 +327,7 @@ export default function ItemImagePicker({
             type="button"
             onClick={() => setActiveTab(tab.id)}
             style={{
-              background: activeTab === tab.id ? 'var(--gold-primary)' : 'transparent',
+              background: activeTab === tab.id ? 'linear-gradient(135deg, #d4af37, #aa841c)' : 'transparent',
               color: activeTab === tab.id ? '#060c17' : 'var(--text-muted)',
               border: 'none',
               padding: '0.3rem 0.7rem',
@@ -301,6 +342,78 @@ export default function ItemImagePicker({
           </button>
         ))}
       </div>
+
+      {activeTab === 'generate' && (
+        <div style={{ background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.25)', borderRadius: '10px', padding: '0.8rem' }}>
+          <div style={{ fontSize: '0.72rem', color: '#c4b5fd', marginBottom: '0.5rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <Wand2 size={13} color="#a78bfa" /> Describe scene to generate with Google Gemini AI:
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '0.5rem', marginBottom: '0.5rem' }}>
+            <input
+              type="text"
+              value={genPrompt}
+              onChange={(e) => { setGenPrompt(e.target.value); setGenError(''); setGenSuccess(''); }}
+              placeholder="e.g. Ooty toy train passing through green tea valley at sunrise"
+              style={{
+                background: 'rgba(0,0,0,0.5)',
+                border: '1px solid rgba(139,92,246,0.35)',
+                borderRadius: '8px',
+                color: '#fff',
+                padding: '0.45rem 0.7rem',
+                fontSize: '0.78rem',
+                outline: 'none'
+              }}
+            />
+            <select
+              value={genStyle}
+              onChange={(e) => setGenStyle(e.target.value)}
+              style={{
+                background: '#0a0d1e',
+                border: '1px solid rgba(139,92,246,0.35)',
+                color: '#c4b5fd',
+                borderRadius: '8px',
+                padding: '0.45rem 0.6rem',
+                fontSize: '0.75rem',
+                outline: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              <option value="photorealistic">📷 Photorealistic</option>
+              <option value="cinematic">🎬 Cinematic</option>
+              <option value="artistic">🎨 Artistic</option>
+            </select>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+              Uses Gemini 2.0 Flash multimodal image generator
+            </span>
+            <button
+              type="button"
+              onClick={handleGenerateWithGemini}
+              disabled={genLoading}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                padding: '0.4rem 0.85rem',
+                borderRadius: '8px',
+                cursor: genLoading ? 'not-allowed' : 'pointer',
+                background: genLoading ? 'rgba(139,92,246,0.2)' : 'linear-gradient(135deg, #7c3aed, #4c1d95)',
+                border: '1px solid rgba(139,92,246,0.4)',
+                color: '#fff',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                opacity: genLoading ? 0.7 : 1
+              }}
+            >
+              {genLoading ? <Loader2 size={13} className="animate-pulse-slow" /> : <Sparkles size={13} />}
+              <span>{genLoading ? 'Generating...' : '✨ Generate Image'}</span>
+            </button>
+          </div>
+          {genError && <div style={{ marginTop: '0.4rem', color: '#f87171', fontSize: '0.72rem', fontWeight: 600 }}>⚠️ {genError}</div>}
+          {genSuccess && <div style={{ marginTop: '0.4rem', color: '#34d399', fontSize: '0.72rem', fontWeight: 700 }}>{genSuccess}</div>}
+        </div>
+      )}
 
       {activeTab === 'upload' && (
         <div

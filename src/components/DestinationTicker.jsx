@@ -1,9 +1,12 @@
 import React from 'react';
 import { Star } from 'lucide-react';
 import { DESTINATIONS } from '../data/destinationsData';
+import { catalogService } from '../services/catalog';
+import { useCatalog } from '../hooks/useCatalog';
 
 export default function DestinationTicker() {
-  const items = [...DESTINATIONS, ...DESTINATIONS];
+  const destinations = useCatalog(catalogService.getDestinations) || DESTINATIONS;
+  const items = [...destinations, ...destinations];
 
   return (
     <div className="ticker" aria-hidden="true">

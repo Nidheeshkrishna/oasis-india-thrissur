@@ -78,6 +78,85 @@ export const NEARBY_LOCATIONS_DATABASE = [
       'Thumboormuzhy River Garden'
     ]
   },
+  {
+    name: 'Vadakkumnathan Temple Round',
+    category: 'temple',
+    region: 'Thrissur',
+    lat: 10.5246,
+    lng: 76.2143,
+    nearby: [
+      'Thrissur Swaraj Round Main Hub',
+      'Sakthan Thampuran Palace & Zoo',
+      'Thrissur Junction (TCR) Railway Station',
+      'Viyyur Junction & Central Prison',
+      'Thrissur KSRTC Central Bus Station'
+    ]
+  },
+  {
+    name: 'Sakthan Thampuran Palace & Zoo',
+    category: 'landmark',
+    region: 'Thrissur',
+    lat: 10.5209,
+    lng: 76.2195,
+    nearby: [
+      'Vadakkumnathan Temple Round',
+      'Thrissur Junction (TCR) Railway Station',
+      'Thrissur Swaraj Round Main Hub',
+      'Viyyur Junction & Central Prison'
+    ]
+  },
+  {
+    name: 'Viyyur Junction & Central Prison',
+    category: 'hub',
+    region: 'Thrissur',
+    lat: 10.5580,
+    lng: 76.2150,
+    nearby: [
+      'Vadakkumnathan Temple Round',
+      'Thrissur Swaraj Round Main Hub',
+      'Sakthan Thampuran Palace & Zoo',
+      'Thrissur Junction (TCR) Railway Station',
+      'Thrissur KSRTC Central Bus Station'
+    ]
+  },
+  {
+    name: 'Punnathur Kotta Elephant Sanctuary',
+    category: 'nature',
+    region: 'Thrissur',
+    lat: 10.6037,
+    lng: 76.0606,
+    nearby: [
+      'Guruvayur Temple East Nada',
+      'Guruvayur Railway Station',
+      'Chavakkad Beach',
+      'Mammiyoor Shiva Temple'
+    ]
+  },
+  {
+    name: 'Chavakkad Beach & Azhikode Estuary',
+    category: 'nature',
+    region: 'Thrissur',
+    lat: 10.5686,
+    lng: 76.0048,
+    nearby: [
+      'Guruvayur Temple East Nada',
+      'Punnathur Kotta Elephant Sanctuary',
+      'Guruvayur Railway Station',
+      'Kodungallur Cheraman Juma Masjid'
+    ]
+  },
+  {
+    name: 'Kerala Kalamandalam (Cheruthuruthy)',
+    category: 'landmark',
+    region: 'Thrissur',
+    lat: 10.6829,
+    lng: 76.2769,
+    nearby: [
+      'Shoranur Junction Railway Station',
+      'Thrissur Swaraj Round Main Hub',
+      'Chavakkad Beach & Azhikode Estuary'
+    ]
+  },
 
   // ─── KOCHI & ERNAKULAM ───
   {
@@ -575,17 +654,73 @@ export const NEARBY_LOCATIONS_DATABASE = [
 ];
 
 // Fast in-memory index for search suggestions and nearby hub discovery
+
+// Levenshtein edit-distance — powers typo-tolerant search (e.g. "vyur" → "Viyyur").
+const longestCommonSubsequenceLen = (a, b) => {
+  const m = a.length;
+  const n = b.length;
+  const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      if (a[i - 1] === b[j - 1]) dp[i][j] = dp[i - 1][j - 1] + 1;
+      else dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+    }
+  }
+  return dp[m][n];
+};
+
+// Known misspellings / short names → canonical location name
+export const LOCATION_ALIASES = {
+  'vyur': 'Viyyur Junction & Central Prison',
+  'vyr': 'Viyyur Junction & Central Prison',
+  'viyur': 'Viyyur Junction & Central Prison',
+  'viyyur': 'Viyyur Junction & Central Prison',
+  'vyar': 'Viyyur Junction & Central Prison',
+  'kodai': 'Kodaikanal Lake & Star Promenade',
+  'swaraj': 'Thrissur Swaraj Round Main Hub',
+  'swaraj round': 'Thrissur Swaraj Round Main Hub',
+  'swarajround': 'Thrissur Swaraj Round Main Hub',
+  'tcr': 'Thrissur Junction (TCR) Railway Station'
+};
+
+const fuzzyMatchItem = (item, q) => {
+  const qLen = q.length;
+  if (qLen < 3) return false;
+  const nameLower = item.name.toLowerCase();
+  if (nameLower === q) return false;
+
+  const aliasName = LOCATION_ALIASES[q];
+  if (aliasName && aliasName.toLowerCase() === nameLower) return true;
+
+  const qWords = q.split(/[^a-z0-9]+/).filter(w => w.length >= 3);
+  const words = nameLower.split(/[^a-z0-9]+/).filter(w => w.length >= 3);
+  if (!qWords.length || !words.length) return false;
+
+  // Every typed word must read like a subsequence of the leading portion of a
+  // candidate word (extra letters / doubled vowels allowed). Prefix-anchored so
+  // "vyur" matches "Viyyur" but never "Guruvayur".
+  return qWords.every(qw => {
+    const minLcs = Math.max(3, qw.length);
+    return words.some(w => {
+      const lead = w.slice(0, qw.length + 2);
+      return longestCommonSubsequenceLen(qw, lead) >= minLcs;
+    });
+  });
+};
+
 export function searchLocationsAndNearby(query = '', maxResults = 8) {
   const q = (query || '').trim().toLowerCase();
   if (!q) {
     return {
       matches: NEARBY_LOCATIONS_DATABASE.slice(0, maxResults),
+      fuzzyMatches: [],
       nearbySuggestions: []
     };
   }
 
   // 1. Direct matched items
   const matches = [];
+  const fuzzyMatches = [];
   const nearbySet = new Set();
 
   for (const item of NEARBY_LOCATIONS_DATABASE) {
@@ -598,6 +733,13 @@ export function searchLocationsAndNearby(query = '', maxResults = 8) {
       if (Array.isArray(item.nearby)) {
         item.nearby.forEach(nb => nearbySet.add(nb));
       }
+    } else if (LOCATION_ALIASES[q] && LOCATION_ALIASES[q].toLowerCase() === nameLower) {
+      matches.push(item);
+      if (Array.isArray(item.nearby)) {
+        item.nearby.forEach(nb => nearbySet.add(nb));
+      }
+    } else if (fuzzyMatchItem(item, q)) {
+      fuzzyMatches.push(item);
     }
   }
 
@@ -609,6 +751,7 @@ export function searchLocationsAndNearby(query = '', maxResults = 8) {
 
   return {
     matches: matches.slice(0, maxResults),
+    fuzzyMatches: fuzzyMatches.slice(0, 6),
     nearbySuggestions
   };
 }
@@ -761,7 +904,21 @@ export function getRouteCorridorPoints(startName = 'Thrissur Swaraj Round Main H
   };
 }
 
-// Locate coordinates from known locations or fallback to hash-coords
+// Resolve a typed / partial / misspelled name to the canonical database name
+// (e.g. "vyur" → "Viyyur Junction & Central Prison").
+export function getCanonicalLocationName(name = '') {
+  const lower = (name || '').trim().toLowerCase();
+  if (!lower) return '';
+  const aliasName = LOCATION_ALIASES[lower];
+  if (aliasName) return aliasName;
+  const exact = NEARBY_LOCATIONS_DATABASE.find(loc => loc.name.toLowerCase() === lower);
+  if (exact) return exact.name;
+  const fuzzy = NEARBY_LOCATIONS_DATABASE.find(item => fuzzyMatchItem(item, lower));
+  if (fuzzy) return fuzzy.name;
+  return name.trim();
+}
+
+// Locate coordinates from known locations, aliases, fuzzy matches, or fallback to hash-coords
 export function resolveLocationCoords(locationName = '') {
   const lower = (locationName || '').trim().toLowerCase();
   if (!lower) return { lat: 10.5276, lng: 76.2144 };
@@ -780,6 +937,33 @@ export function resolveLocationCoords(locationName = '') {
       category: exact.category,
       region: exact.region,
       nearby: exact.nearby || []
+    };
+  }
+
+  // Alias correction (e.g. "vyur" → "Viyyur Junction & Central Prison")
+  const aliasName = LOCATION_ALIASES[lower];
+  if (aliasName) {
+    const aliasTarget = NEARBY_LOCATIONS_DATABASE.find(l => l.name.toLowerCase() === aliasName.toLowerCase());
+    if (aliasTarget) {
+      return {
+        lat: aliasTarget.lat,
+        lng: aliasTarget.lng,
+        category: aliasTarget.category,
+        region: aliasTarget.region,
+        nearby: aliasTarget.nearby || []
+      };
+    }
+  }
+
+  // Typo-tolerant fuzzy fallback
+  const fuzzy = NEARBY_LOCATIONS_DATABASE.find(item => fuzzyMatchItem(item, lower));
+  if (fuzzy) {
+    return {
+      lat: fuzzy.lat,
+      lng: fuzzy.lng,
+      category: fuzzy.category,
+      region: fuzzy.region,
+      nearby: fuzzy.nearby || []
     };
   }
 

@@ -180,9 +180,11 @@ export default function DestinationModal({ destination, onClose, onBookTour }) {
                     </span>
                     <div style={{ fontSize: '1.9rem', fontWeight: 800, color: 'var(--gold-deep)' }}>
                       ₹{matchingPackage.price.toLocaleString('en-IN')}{' '}
-                      <span style={{ fontSize: '0.9rem', color: 'var(--text-dim)', textDecoration: 'line-through' }}>
-                        ₹{matchingPackage.originalPrice.toLocaleString('en-IN')}
-                      </span>
+                      {Number(matchingPackage.originalPrice) > Number(matchingPackage.price) && (
+                        <span style={{ fontSize: '0.9rem', color: 'var(--text-dim)', textDecoration: 'line-through' }}>
+                          ₹{matchingPackage.originalPrice.toLocaleString('en-IN')}
+                        </span>
+                      )}
                     </div>
                     <div style={{ display: 'flex', gap: '1rem', marginTop: '0.4rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                       <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
@@ -347,20 +349,45 @@ export default function DestinationModal({ destination, onClose, onBookTour }) {
                   {t('destination.aboutDestination')}
                 </h3>
                 <p style={{ color: '#e2e8f0', fontSize: '1rem', lineHeight: 1.7, marginBottom: '1.5rem' }}>
-                  {destination.description}
+                  {destination.description || `Explore ${destination.name} with OASIS Thrissur. Direct departures and escorted travel with authentic local experiences.`}
                 </p>
 
-                <h4 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1rem', color: '#ffffff' }}>
-                  {t('destination.keyHighlights')}
-                </h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '2rem' }}>
-                  {destination.highlights.map((h, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem', color: '#e2e8f0', fontSize: '0.95rem' }}>
-                      <CheckCircle2 size={18} color="var(--emerald-accent)" style={{ flexShrink: 0, marginTop: '2px' }} />
-                      <span>{h}</span>
+                {/* Key Highlights */}
+                {Array.isArray(destination.highlights) && destination.highlights.length > 0 && (
+                  <div style={{ marginBottom: '2rem' }}>
+                    <h4 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1rem', color: '#ffffff' }}>
+                      {t('destination.keyHighlights')}
+                    </h4>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                      {destination.highlights.map((h, i) => (
+                        <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem', color: '#e2e8f0', fontSize: '0.95rem' }}>
+                          <CheckCircle2 size={18} color="var(--emerald-accent)" style={{ flexShrink: 0, marginTop: '2px' }} />
+                          <span>{h}</span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                )}
+
+                {/* Nearby Attractions / Sightseeing */}
+                {Array.isArray(destination.nearbyAttractions) && destination.nearbyAttractions.length > 0 && (
+                  <div style={{ marginBottom: '2rem' }}>
+                    <h4 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--gold-deep)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <Compass size={18} /> Nearby Sightseeing &amp; Attractions
+                    </h4>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '0.8rem' }}>
+                      {destination.nearbyAttractions.map((a, i) => (
+                        <div key={i} className="glass-card" style={{ padding: '0.8rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.25rem', border: '1px solid rgba(212,175,55,0.2)' }}>
+                          <div style={{ fontWeight: 700, fontSize: '0.92rem', color: '#fff' }}>{a.name}</div>
+                          <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span>📍 {a.distance}</span>
+                            {a.type && <span style={{ color: 'var(--gold-light)', background: 'rgba(212,175,55,0.1)', padding: '0.1rem 0.4rem', borderRadius: '6px' }}>{a.type}</span>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Sidebar Booking Card */}
@@ -369,19 +396,21 @@ export default function DestinationModal({ destination, onClose, onBookTour }) {
                   {t('destination.signaturePackage')}
                 </div>
                 <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--gold-deep)', margin: '0.4rem 0 1rem' }}>
-                  ₹{destination.startingPrice.toLocaleString('en-IN')}{' '}
+                  ₹{(destination.startingPrice || 0).toLocaleString('en-IN')}{' '}
                   <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500 }}>{t('destination.perTraveler')}</span>
                 </div>
 
                 <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem', marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.9rem' }}>
                     <span style={{ color: 'var(--text-muted)' }}>{t('destination.duration')}</span>
-                    <span style={{ fontWeight: 700, color: 'var(--gold-deep)' }}>{destination.duration}</span>
+                    <span style={{ fontWeight: 700, color: 'var(--gold-deep)' }}>{destination.duration || 'Custom Duration'}</span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.9rem' }}>
-                    <span style={{ color: 'var(--text-muted)' }}>{t('destination.bestTime')}</span>
-                    <span style={{ fontWeight: 700, color: 'var(--emerald-accent)' }}>{destination.bestTime}</span>
-                  </div>
+                  {destination.bestTime && (
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.9rem' }}>
+                      <span style={{ color: 'var(--text-muted)' }}>{t('destination.bestTime')}</span>
+                      <span style={{ fontWeight: 700, color: 'var(--emerald-accent)' }}>{destination.bestTime}</span>
+                    </div>
+                  )}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.9rem' }}>
                     <span style={{ color: 'var(--text-muted)' }}>{t('destination.pickupHub')}</span>
                     <span style={{ fontWeight: 700 }}>Thrissur Swaraj Round</span>
@@ -416,10 +445,13 @@ export default function DestinationModal({ destination, onClose, onBookTour }) {
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.2rem' }}>
-                {destination.galleryImages.map((imgUrl, idx) => (
+                {(Array.isArray(destination.galleryImages) && destination.galleryImages.length > 0 
+                  ? destination.galleryImages 
+                  : (destination.heroImage ? [destination.heroImage] : [])
+                ).map((imgUrl, idx) => (
                   <div 
                     key={idx} 
-                    style={{ position: 'relative', height: '200px', borderRadius: '12px', overflow: 'hidden', cursor: 'pointer' }}
+                    style={{ position: 'relative', height: '200px', borderRadius: '12px', overflow: 'hidden', cursor: 'pointer', border: '1px solid var(--border-gold)' }}
                     onClick={() => setSelectedPhoto(imgUrl)}
                   >
                     <img 
@@ -475,10 +507,10 @@ export default function DestinationModal({ destination, onClose, onBookTour }) {
                     </div>
                     <div>
                       <div style={{ fontSize: '2.4rem', fontWeight: 800, color: 'var(--gold-deep)' }}>
-                        {destination.weather.temp}
+                        {destination.weather?.temp || '22°C'}
                       </div>
                       <div style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
-                        {destination.weather.condition}
+                        {destination.weather?.condition || 'Pleasant & Clear'}
                       </div>
                     </div>
                   </div>
@@ -486,11 +518,11 @@ export default function DestinationModal({ destination, onClose, onBookTour }) {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem' }}>
                     <div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', textTransform: 'uppercase' }}>{t('destination.humidity')}</div>
-                      <div style={{ fontWeight: 700 }}>{destination.weather.humidity}</div>
+                      <div style={{ fontWeight: 700 }}>{destination.weather?.humidity || '60%'}</div>
                     </div>
                     <div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', textTransform: 'uppercase' }}>{t('destination.optimalSeason')}</div>
-                      <div style={{ fontWeight: 700, color: 'var(--emerald-accent)' }}>{destination.weather.bestSeason}</div>
+                      <div style={{ fontWeight: 700, color: 'var(--emerald-accent)' }}>{destination.weather?.bestSeason || destination.bestTime || 'All Year'}</div>
                     </div>
                   </div>
                 </div>
@@ -529,7 +561,7 @@ export default function DestinationModal({ destination, onClose, onBookTour }) {
                   <span>{t('destination.howToReach')}</span>
                 </div>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem', lineHeight: 1.6 }}>
-                  {destination.travelGuide.howToReach}
+                  {destination.travelGuide?.howToReach || `Direct luxury AC coach / flight transfers arranged from Thrissur Swaraj Round & Cochin Airport by OASIS Thrissur.`}
                 </p>
               </div>
 
@@ -539,7 +571,7 @@ export default function DestinationModal({ destination, onClose, onBookTour }) {
                   <span>{t('destination.dressCode')}</span>
                 </div>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem', lineHeight: 1.6 }}>
-                  {destination.travelGuide.dressCode}
+                  {destination.travelGuide?.dressCode || `Modest comfortable cotton clothing, walking shoes & seasonal layers.`}
                 </p>
               </div>
 
@@ -549,7 +581,7 @@ export default function DestinationModal({ destination, onClose, onBookTour }) {
                   <span>{t('destination.localCuisine')}</span>
                 </div>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem', lineHeight: 1.6 }}>
-                  {destination.travelGuide.localCuisine}
+                  {destination.travelGuide?.localCuisine || `Authentic regional delicacies and Pure Veg Sattvic meals curated by OASIS tour managers.`}
                 </p>
               </div>
             </div>
@@ -561,18 +593,27 @@ export default function DestinationModal({ destination, onClose, onBookTour }) {
               <h3 style={{ fontSize: '1.3rem', color: 'var(--gold-deep)', marginBottom: '1rem', fontFamily: 'var(--font-heading)' }}>
                 {t('destination.accommodations')}
               </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.2rem' }}>
-                {destination.hotels.map((h, i) => (
-                  <div key={i} className="glass-card" style={{ padding: '1.2rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem', color: 'var(--gold-primary)' }}>
-                      <Hotel size={18} />
-                      <span style={{ fontWeight: 700, fontSize: '0.8rem', textTransform: 'uppercase' }}>{h.rating}</span>
+              {Array.isArray(destination.hotels) && destination.hotels.length > 0 ? (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.2rem' }}>
+                  {destination.hotels.map((h, i) => (
+                    <div key={i} className="glass-card" style={{ padding: '1.2rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem', color: 'var(--gold-primary)' }}>
+                        <Hotel size={18} />
+                        <span style={{ fontWeight: 700, fontSize: '0.8rem', textTransform: 'uppercase' }}>{h.rating}</span>
+                      </div>
+                      <div style={{ fontWeight: 700, fontSize: '1.1rem', marginBottom: '0.2rem' }}>{h.name}</div>
+                      <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{h.location}</div>
                     </div>
-                    <div style={{ fontWeight: 700, fontSize: '1.1rem', marginBottom: '0.2rem' }}>{h.name}</div>
-                    <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{h.location}</div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="glass-card" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                  <Hotel size={32} color="var(--gold-primary)" style={{ margin: '0 auto 0.8rem' }} />
+                  <p style={{ margin: 0, fontSize: '0.95rem' }}>
+                    OASIS Thrissur partners with verified 4-Star and 5-Star luxury resort partners for {destination.name}. Complete hotel itinerary provided upon package booking.
+                  </p>
+                </div>
+              )}
             </div>
           )}
 

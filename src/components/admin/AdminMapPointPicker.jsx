@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { MapPin, Plus, Trash2, Navigation, Flag, Search, ArrowUp, ArrowDown, Rocket, Maximize2, Minimize2, ExternalLink, Sparkles, Compass, Check, ArrowRight, Layers } from 'lucide-react';
-import { searchLocationsAndNearby, resolveLocationCoords, getRouteCorridorPoints, LOCATION_CATEGORIES, NEARBY_LOCATIONS_DATABASE, PREDEFINED_CORRIDORS } from '../../data/nearbyLocationsData';
+import { searchLocationsAndNearby, resolveLocationCoords, getRouteCorridorPoints, getCanonicalLocationName, LOCATION_CATEGORIES, NEARBY_LOCATIONS_DATABASE, PREDEFINED_CORRIDORS } from '../../data/nearbyLocationsData';
 import { DESTINATIONS } from '../../data/destinationsData';
 
 const PRESET_HUB_COORDS = {
@@ -41,7 +41,8 @@ const enforceInvariant = (points) => {
 
 const findCoordsForLocation = (text) => {
   const resolved = resolveLocationCoords(text);
-  return { name: text, lat: resolved.lat, lng: resolved.lng, nearby: resolved.nearby || [] };
+  const canonical = getCanonicalLocationName(text);
+  return { name: canonical || text, lat: resolved.lat, lng: resolved.lng, nearby: resolved.nearby || [] };
 };
 
 // Candidate clickable points on the map
@@ -258,7 +259,8 @@ export default function AdminMapPointPicker({
   }, [pinnedCoords, pointName, routePoints, pointType]);
 
   const addPointByName = (name, explicitType) => {
-    const label = (name || '').trim();
+    // Resolve misspelled / partial names to the proper location name (e.g. "vyur" → Viyyur)
+    const label = getCanonicalLocationName(name) || (name || '').trim();
     if (!label) return;
 
     const targetType = explicitType || pointType;
@@ -316,11 +318,6 @@ export default function AdminMapPointPicker({
   };
 
   const query = pointName.trim().toLowerCase();
-  const localMatches = showSuggestions
-    ? (query.length >= 2
-        ? SUGGESTION_NAMES.filter(n => n.toLowerCase().includes(query)).slice(0, 8)
-        : SUGGESTION_NAMES)
-    : [];
 
   const handleQuickAddPreset = (presetKey) => {
     const hub = PRESET_HUB_COORDS[presetKey];
@@ -660,13 +657,18 @@ export default function AdminMapPointPicker({
               }}>
                 {/* Categorized database matches */}
                 {(() => {
-                  const searchRes = searchLocationsAndNearby(pointName, 8);
+                  const searchRes = searchLocationsAndNearby(pointName, 16);
+                  const qLower = (pointName || '').trim().toLowerCase();
+                  const regionHits = searchRes.matches.filter(m => (m.region || '').toLowerCase().includes(qLower));
+                  const regionLabel = (regionHits.length > 0 && regionHits.length === searchRes.matches.length && qLower.length >= 3)
+                    ? regionHits[0].region
+                    : '';
                   return (
                     <>
                       {searchRes.matches.length > 0 && (
                         <div>
                           <div style={{ padding: '0.45rem 0.8rem 0.25rem', fontSize: '0.66rem', fontWeight: 900, color: 'var(--gold-light)', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-                            <span>📍 VERIFIED TRAVEL HUBS &amp; ATTRACTIONS</span>
+                            <span>📍 {regionLabel ? `ALL LOCATIONS IN ${regionLabel.toUpperCase()} — HUBS, ATTRACTIONS & ROUTE POINTS` : 'VERIFIED TRAVEL HUBS & ATTRACTIONS'}</span>
                             <span style={{ color: 'var(--text-muted)' }}>{searchRes.matches.length} found</span>
                           </div>
                           {searchRes.matches.map((item, idx) => {
@@ -719,6 +721,74 @@ export default function AdminMapPointPicker({
                                     style={{ background: 'rgba(168,85,247,0.2)', border: '1px solid #a855f7', color: '#c084fc', borderRadius: '6px', padding: '0.15rem 0.4rem', fontSize: '0.64rem', fontWeight: 800, cursor: 'pointer' }}
                                   >
                                     + Drop
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => { addPointByName(item.name, 'destination'); setShowSuggestions(false); }}
+                                    title="Add as Destination"
+                                    style={{ background: 'rgba(239,68,68,0.2)', border: '1px solid #ef4444', color: '#f87171', borderRadius: '6px', padding: '0.15rem 0.4rem', fontSize: '0.64rem', fontWeight: 800, cursor: 'pointer' }}
+                                  >
+                                    + End
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Typo / misspelling correction suggestions (e.g. "vyur" → Viyyur) */}
+                      {searchRes.fuzzyMatches.length > 0 && (
+                        <div>
+                          <div style={{ padding: '0.45rem 0.8rem 0.25rem', fontSize: '0.66rem', fontWeight: 900, color: '#4ade80', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                            <span>🔎 DID YOU MEAN?</span>
+                            <span style={{ color: 'var(--text-muted)' }}>
+                              <strong style={{ color: '#4ade80' }}>"{pointName.trim()}"</strong> → {searchRes.fuzzyMatches.length} match(es)
+                            </span>
+                          </div>
+                          {searchRes.fuzzyMatches.map((item, idx) => {
+                            const cat = LOCATION_CATEGORIES[item.category] || LOCATION_CATEGORIES.landmark;
+                            const canonical = getCanonicalLocationName(pointName);
+                            return (
+                              <div
+                                key={`fuzzy-${idx}`}
+                                style={{
+                                  display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%',
+                                  background: 'rgba(74,222,128,0.04)', borderBottom: '1px solid rgba(255,255,255,0.04)',
+                                  color: '#fff', padding: '0.45rem 0.8rem', fontSize: '0.78rem', gap: '0.5rem'
+                                }}
+                              >
+                                <div
+                                  onClick={() => handleSuggestionPick(item.name)}
+                                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', overflow: 'hidden', cursor: 'pointer', flex: 1 }}
+                                >
+                                  <span style={{ fontSize: '0.9rem', flexShrink: 0 }}>{cat.icon}</span>
+                                  <div style={{ overflow: 'hidden' }}>
+                                    <div style={{ fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#86efac' }}>
+                                      {canonical && canonical !== item.name ? `${canonical}` : item.name}
+                                    </div>
+                                    <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
+                                      {cat.label} • {item.region}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', flexShrink: 0 }}>
+                                  <button
+                                    type="button"
+                                    onClick={() => { addPointByName(item.name, 'start'); setShowSuggestions(false); }}
+                                    title="Add as Start Location"
+                                    style={{ background: 'rgba(16,185,129,0.2)', border: '1px solid #10b981', color: '#10b981', borderRadius: '6px', padding: '0.15rem 0.4rem', fontSize: '0.64rem', fontWeight: 800, cursor: 'pointer' }}
+                                  >
+                                    + Start
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => { addPointByName(item.name, 'pickup'); setShowSuggestions(false); }}
+                                    title="Add as Pickup Point"
+                                    style={{ background: 'rgba(212,175,55,0.2)', border: '1px solid var(--border-gold)', color: '#fef08a', borderRadius: '6px', padding: '0.15rem 0.4rem', fontSize: '0.64rem', fontWeight: 800, cursor: 'pointer' }}
+                                  >
+                                    + Pickup
                                   </button>
                                   <button
                                     type="button"

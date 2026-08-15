@@ -152,11 +152,14 @@ export const catalogService = {
 
   addTour(tourData) {
     const tours = this.getTours();
+    const price = Number(tourData.price) || 0;
+    const originalPrice = Number(tourData.originalPrice) || 0;
+    const discountPercent = originalPrice > price ? Math.round((1 - price / originalPrice) * 100) : 0;
     const newTour = {
       id: `tour-${Date.now()}`,
       rating: 4.9,
       reviews: 0,
-      discountPercent: 10,
+      discountPercent,
       ...tourData
     };
     const updated = [newTour, ...tours];
@@ -295,8 +298,30 @@ export const catalogService = {
     return getStorageItem('catalog_destinations', DESTINATIONS);
   },
 
+  addDestination(destData) {
+    const list = this.getDestinations();
+    const newDest = {
+      id: `dest-${Date.now()}`,
+      rating: 4.9,
+      reviewsCount: 0,
+      bgMixStyle: 'collage-blend',
+      ...destData
+    };
+    const updated = [newDest, ...list];
+    setStorageItem('catalog_destinations', updated);
+    notifyChange();
+    return updated;
+  },
+
   updateDestination(id, patch) {
     const list = this.getDestinations().map(d => d.id === id ? { ...d, ...patch } : d);
+    setStorageItem('catalog_destinations', list);
+    notifyChange();
+    return list;
+  },
+
+  deleteDestination(id) {
+    const list = this.getDestinations().filter(d => d.id !== id);
     setStorageItem('catalog_destinations', list);
     notifyChange();
     return list;

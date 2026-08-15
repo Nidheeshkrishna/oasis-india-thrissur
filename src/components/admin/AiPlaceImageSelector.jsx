@@ -1,202 +1,226 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Sparkles, Check, Image as ImageIcon, Layers, Eye, Star, MapPin, Upload,
-  RefreshCw, Wand2, ShieldCheck, Search, Filter, ArrowRight, Zap, CheckCircle2
+  RefreshCw, Wand2, ShieldCheck, Search, Filter, ArrowRight, Zap, CheckCircle2,
+  Plus, Trash2, Tag, Compass
 } from 'lucide-react';
 import { generateAiDestinationGuide } from '../../services/aiDestinationGenerator';
 import { geminiService } from '../../services/gemini';
 import MixedBackground from '../MixedBackground';
 
-// High-definition AI photography bank for popular tourist places
+// High-definition authentic photography bank for popular tourist places
 const LOCATION_PLACE_IMAGES = {
   'ooty': [
-    { id: 'ooty-1', placeName: 'Nilgiri Mountain Toy Train (UNESCO World Heritage)', category: 'Heritage & Rail', url: './ooty-toy-train-real.jpg', isDefaultCover: true },
-    { id: 'ooty-2', placeName: 'Government Botanical Garden & Glasshouse', category: 'Gardens & Tea', url: './ooty-botanical-garden-real.jpg' },
-    { id: 'ooty-3', placeName: 'Ooty Lake & Star Boating Jetty', category: 'Lakes & Water', url: './ooty-lake-boating-real.jpg' },
-    { id: 'ooty-4', placeName: 'Nilgiri Tea Plantations & Doddabetta Slopes', category: 'Gardens & Tea', url: './ooty-tea-gardens-real.jpg' },
-    { id: 'ooty-5', placeName: 'Doddabetta Peak (8,652 ft) & Telescope House', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'ooty-6', placeName: 'Pykara Lake & Cascading Roaring Waterfalls', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'ooty-7', placeName: 'Avalanche Lake & Trout Pine Sanctuary', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'ooty-8', placeName: 'Government Rose Garden (20,000+ Rose Varieties)', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'ooty-9', placeName: 'Wenlock Downs 9th Mile Shooting Meadow', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'ooty-10', placeName: 'Emerald Lake & Silent Valley Tea Ridge', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1518457607834-6e8d80c183c5?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'ooty-11', placeName: 'Highfield Tea Factory & Chocolate Museum', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'ooty-12', placeName: 'Mudumalai Tiger Reserve & Elephant Camp', category: 'Wildlife & Safari', url: 'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1200&q=80' }
+    { id: 'ooty-1', placeName: 'Nilgiri Mountain Toy Train (UNESCO World Heritage)', category: 'Heritage & Rail', url: './ooty-toy-train-real.jpg', isDefaultCover: true, location: 'Ooty' },
+    { id: 'ooty-2', placeName: 'Government Botanical Garden & Glasshouse', category: 'Gardens & Tea', url: './ooty-botanical-garden-real.jpg', location: 'Ooty' },
+    { id: 'ooty-3', placeName: 'Ooty Lake & Star Boating Jetty', category: 'Lakes & Water', url: './ooty-lake-boating-real.jpg', location: 'Ooty' },
+    { id: 'ooty-4', placeName: 'Nilgiri Tea Plantations & Doddabetta Slopes', category: 'Gardens & Tea', url: './ooty-tea-gardens-real.jpg', location: 'Ooty' },
+    { id: 'ooty-5', placeName: 'Doddabetta Peak (8,652 ft) & Telescope House', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80', location: 'Ooty' },
+    { id: 'ooty-6', placeName: 'Pykara Lake & Cascading Roaring Waterfalls', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1200&q=80', location: 'Ooty' },
+    { id: 'ooty-7', placeName: 'Avalanche Lake & Trout Pine Sanctuary', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80', location: 'Ooty' },
+    { id: 'ooty-8', placeName: 'Government Rose Garden (20,000+ Rose Varieties)', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=1200&q=80', location: 'Ooty' },
+    { id: 'ooty-9', placeName: 'Wenlock Downs 9th Mile Shooting Meadow', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80', location: 'Ooty' },
+    { id: 'ooty-10', placeName: 'Emerald Lake & Silent Valley Tea Ridge', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1518457607834-6e8d80c183c5?auto=format&fit=crop&w=1200&q=80', location: 'Ooty' },
+    { id: 'ooty-11', placeName: 'Highfield Tea Factory & Chocolate Museum', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=1200&q=80', location: 'Ooty' },
+    { id: 'ooty-12', placeName: 'Mudumalai Tiger Reserve & Elephant Camp', category: 'Wildlife & Safari', url: 'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1200&q=80', location: 'Ooty' }
   ],
   'kodaikanal': [
-    { id: 'kodai-1', placeName: 'Kodaikanal Star Lake & Pedal Boating', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=1200&q=80', isDefaultCover: true },
-    { id: 'kodai-2', placeName: 'Bryant Botanical Park & Floral Lawns', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'kodai-3', placeName: 'Coaker\'s Walk Promenade & Valley View', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'kodai-4', placeName: 'Pillar Rocks Vertical Granite Cliffs', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'kodai-5', placeName: 'Guna Caves (Devil\'s Kitchen Roots)', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'kodai-6', placeName: 'Dense Pine Tree Forest Canopy', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'kodai-7', placeName: 'Green Valley View (Suicide Point)', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'kodai-8', placeName: 'Silver Cascade 180-ft Falls', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'kodai-9', placeName: 'Dolphin\'s Nose Cliff & Echo Rock', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'kodai-10', placeName: 'Mannavanur Eco Lake & Sheep Farm', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'kodai-11', placeName: 'Poombarai Terraced Village & Temple', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80' }
+    { id: 'kodai-1', placeName: 'Kodaikanal Star Lake & Pedal Boating', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=1200&q=80', isDefaultCover: true, location: 'Kodaikanal' },
+    { id: 'kodai-2', placeName: 'Bryant Botanical Park & Floral Lawns', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=1200&q=80', location: 'Kodaikanal' },
+    { id: 'kodai-3', placeName: 'Coaker\'s Walk Promenade & Valley View', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80', location: 'Kodaikanal' },
+    { id: 'kodai-4', placeName: 'Pillar Rocks Vertical Granite Cliffs', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80', location: 'Kodaikanal' },
+    { id: 'kodai-5', placeName: 'Guna Caves (Devil\'s Kitchen Roots)', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=1200&q=80', location: 'Kodaikanal' },
+    { id: 'kodai-6', placeName: 'Dense Pine Tree Forest Canopy', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80', location: 'Kodaikanal' },
+    { id: 'kodai-7', placeName: 'Green Valley View (Suicide Point)', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1200&q=80', location: 'Kodaikanal' },
+    { id: 'kodai-8', placeName: 'Silver Cascade 180-ft Falls', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=1200&q=80', location: 'Kodaikanal' },
+    { id: 'kodai-9', placeName: 'Dolphin\'s Nose Cliff & Echo Rock', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80', location: 'Kodaikanal' },
+    { id: 'kodai-10', placeName: 'Mannavanur Eco Lake & Sheep Farm', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80', location: 'Kodaikanal' },
+    { id: 'kodai-11', placeName: 'Poombarai Terraced Village & Temple', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80', location: 'Kodaikanal' }
   ],
   'munnar': [
-    { id: 'mun-1', placeName: 'Munnar Emerald Tea Plantations', category: 'Gardens & Tea', url: './munnar-tea-plantations-real.jpg', isDefaultCover: true },
-    { id: 'mun-2', placeName: 'Eravikulam National Park (Rajamalai Tahr)', category: 'Wildlife & Safari', url: 'https://images.unsplash.com/photo-1534567153574-2b12153a87f0?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'mun-3', placeName: 'Mattupetty Dam & Speedboat Lake', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'mun-4', placeName: 'Kolukkumalai Sunrise (7,900 ft Cloud-bed)', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'mun-5', placeName: 'Anamudi Peak Summit Lookout', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'mun-6', placeName: 'Kundala Arch Dam & Pedal Boating', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'mun-7', placeName: 'Attukad Waterfalls & Forest Cascades', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'mun-8', placeName: 'Pothamedu Viewpoint & Cardamom Hills', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1518457607834-6e8d80c183c5?auto=format&fit=crop&w=1200&q=80' }
-  ],
-  'silent valley': [
-    { id: 'sv-1', placeName: 'Misty Evergreen Rainforest Canopy', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80', isDefaultCover: true },
-    { id: 'sv-2', placeName: 'Kunthi River Crystal Stream & Bridge', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'sv-3', placeName: 'Lion-Tailed Macaque Wildlife Sanctuary', category: 'Wildlife & Safari', url: 'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'sv-4', placeName: 'Sairandhri Watchtower Lookout', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80' }
-  ],
-  'athirappilly': [
-    { id: 'ath-1', placeName: 'Athirappilly Roaring Waterfall Drop', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=1200&q=80', isDefaultCover: true },
-    { id: 'ath-2', placeName: 'Rainbow Mist Spray & Jungle Rocks', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'ath-3', placeName: 'Chalakudy Riverfront Rainforest', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'ath-4', placeName: 'Twilight Evening Sunset Viewpoint', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80' }
-  ],
-  'wayanad': [
-    { id: 'way-1', placeName: 'Chembra Peak Heart-Shaped Lake', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1200&q=80', isDefaultCover: true },
-    { id: 'way-2', placeName: 'Banasura Sagar Dam Speedboat Lake', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'way-3', placeName: 'Edakkal Prehistoric Caves Petroglyphs', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'way-4', placeName: 'Kuruva Island Bamboo Rafting', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'way-5', placeName: 'Lakkidi Ghat Viewpoint & Clouds', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'way-6', placeName: 'Muthanga Wildlife Tiger Safari', category: 'Wildlife & Safari', url: 'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1200&q=80' }
-  ],
-  'kashi': [
-    { id: 'kas-1', placeName: 'Kashi Vishwanath Jyotirlinga & Corridor', category: 'Heritage & Culture', url: './kashi-vishwanath-real.jpg', isDefaultCover: true },
-    { id: 'kas-2', placeName: 'Ayodhya Shri Ram Janmabhoomi Mandir', category: 'Heritage & Culture', url: './ayodhya-ram-mandir-real.jpg' },
-    { id: 'kas-3', placeName: 'Dashashwamedh Ghat Evening Ganga Aarti', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1571536802807-30451e3955d8?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'kas-4', placeName: 'Sarnath Deer Park & Dhamek Stupa', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'kas-5', placeName: 'Manikarnika Sacred Ghat Sunrise', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'kas-6', placeName: 'Prayagraj Triveni Sangam Holy Confluence', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80' }
-  ],
-  'ayodhya': [
-    { id: 'ayo-1', placeName: 'Shri Ram Janmabhoomi Mandir Complex', category: 'Heritage & Culture', url: './ayodhya-ram-mandir-real.jpg', isDefaultCover: true },
-    { id: 'ayo-2', placeName: 'Saryu River Ghats & Evening Aarti', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1571536802807-30451e3955d8?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'ayo-3', placeName: 'Hanuman Garhi Fort Temple', category: 'Heritage & Culture', url: './kashi-vishwanath-real.jpg' },
-    { id: 'ayo-4', placeName: 'Kanak Bhawan Royal Palace Temple', category: 'Heritage & Culture', url: './ayodhya-ram-mandir-real.jpg' }
-  ],
-  'kashmir': [
-    { id: 'kas-10', placeName: 'Dal Lake Royal Shikara & Himalayas', category: 'Lakes & Water', url: './dal-lake-shikara-real.jpg', isDefaultCover: true },
-    { id: 'kas-11', placeName: 'Dal Lake Houseboat & Mountain Reflection', category: 'Lakes & Water', url: './dal-lake-shikara-real.jpg' },
-    { id: 'kas-12', placeName: 'Gulmarg Gondola & Mount Apharwat Snow', category: 'Peaks & Views', url: './gulmarg-real.jpg' },
-    { id: 'kas-13', placeName: 'Pahalgam Betaab Valley & Lidder River', category: 'Peaks & Views', url: './pahalgam-real.jpg' },
-    { id: 'kas-14', placeName: 'Sonamarg Thajiwas Glacier Snow Walk', category: 'Peaks & Views', url: './sonamarg-real.jpg' },
-    { id: 'kas-15', placeName: 'Srinagar Mughal Gardens (Shalimar & Nishat)', category: 'Gardens & Tea', url: './srinagar-real.jpg' },
-    { id: 'kas-16', placeName: 'Amritsar Golden Temple (Harmandir Sahib)', category: 'Heritage & Culture', url: './golden-temple-real.jpg' },
-    { id: 'kas-17', placeName: 'Wagah Border Beating Retreat Ceremony', category: 'Heritage & Culture', url: './wagah-border-real.jpg' }
-  ],
-  'kochi': [
-    { id: 'kc-1', placeName: 'Fort Kochi Chinese Fishing Nets (Cheena Vala)', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=80', isDefaultCover: true },
-    { id: 'kc-2', placeName: 'Mattancherry Dutch Palace & Ramayana Murals', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'kc-3', placeName: 'Paradesi Jewish Synagogue & Jew Town Antiques', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'kc-4', placeName: 'Marine Drive Waterfront & Rainbow Bridge Harbor', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'kc-5', placeName: 'St. Francis CSI Church (Vasco da Gama 1503)', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'kc-6', placeName: 'Santa Cruz Cathedral Basilica Fort Kochi', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1548625361-16eb16262438?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'kc-7', placeName: 'Hill Palace Museum Tripunithura (Royal Seat)', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'kc-8', placeName: 'Cherai Beach & Vypin Island Sunset Coast', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'kc-9', placeName: 'Bolgatty Palace & Heritage Island Resort', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'kc-10', placeName: 'Cochin International Airport (COK) Solar Hub', category: 'Transit Hub', url: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'kc-11', placeName: 'Mangalavanam Bird Sanctuary & Mangrove Trail', category: 'Wildlife & Safari', url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'kc-12', placeName: 'Kerala Kathakali Centre Classical Heritage', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1200&q=80' }
-  ],
-  'cochin': [
-    { id: 'coch-1', placeName: 'Fort Kochi Chinese Fishing Nets (Cheena Vala)', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=80', isDefaultCover: true },
-    { id: 'coch-2', placeName: 'Marine Drive Waterfront & Rainbow Bridge Harbor', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'coch-3', placeName: 'Mattancherry Dutch Palace & Murals', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'coch-4', placeName: 'Jew Town & Paradesi Synagogue', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'coch-5', placeName: 'Cherai Beach & Vypin Island Golden Shore', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'coch-6', placeName: 'Hill Palace Museum Tripunithura', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1200&q=80' }
+    { id: 'mun-1', placeName: 'Munnar Emerald Tea Plantations', category: 'Gardens & Tea', url: './munnar-tea-plantations-real.jpg', isDefaultCover: true, location: 'Munnar' },
+    { id: 'mun-2', placeName: 'Eravikulam National Park (Rajamalai Tahr)', category: 'Wildlife & Safari', url: 'https://images.unsplash.com/photo-1534567153574-2b12153a87f0?auto=format&fit=crop&w=1200&q=80', location: 'Munnar' },
+    { id: 'mun-3', placeName: 'Mattupetty Dam & Speedboat Lake', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80', location: 'Munnar' },
+    { id: 'mun-4', placeName: 'Kolukkumalai Sunrise (7,900 ft Cloud-bed)', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?auto=format&fit=crop&w=1200&q=80', location: 'Munnar' },
+    { id: 'mun-5', placeName: 'Anamudi Peak Summit Lookout', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80', location: 'Munnar' },
+    { id: 'mun-6', placeName: 'Kundala Arch Dam & Pedal Boating', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1200&q=80', location: 'Munnar' },
+    { id: 'mun-7', placeName: 'Attukad Waterfalls & Forest Cascades', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1200&q=80', location: 'Munnar' },
+    { id: 'mun-8', placeName: 'Pothamedu Viewpoint & Cardamom Hills', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1518457607834-6e8d80c183c5?auto=format&fit=crop&w=1200&q=80', location: 'Munnar' }
   ],
   'kollam': [
-    { id: 'kol-1', placeName: 'Ashtamudi Lake & Backwater Houseboat Cruise', category: 'Lakes & Water', url: 'wiki:Ashtamudi Lake', isDefaultCover: true },
-    { id: 'kol-2', placeName: 'Jatayu Earth\'s Center (Chadayamangalam Rock)', category: 'Adventure & Culture', url: 'wiki:Jatayu Earth\'s Center' },
-    { id: 'kol-3', placeName: 'Thangassery Light House & British Fort', category: 'Heritage & Culture', url: 'wiki:Thangassery Light House' },
-    { id: 'kol-4', placeName: 'Kollam Beach & Mahatma Gandhi Park', category: 'Lakes & Water', url: 'wiki:Kollam Beach' },
-    { id: 'kol-5', placeName: 'Munroe Island (Munroethuruth) Hidden Lagoon', category: 'Lakes & Water', url: 'wiki:Munroe Island' },
-    { id: 'kol-6', placeName: 'Sasthamkotta Freshwater Lake', category: 'Lakes & Water', url: 'wiki:Sasthamkotta Lake' },
-    { id: 'kol-7', placeName: 'Thenmala Dam & Ecotourism Boardwalk', category: 'Nature & Ecotourism', url: 'wiki:Thenmala Dam' },
-    { id: 'kol-8', placeName: 'Thevally Palace & Houseboat Jetty', category: 'Heritage & Culture', url: 'wiki:Thevally Palace' },
-    { id: 'kol-9', placeName: 'Paravur Lake & Puthenkavu Backwater Village', category: 'Lakes & Water', url: 'wiki:Paravur Lake' },
-    { id: 'kol-10', placeName: 'Tangasseri Fort Ruins & Ancient Trade Coast', category: 'Heritage & Culture', url: 'wiki:Tangasseri Fort' },
-    { id: 'kol-11', placeName: 'Amritapuri International Ashram', category: 'Spiritual & Wellness', url: 'wiki:Amritapuri' },
-    { id: 'kol-12', placeName: 'Asramam Adventure Park & Maidan', category: 'Nature & Ecotourism', url: 'wiki:Asramam Maidan' }
+    { id: 'kol-1', placeName: 'Ashtamudi Lake & Backwater Houseboat Cruise', category: 'Lakes & Water', url: 'wiki:Ashtamudi Lake', isDefaultCover: true, location: 'Kollam' },
+    { id: 'kol-2', placeName: 'Jatayu Earth\'s Center (Chadayamangalam Rock)', category: 'Adventure & Culture', url: 'wiki:Jatayu Earth\'s Center', location: 'Kollam' },
+    { id: 'kol-3', placeName: 'Thangassery Light House & British Fort', category: 'Heritage & Culture', url: 'wiki:Thangassery Light House', location: 'Kollam' },
+    { id: 'kol-4', placeName: 'Kollam Beach & Mahatma Gandhi Park', category: 'Lakes & Water', url: 'wiki:Kollam Beach', location: 'Kollam' },
+    { id: 'kol-5', placeName: 'Munroe Island (Munroethuruth) Hidden Lagoon', category: 'Lakes & Water', url: 'wiki:Munroe Island', location: 'Kollam' },
+    { id: 'kol-6', placeName: 'Sasthamkotta Freshwater Lake', category: 'Lakes & Water', url: 'wiki:Sasthamkotta Lake', location: 'Kollam' },
+    { id: 'kol-7', placeName: 'Thenmala Dam & Ecotourism Boardwalk', category: 'Nature & Ecotourism', url: 'wiki:Thenmala Dam', location: 'Kollam' },
+    { id: 'kol-8', placeName: 'Thevally Palace & Houseboat Jetty', category: 'Heritage & Culture', url: 'wiki:Thevally Palace', location: 'Kollam' },
+    { id: 'kol-9', placeName: 'Paravur Lake & Puthenkavu Backwater Village', category: 'Lakes & Water', url: 'wiki:Paravur Lake', location: 'Kollam' },
+    { id: 'kol-10', placeName: 'Tangasseri Fort Ruins & Ancient Trade Coast', category: 'Heritage & Culture', url: 'wiki:Tangasseri Fort', location: 'Kollam' },
+    { id: 'kol-11', placeName: 'Amritapuri International Ashram', category: 'Spiritual & Wellness', url: 'wiki:Amritapuri', location: 'Kollam' },
+    { id: 'kol-12', placeName: 'Asramam Adventure Park & Maidan', category: 'Nature & Ecotourism', url: 'wiki:Asramam Maidan', location: 'Kollam' }
+  ],
+  'kochi': [
+    { id: 'kc-1', placeName: 'Fort Kochi Chinese Fishing Nets (Cheena Vala)', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=80', isDefaultCover: true, location: 'Kochi' },
+    { id: 'kc-2', placeName: 'Mattancherry Dutch Palace & Ramayana Murals', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=1200&q=80', location: 'Kochi' },
+    { id: 'kc-3', placeName: 'Paradesi Jewish Synagogue & Jew Town Antiques', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1200&q=80', location: 'Kochi' },
+    { id: 'kc-4', placeName: 'Marine Drive Waterfront & Rainbow Bridge Harbor', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=1200&q=80', location: 'Kochi' },
+    { id: 'kc-5', placeName: 'St. Francis CSI Church (Vasco da Gama 1503)', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1200&q=80', location: 'Kochi' },
+    { id: 'kc-6', placeName: 'Santa Cruz Cathedral Basilica Fort Kochi', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1548625361-16eb16262438?auto=format&fit=crop&w=1200&q=80', location: 'Kochi' },
+    { id: 'kc-7', placeName: 'Hill Palace Museum Tripunithura (Royal Seat)', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1200&q=80', location: 'Kochi' },
+    { id: 'kc-8', placeName: 'Cherai Beach & Vypin Island Sunset Coast', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80', location: 'Kochi' }
+  ],
+  'wayanad': [
+    { id: 'way-1', placeName: 'Chembra Peak Heart-Shaped Lake', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1200&q=80', isDefaultCover: true, location: 'Wayanad' },
+    { id: 'way-2', placeName: 'Banasura Sagar Dam Speedboat Lake', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80', location: 'Wayanad' },
+    { id: 'way-3', placeName: 'Edakkal Prehistoric Caves Petroglyphs', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80', location: 'Wayanad' },
+    { id: 'way-4', placeName: 'Kuruva Island Bamboo Rafting', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1200&q=80', location: 'Wayanad' },
+    { id: 'way-5', placeName: 'Lakkidi Ghat Viewpoint & Clouds', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80', location: 'Wayanad' },
+    { id: 'way-6', placeName: 'Muthanga Wildlife Tiger Safari', category: 'Wildlife & Safari', url: 'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1200&q=80', location: 'Wayanad' }
+  ],
+  'silent valley': [
+    { id: 'sv-1', placeName: 'Misty Evergreen Rainforest Canopy', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80', isDefaultCover: true, location: 'Silent Valley' },
+    { id: 'sv-2', placeName: 'Kunthi River Crystal Stream & Bridge', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1200&q=80', location: 'Silent Valley' },
+    { id: 'sv-3', placeName: 'Lion-Tailed Macaque Wildlife Sanctuary', category: 'Wildlife & Safari', url: 'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1200&q=80', location: 'Silent Valley' },
+    { id: 'sv-4', placeName: 'Sairandhri Watchtower Lookout', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80', location: 'Silent Valley' }
+  ],
+  'athirappilly': [
+    { id: 'ath-1', placeName: 'Athirappilly Roaring Waterfall Drop', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=1200&q=80', isDefaultCover: true, location: 'Athirappilly' },
+    { id: 'ath-2', placeName: 'Rainbow Mist Spray & Jungle Rocks', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1200&q=80', location: 'Athirappilly' },
+    { id: 'ath-3', placeName: 'Chalakudy Riverfront Rainforest', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80', location: 'Athirappilly' },
+    { id: 'ath-4', placeName: 'Vazhachal Cascades & Forest Trail', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80', location: 'Athirappilly' }
+  ],
+  'kashi': [
+    { id: 'kas-1', placeName: 'Kashi Vishwanath Jyotirlinga & Corridor', category: 'Heritage & Culture', url: './kashi-vishwanath-real.jpg', isDefaultCover: true, location: 'Kashi' },
+    { id: 'kas-2', placeName: 'Dashashwamedh Ghat Evening Ganga Aarti', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1571536802807-30451e3955d8?auto=format&fit=crop&w=1200&q=80', location: 'Kashi' },
+    { id: 'kas-3', placeName: 'Sarnath Deer Park & Dhamek Stupa', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1200&q=80', location: 'Kashi' },
+    { id: 'kas-4', placeName: 'Manikarnika Sacred Ghat Sunrise', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1200&q=80', location: 'Kashi' },
+    { id: 'kas-5', placeName: 'Prayagraj Triveni Sangam Holy Confluence', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80', location: 'Prayagraj' }
+  ],
+  'ayodhya': [
+    { id: 'ayo-1', placeName: 'Shri Ram Janmabhoomi Mandir Complex', category: 'Heritage & Culture', url: './ayodhya-ram-mandir-real.jpg', isDefaultCover: true, location: 'Ayodhya' },
+    { id: 'ayo-2', placeName: 'Saryu River Ghats & Evening Aarti', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1571536802807-30451e3955d8?auto=format&fit=crop&w=1200&q=80', location: 'Ayodhya' },
+    { id: 'ayo-3', placeName: 'Hanuman Garhi Fort Temple', category: 'Heritage & Culture', url: './kashi-vishwanath-real.jpg', location: 'Ayodhya' },
+    { id: 'ayo-4', placeName: 'Kanak Bhawan Royal Palace Temple', category: 'Heritage & Culture', url: './ayodhya-ram-mandir-real.jpg', location: 'Ayodhya' }
+  ],
+  'kashmir': [
+    { id: 'kas-10', placeName: 'Dal Lake Royal Shikara & Himalayas', category: 'Lakes & Water', url: './dal-lake-shikara-real.jpg', isDefaultCover: true, location: 'Kashmir' },
+    { id: 'kas-11', placeName: 'Dal Lake Houseboat & Mountain Reflection', category: 'Lakes & Water', url: './dal-lake-shikara-real.jpg', location: 'Kashmir' },
+    { id: 'kas-12', placeName: 'Gulmarg Gondola & Mount Apharwat Snow', category: 'Peaks & Views', url: './gulmarg-real.jpg', location: 'Gulmarg' },
+    { id: 'kas-13', placeName: 'Pahalgam Betaab Valley & Lidder River', category: 'Peaks & Views', url: './pahalgam-real.jpg', location: 'Pahalgam' },
+    { id: 'kas-14', placeName: 'Sonamarg Thajiwas Glacier Snow Walk', category: 'Peaks & Views', url: './sonamarg-real.jpg', location: 'Sonamarg' },
+    { id: 'kas-15', placeName: 'Srinagar Mughal Gardens (Shalimar & Nishat)', category: 'Gardens & Tea', url: './srinagar-real.jpg', location: 'Srinagar' },
+    { id: 'kas-16', placeName: 'Amritsar Golden Temple (Harmandir Sahib)', category: 'Heritage & Culture', url: './golden-temple-real.jpg', location: 'Amritsar' },
+    { id: 'kas-17', placeName: 'Wagah Border Beating Retreat Ceremony', category: 'Heritage & Culture', url: './wagah-border-real.jpg', location: 'Amritsar' }
   ],
   'parambikulam': [
-    { id: 'pb-1', placeName: 'Parambikulam Tiger Reserve Rainforest', category: 'Wildlife & Safari', url: './parambikulam-forest-real.jpg', isDefaultCover: true },
-    { id: 'pb-2', placeName: 'Parambikulam Reservoir Bamboo Rafting', category: 'Lakes & Water', url: './parambikulam-lake-real.jpg' },
-    { id: 'pb-3', placeName: 'Royal Bengal Tiger & Leopard Safari', category: 'Wildlife & Safari', url: './parambikulam-tiger-real.jpg' },
-    { id: 'pb-4', placeName: 'Kannimara 450-yr-old Giant Teak Tree', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=1200&q=80' }
+    { id: 'pb-1', placeName: 'Parambikulam Tiger Reserve Rainforest', category: 'Wildlife & Safari', url: './parambikulam-forest-real.jpg', isDefaultCover: true, location: 'Parambikulam' },
+    { id: 'pb-2', placeName: 'Parambikulam Reservoir Bamboo Rafting', category: 'Lakes & Water', url: './parambikulam-lake-real.jpg', location: 'Parambikulam' },
+    { id: 'pb-3', placeName: 'Royal Bengal Tiger & Leopard Safari', category: 'Wildlife & Safari', url: './parambikulam-tiger-real.jpg', location: 'Parambikulam' },
+    { id: 'pb-4', placeName: 'Kannimara 450-yr-old Giant Teak Tree', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=1200&q=80', location: 'Parambikulam' }
   ],
   'puri': [
-    { id: 'puri-1', placeName: 'Shree Jagannath Temple Main Entrance', category: 'Heritage & Culture', url: './puri-jagannath-entrance-real.jpg', isDefaultCover: true },
-    { id: 'puri-2', placeName: 'Shree Jagannath 214-ft Sacred Deula Spire', category: 'Heritage & Culture', url: './puri-jagannath-real.jpg' },
-    { id: 'puri-3', placeName: 'Konark Sun Temple 24 Sundial Chariot Wheels', category: 'Heritage & Culture', url: './konark-sun-temple-real.jpg' },
-    { id: 'puri-4', placeName: 'Lingaraj Temple 180-ft Stone Tower Bhubaneswar', category: 'Heritage & Culture', url: './lingaraj-temple-real.jpg' },
-    { id: 'puri-5', placeName: 'Puri Blue Flag Golden Beach & Sunset', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80' },
-    { id: 'puri-6', placeName: 'Chilika Lake Irrawaddy Dolphin Sanctuary', category: 'Wildlife & Safari', url: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1200&q=80' }
+    { id: 'puri-1', placeName: 'Shree Jagannath Temple Main Entrance', category: 'Heritage & Culture', url: './puri-jagannath-entrance-real.jpg', isDefaultCover: true, location: 'Puri' },
+    { id: 'puri-2', placeName: 'Shree Jagannath 214-ft Sacred Deula Spire', category: 'Heritage & Culture', url: './puri-jagannath-real.jpg', location: 'Puri' },
+    { id: 'puri-3', placeName: 'Konark Sun Temple 24 Sundial Chariot Wheels', category: 'Heritage & Culture', url: './konark-sun-temple-real.jpg', location: 'Konark' },
+    { id: 'puri-4', placeName: 'Lingaraj Temple 180-ft Stone Tower Bhubaneswar', category: 'Heritage & Culture', url: './lingaraj-temple-real.jpg', location: 'Bhubaneswar' },
+    { id: 'puri-5', placeName: 'Puri Blue Flag Golden Beach & Sunset', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80', location: 'Puri' },
+    { id: 'puri-6', placeName: 'Chilika Lake Irrawaddy Dolphin Sanctuary', category: 'Wildlife & Safari', url: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1200&q=80', location: 'Chilika' }
   ],
   'tiruchendur': [
-    { id: 'tc-1', placeName: 'Tiruchendur Murugan Seashore Temple Tower', category: 'Heritage & Culture', url: './tiruchendur-murugan-real.jpg', isDefaultCover: true },
-    { id: 'tc-2', placeName: 'Tiruchendur Bay of Bengal Beach Sands', category: 'Lakes & Water', url: './tiruchendur-beach-real.jpg' },
-    { id: 'tc-3', placeName: 'Thenkasi Kasi Viswanathar Temple Gopuram', category: 'Heritage & Culture', url: './thenkasi-viswanathar-real.jpg' },
-    { id: 'tc-4', placeName: 'Courtallam Main Herbal Waterfalls', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1200&q=80' }
+    { id: 'tc-1', placeName: 'Tiruchendur Murugan Seashore Temple Tower', category: 'Heritage & Culture', url: './tiruchendur-murugan-real.jpg', isDefaultCover: true, location: 'Tiruchendur' },
+    { id: 'tc-2', placeName: 'Tiruchendur Bay of Bengal Beach Sands', category: 'Lakes & Water', url: './tiruchendur-beach-real.jpg', location: 'Tiruchendur' },
+    { id: 'tc-3', placeName: 'Thenkasi Kasi Viswanathar Temple Gopuram', category: 'Heritage & Culture', url: './thenkasi-viswanathar-real.jpg', location: 'Thenkasi' },
+    { id: 'tc-4', placeName: 'Courtallam Main Herbal Waterfalls', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1200&q=80', location: 'Courtallam' }
   ],
   'gundlupet': [
-    { id: 'gp-1', placeName: 'Gundlupet Golden Sunflower & Marigold Meadows', category: 'Gardens & Tea', url: './gundlupet-sunflowers-real.jpg', isDefaultCover: true },
-    { id: 'gp-2', placeName: 'Bandipur Tiger Reserve Jungle Trail', category: 'Wildlife & Safari', url: './parambikulam-forest-real.jpg' },
-    { id: 'gp-3', placeName: 'Himavad Gopalaswamy Betta Misty Summit', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80' }
+    { id: 'gp-1', placeName: 'Gundlupet Golden Sunflower & Marigold Meadows', category: 'Gardens & Tea', url: './gundlupet-sunflowers-real.jpg', isDefaultCover: true, location: 'Gundlupet' },
+    { id: 'gp-2', placeName: 'Bandipur Tiger Reserve Jungle Trail', category: 'Wildlife & Safari', url: './parambikulam-forest-real.jpg', location: 'Bandipur' },
+    { id: 'gp-3', placeName: 'Himavad Gopalaswamy Betta Misty Summit', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80', location: 'Gundlupet' }
   ],
   'horanadu': [
-    { id: 'hn-1', placeName: 'Annapoorneshwari Temple Golden Shrine', category: 'Heritage & Culture', url: './horanadu-annapoorneshwari-real.jpg', isDefaultCover: true },
-    { id: 'hn-2', placeName: 'Chikmagalur Western Ghats Green Tea Slopes', category: 'Gardens & Tea', url: './munnar-tea-plantations-real.jpg' },
-    { id: 'hn-3', placeName: 'Kalasa Kalaseshwara Ancient Shiva Temple', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1200&q=80' }
+    { id: 'hn-1', placeName: 'Annapoorneshwari Temple Golden Shrine', category: 'Heritage & Culture', url: './horanadu-annapoorneshwari-real.jpg', isDefaultCover: true, location: 'Horanadu' },
+    { id: 'hn-2', placeName: 'Chikmagalur Western Ghats Green Tea Slopes', category: 'Gardens & Tea', url: './munnar-tea-plantations-real.jpg', location: 'Chikmagalur' },
+    { id: 'hn-3', placeName: 'Kalasa Kalaseshwara Ancient Shiva Temple', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1200&q=80', location: 'Kalasa' }
   ]
 };
 
-const POPULAR_DESTINATIONS_CHIPS = [
-  { label: '🌿 Ooty (12 Places)', query: 'Ooty' },
-  { label: '🌲 Kodaikanal (11 Places)', query: 'Kodaikanal' },
-  { label: '⛰️ Munnar (8 Places)', query: 'Munnar' },
-  { label: '🌴 Kochi (12 Places)', query: 'Kochi' },
-  { label: '🚣 Kollam (12 Places)', query: 'Kollam' },
-  { label: '🐅 Wayanad (6 Places)', query: 'Wayanad' },
-  { label: '🌊 Athirappilly (4 Places)', query: 'Athirappilly' },
-  { label: '🛕 Kashi & Ayodhya', query: 'Kashi' },
-  { label: '❄️ Kashmir (8 Places)', query: 'Kashmir' },
-  { label: '🐘 Parambikulam (4 Places)', query: 'Parambikulam' },
-  { label: '🕉️ Puri & Konark (6 Places)', query: 'Puri' },
-  { label: '🌺 Gundlupet Blooms', query: 'Gundlupet' },
-  { label: '🦚 Tiruchendur & Thenkasi', query: 'Tiruchendur' },
-  { label: '🌾 Horanadu Shrine', query: 'Horanadu' }
+// Multi-Location & Combo Presets
+const MULTI_LOCATION_COMBO_PRESETS = [
+  { label: '🌊 Kollam + Munnar (20 Spots)', query: 'Kollam and Munnar' },
+  { label: '🌿 Ooty + Kodaikanal (23 Spots)', query: 'Ooty and Kodaikanal' },
+  { label: '🌴 Kochi + Kollam (20 Spots)', query: 'Kochi and Kollam' },
+  { label: '⛰️ Munnar + Wayanad (14 Spots)', query: 'Munnar and Wayanad' },
+  { label: '🛕 Kashi + Ayodhya (9 Spots)', query: 'Kashi and Ayodhya' },
+  { label: '❄️ Kashmir + Amritsar', query: 'Kashmir and Amritsar' },
+  { label: '🐅 Wayanad + Parambikulam', query: 'Wayanad and Parambikulam' }
 ];
 
-// Known curated locations — used to auto-sync the image studio only for real destinations,
-// preventing generic fallback images from polluting the tour form while typing partial words.
-const isKnownLocation = (loc) => {
-  const n = (loc || '').trim().toLowerCase();
-  if (!n) return false;
-  if (LOCATION_PLACE_IMAGES[n]) return true;
-  return Object.keys(LOCATION_PLACE_IMAGES).some(k =>
-    n.includes(k) || k.includes(n)
-  );
+const SINGLE_LOCATION_PRESETS = [
+  { label: '🚣 Kollam (12 Places)', query: 'Kollam' },
+  { label: '⛰️ Munnar (8 Places)', query: 'Munnar' },
+  { label: '🌴 Kochi (8 Places)', query: 'Kochi' },
+  { label: '🌿 Ooty (12 Places)', query: 'Ooty' },
+  { label: '🌲 Kodaikanal (11 Places)', query: 'Kodaikanal' },
+  { label: '🐅 Wayanad (6 Places)', query: 'Wayanad' },
+  { label: '🌊 Athirappilly (4 Places)', query: 'Athirappilly' },
+  { label: '🛕 Kashi (5 Places)', query: 'Kashi' },
+  { label: '🕉️ Ayodhya (4 Places)', query: 'Ayodhya' },
+  { label: '❄️ Kashmir (8 Places)', query: 'Kashmir' },
+  { label: '🐘 Parambikulam (4 Places)', query: 'Parambikulam' },
+  { label: '🌺 Gundlupet Blooms', query: 'Gundlupet' },
+  { label: '🌾 Horanadu Shrine', query: 'Horanadu' },
+  { label: '🕉️ Puri Jagannath', query: 'Puri' }
+];
+
+// Split input string into distinct location tokens (supports up to 4 locations)
+export const extractLocationTokens = (inputStr = '') => {
+  if (!inputStr || typeof inputStr !== 'string') return ['Kollam', 'Munnar'];
+  
+  const cleaned = inputStr
+    .replace(/\s+and\s+/gi, ',')
+    .replace(/\s*&\s*/g, ',')
+    .replace(/\s*\+\s*/g, ',')
+    .replace(/\s*\/\s*/g, ',');
+  
+  const rawTokens = cleaned
+    .split(',')
+    .map(t => t.trim())
+    .filter(t => t.length >= 2);
+
+  const KNOWN_DESTS = [
+    'kollam', 'munnar', 'ooty', 'kodaikanal', 'kochi', 'cochin', 'wayanad',
+    'athirappilly', 'silent valley', 'kashmir', 'kashi', 'ayodhya', 'puri',
+    'parambikulam', 'tiruchendur', 'thenkasi', 'gundlupet', 'horanadu', 'amritsar'
+  ];
+
+  const results = [];
+  rawTokens.forEach(tok => {
+    const tLower = tok.toLowerCase();
+    const matched = KNOWN_DESTS.filter(k => tLower.includes(k));
+    if (matched.length > 0) {
+      matched.forEach(m => {
+        const formatted = m.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        if (!results.some(r => r.toLowerCase() === formatted.toLowerCase())) {
+          results.push(formatted);
+        }
+      });
+    } else {
+      const formatted = tok.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      if (!results.some(r => r.toLowerCase() === formatted.toLowerCase())) {
+        results.push(formatted);
+      }
+    }
+  });
+
+  return results.length ? results.slice(0, 4) : ['Kollam', 'Munnar'];
 };
 
-// Real-photo fallback when an image lookup misses, so a card never renders broken/empty
 const GENERIC_FALLBACK_IMG = 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80';
-
-// ── Real photo sources ──────────────────────────────────────────────────────────
-// 1) Google Images (Google Custom Search JSON API) — used automatically when the
-//    keys are configured in .env (VITE_GOOGLE_CSE_KEY + VITE_GOOGLE_CSE_CX).
-// 2) Wikipedia / Wikimedia Commons — always available fallback of real photographs.
 const GOOGLE_CSE_KEY = import.meta.env.VITE_GOOGLE_CSE_KEY || '';
 const GOOGLE_CSE_CX = import.meta.env.VITE_GOOGLE_CSE_CX || '';
 const GOOGLE_IMAGES_ACTIVE = Boolean(GOOGLE_CSE_KEY && GOOGLE_CSE_CX);
-
 const realImageCache = new Map();
 
 const fetchFromGoogleImages = async (query) => {
@@ -231,7 +255,6 @@ const fetchFromWikipedia = async (query) => {
   }
 };
 
-// Resolve a "wiki:<place name>" marker to a real photo — Google Images first, Wikipedia fallback
 const fetchRealImage = async (query) => {
   const key = query.toLowerCase().trim();
   if (realImageCache.has(key)) return realImageCache.get(key);
@@ -242,7 +265,6 @@ const fetchRealImage = async (query) => {
   return url;
 };
 
-// Replace any "wiki:" placeholder URLs in a place list with the place's real photo (concurrently)
 const enrichWithWikipediaImages = async (list) => {
   const results = await Promise.all(list.map(async (p) => {
     if (typeof p.url === 'string' && p.url.startsWith('wiki:')) {
@@ -255,308 +277,267 @@ const enrichWithWikipediaImages = async (list) => {
 };
 
 export default function AiPlaceImageSelector({
-  locationName = 'Ooty',
+  locationName = 'Kollam and Munnar',
+  sightseeingList = [],
+  highlightsList = [],
+  coverImageUrl = '',
+  mixedBackgroundUrls = [],
   onSelectCoverImage,
   onSelectMixImages,
-  onSelectMainPlaces,
-  onSelectIncludedHighlights,
-  onAutoFillPackage
+  onToggleSightseeing,
+  onToggleHighlight,
+  onBatchAddSightseeing,
+  onBatchAddHighlights
 }) {
-  const [searchInput, setSearchInput] = useState(locationName || 'Ooty');
-  const [activeLocation, setActiveLocation] = useState(locationName || 'Ooty');
+  const initialTokens = extractLocationTokens(locationName);
+  const [searchInput, setSearchInput] = useState(locationName || initialTokens.join(', '));
+  const [activeLocations, setActiveLocations] = useState(initialTokens);
   const [placesList, setPlacesList] = useState([]);
-  const [coverImageUrl, setCoverImageUrl] = useState('');
-  const [selectedMixUrls, setSelectedMixUrls] = useState([]);
-  const [blendStyle, setBlendStyle] = useState('collage-blend');
+  const [activeLocationTab, setActiveLocationTab] = useState('All');
   const [activeCategory, setActiveCategory] = useState('All');
   const [isLoading, setIsLoading] = useState(false);
   const [isGeneratingImages, setIsGeneratingImages] = useState(false);
   const [aiGeneratingId, setAiGeneratingId] = useState(null);
   const [statusMsg, setStatusMsg] = useState('');
-  const isFirstLoad = useRef(true);
+  const [blendStyle, setBlendStyle] = useState('collage-blend');
+  const [selectedMixUrls, setSelectedMixUrls] = useState(mixedBackgroundUrls || []);
 
-  // Initial load on mount only (activeLocation starts from locationName prop)
   useEffect(() => {
-    loadLocationPlaces(activeLocation);
+    loadMultiLocationPlaces(activeLocations);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Sync whenever parent passes a different locationName
+  // Sync if parent passes a different location string
   useEffect(() => {
     if (!locationName || !locationName.trim()) return;
-    const cleanLoc = locationName.trim();
-    if (cleanLoc.length < 3) return; // avoid generic fallback images from partial words
-    if (!isKnownLocation(cleanLoc)) return; // only auto-sync known destinations, never mixed generic images
-    if (cleanLoc.toLowerCase() !== activeLocation.trim().toLowerCase()) {
-      setSearchInput(cleanLoc);
-      setActiveLocation(cleanLoc);
-      loadLocationPlaces(cleanLoc);
+    const tokens = extractLocationTokens(locationName);
+    const same = tokens.length === activeLocations.length && tokens.every((t, i) => t.toLowerCase() === (activeLocations[i] || '').toLowerCase());
+    if (!same) {
+      setActiveLocations(tokens);
+      setSearchInput(locationName);
+      loadMultiLocationPlaces(tokens);
     }
   }, [locationName]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const loadLocationPlaces = async (loc) => {
+  // Load places for all active locations
+  const loadMultiLocationPlaces = async (locArray) => {
     setIsLoading(true);
-    const norm = loc.trim().toLowerCase();
-    
-    // Priority-ordered lookup to avoid substring collisions (kashi vs kashmir, etc.)
-    const PRIORITY_KEYS = [
-      'silent valley', 'athirappilly', 'parambikulam', 'tiruchendur',
-      'kodaikanal', 'gundlupet', 'horanadu', 'wayanad', 'kashmir',
-      'munnar', 'kashi', 'ayodhya', 'kochi', 'cochin', 'kollam', 'puri', 'ooty'
-    ];
+    const locs = Array.isArray(locArray) && locArray.length ? locArray : ['Kollam', 'Munnar'];
+    let combined = [];
 
-    let found = [];
-    let matchedLocationKey = null;
-    // First try exact match
-    if (LOCATION_PLACE_IMAGES[norm]) {
-      found = LOCATION_PLACE_IMAGES[norm];
-      matchedLocationKey = norm;
-    } else {
-      // Try priority-ordered partial match
-      const matchedKey = PRIORITY_KEYS.find(key => norm.includes(key) || key.includes(norm));
-      if (matchedKey) {
-        // Find actual key in data (e.g. 'cochin' -> 'cochin')
-        const dataKey = Object.keys(LOCATION_PLACE_IMAGES).find(k => k === matchedKey || k.includes(matchedKey) || matchedKey.includes(k));
-        if (dataKey) {
-          found = LOCATION_PLACE_IMAGES[dataKey];
-          matchedLocationKey = dataKey;
-        }
-      }
-    }
+    for (const loc of locs) {
+      const norm = loc.trim().toLowerCase();
+      let found = [];
 
-    // STRICT FILTER: when a curated location matches, show ONLY that location's images.
-    if (found.length === 0) {
-      // Fallback generator from aiDestinationGenerator (real place names; photos resolved below)
-      const guideData = generateAiDestinationGuide(loc);
-      found = guideData.attractions ? guideData.attractions.map((a, i) => ({
-        id: a.id || `place-${i}`,
-        placeName: a.name,
-        category: a.category || 'Tourist Place',
-        url: a.image && !a.image.includes('images.unsplash.com') ? a.image : `wiki:${a.name}`,
-        isDefaultCover: i === 0
-      })) : [];
+      // Check in LOCATION_PLACE_IMAGES
+      const matchedKey = Object.keys(LOCATION_PLACE_IMAGES).find(k => 
+        k === norm || norm.includes(k) || k.includes(norm)
+      );
 
-      // Also attempt real-time Wikipedia / Wikimedia image discovery for custom locations
-      try {
-        const wikiRes = await fetch(
-          `https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrsearch=${encodeURIComponent(loc + ' tourism attractions')}&gsrlimit=8&prop=pageimages|extracts&piprop=original|thumbnail&pithumbsize=1000&exintro=1&explaintext=1`
-        );
-        if (wikiRes.ok) {
-          const wikiData = await wikiRes.json();
-          const pages = wikiData.query?.pages ? Object.values(wikiData.query.pages) : [];
-          // Keep real result pages from the location-scoped search; only skip the location's own article
-          const wikiPlaces = pages
-            .filter(p => (p.thumbnail?.source || p.original?.source) && p.title.toLowerCase().trim() !== norm)
-            .map((p, idx) => ({
-              id: `wiki-${p.pageid || idx}`,
-              placeName: p.title,
-              category: 'Heritage & Culture',
-              url: p.original?.source || p.thumbnail?.source,
-              isDefaultCover: false
-            }));
-          if (wikiPlaces.length > 0) {
-            found = [...found, ...wikiPlaces];
+      if (matchedKey && LOCATION_PLACE_IMAGES[matchedKey]) {
+        found = LOCATION_PLACE_IMAGES[matchedKey].map(p => ({
+          ...p,
+          id: p.id || `${norm}-${Math.random().toString(36).slice(2, 7)}`,
+          location: loc.trim(),
+          description: `Experience ${p.placeName} in ${loc.trim()}. Guided sightseeing and photo opportunities with OASIS Thrissur.`
+        }));
+      } else {
+        // Fallback generator from aiDestinationGuide
+        const guideData = generateAiDestinationGuide(loc);
+        found = guideData.attractions ? guideData.attractions.map((a, i) => ({
+          id: `${loc}-${a.id || i}`,
+          placeName: a.name,
+          category: a.category || a.type || 'Tourist Place',
+          url: a.image && !a.image.includes('images.unsplash.com') ? a.image : `wiki:${a.name}`,
+          isDefaultCover: i === 0,
+          location: loc.trim(),
+          description: a.desc || a.shortDescription || `Visit ${a.name} in ${loc.trim()}.`
+        })) : [];
+
+        // Attempt live Wikipedia fetch if few places found
+        if (found.length < 3) {
+          try {
+            const wikiRes = await fetch(
+              `https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrsearch=${encodeURIComponent(loc + ' tourism attractions')}&gsrlimit=8&prop=pageimages|extracts&piprop=original|thumbnail&pithumbsize=1000&exintro=1&explaintext=1`
+            );
+            if (wikiRes.ok) {
+              const wikiData = await wikiRes.json();
+              const pages = wikiData.query?.pages ? Object.values(wikiData.query.pages) : [];
+              const wikiPlaces = pages
+                .filter(p => (p.thumbnail?.source || p.original?.source) && p.title.toLowerCase().trim() !== norm)
+                .map((p, idx) => ({
+                  id: `wiki-${p.pageid || idx}`,
+                  placeName: p.title,
+                  category: 'Heritage & Culture',
+                  url: p.original?.source || p.thumbnail?.source,
+                  isDefaultCover: false,
+                  location: loc.trim(),
+                  description: p.extract ? p.extract.slice(0, 140) + '...' : `Explore ${p.title} in ${loc.trim()}.`
+                }));
+              if (wikiPlaces.length > 0) {
+                found = [...found, ...wikiPlaces];
+              }
+            }
+          } catch (err) {
+            console.warn('Live wiki fetch note:', err);
           }
         }
-      } catch (err) {
-        console.warn('Live wiki fetch note:', err);
       }
+
+      // Resolve real Wikipedia photos for any "wiki:" placeholders
+      if (found.some(p => typeof p.url === 'string' && p.url.startsWith('wiki:'))) {
+        found = await enrichWithWikipediaImages(found);
+      }
+
+      combined = [...combined, ...found];
     }
 
-    // Resolve real Wikipedia photos for any "wiki:" placeholders (curated entries + fallback)
-    if (found.some(p => typeof p.url === 'string' && p.url.startsWith('wiki:'))) {
-      found = await enrichWithWikipediaImages(found);
-    }
-
-    setPlacesList(found);
+    setPlacesList(combined);
     setIsLoading(false);
 
-    const cover = found.find(p => p.isDefaultCover)?.url || found[0]?.url || '';
-    setCoverImageUrl(cover);
-
-    const initialMix = found.slice(0, 4).map(p => p.url);
-    setSelectedMixUrls(initialMix);
-
-    // After the very first mount, push the loaded location's images + places into the
-    // parent tour form so "enter kochi => ONLY kochi images everywhere in the form".
-    if (isFirstLoad.current) {
-      isFirstLoad.current = false;
-    } else {
-      if (onSelectCoverImage && cover) onSelectCoverImage(cover);
-      if (onSelectMixImages && initialMix.length) onSelectMixImages(initialMix);
-      if (onSelectMainPlaces) {
-        const names = found.slice(0, 5).map(p => p.placeName);
-        if (names.length) onSelectMainPlaces(names.join(', '));
-      }
-      setStatusMsg(`✅ Showing only ${matchedLocationKey ? 'verified' : ''} tourist places & images for "${loc.trim()}" (${found.length} spots). Images synced into the tour form.`);
-      setTimeout(() => setStatusMsg(''), 4000);
+    // Initial cover if not set
+    const firstCover = combined.find(p => p.isDefaultCover)?.url || combined[0]?.url || '';
+    if (!coverImageUrl && firstCover && onSelectCoverImage) {
+      onSelectCoverImage(firstCover);
     }
+
+    // Set initial multi-location mix
+    const initialMix = [];
+    locs.forEach(loc => {
+      const placeForLoc = combined.find(p => (p.location || '').toLowerCase() === loc.toLowerCase());
+      if (placeForLoc?.url && !initialMix.includes(placeForLoc.url)) {
+        initialMix.push(placeForLoc.url);
+      }
+    });
+    combined.forEach(p => {
+      if (initialMix.length < 4 && p.url && !initialMix.includes(p.url)) {
+        initialMix.push(p.url);
+      }
+    });
+
+    if ((!selectedMixUrls || !selectedMixUrls.length) && initialMix.length) {
+      setSelectedMixUrls(initialMix);
+      if (onSelectMixImages) onSelectMixImages(initialMix);
+    }
+
+    setStatusMsg(`✅ Loaded ${combined.length} tourist spots across ${locs.join(' & ')}! Select spots below for Sightseeing & Highlights.`);
+    setTimeout(() => setStatusMsg(''), 4500);
   };
 
   const handleSearchSubmit = (e) => {
     if (e) e.preventDefault();
     if (!searchInput.trim()) return;
-    setActiveLocation(searchInput.trim());
-    loadLocationPlaces(searchInput.trim());
-    setStatusMsg(`🔍 Loaded authentic spots & photography for "${searchInput.trim()}"`);
-    setTimeout(() => setStatusMsg(''), 3500);
+    const tokens = extractLocationTokens(searchInput.trim());
+    setActiveLocations(tokens);
+    loadMultiLocationPlaces(tokens);
   };
 
-  const handleSelectPreset = (chip) => {
-    setSearchInput(chip.query);
-    setActiveLocation(chip.query);
-    loadLocationPlaces(chip.query);
-    setStatusMsg(`✨ Displaying all tourist attractions in ${chip.query}`);
+  const handleSelectPreset = (queryStr) => {
+    setSearchInput(queryStr);
+    const tokens = extractLocationTokens(queryStr);
+    setActiveLocations(tokens);
+    loadMultiLocationPlaces(tokens);
+  };
+
+  const handleRemoveLocation = (locToRemove) => {
+    const updated = activeLocations.filter(l => l.toLowerCase() !== locToRemove.toLowerCase());
+    if (!updated.length) updated.push('Kollam');
+    setActiveLocations(updated);
+    setSearchInput(updated.join(', '));
+    loadMultiLocationPlaces(updated);
+  };
+
+  const handleSetCover = (url, name) => {
+    if (onSelectCoverImage) onSelectCoverImage(url);
+    setStatusMsg(`✓ Set cover image: "${name || 'Selected Place'}"`);
     setTimeout(() => setStatusMsg(''), 3000);
   };
 
   const handleToggleMixPlace = (url) => {
-    if (selectedMixUrls.includes(url)) {
-      const updated = selectedMixUrls.filter(u => u !== url);
-      setSelectedMixUrls(updated);
-      if (onSelectMixImages) onSelectMixImages(updated);
+    const current = mixedBackgroundUrls?.length ? mixedBackgroundUrls : selectedMixUrls;
+    let updated = [];
+    if (current.includes(url)) {
+      updated = current.filter(u => u !== url);
     } else {
-      const updated = [...selectedMixUrls, url];
-      setSelectedMixUrls(updated);
-      if (onSelectMixImages) onSelectMixImages(updated);
+      updated = [...current, url];
     }
+    setSelectedMixUrls(updated);
+    if (onSelectMixImages) onSelectMixImages(updated);
   };
 
-  const handleSetCover = (url, name) => {
-    setCoverImageUrl(url);
-    if (onSelectCoverImage) onSelectCoverImage(url);
-    setStatusMsg(`✓ Selected cover image: "${name || 'Selected Place'}"`);
-    setTimeout(() => setStatusMsg(''), 3000);
-  };
-
-  // After editing one place's image, keep cover/mix + parent form in sync
   const applyEditedImage = (item, newUrl) => {
     const updatedList = placesList.map(p => p.id === item.id ? { ...p, url: newUrl } : p);
     setPlacesList(updatedList);
 
-    const coverChanged = coverImageUrl === item.url;
-    const cover = coverChanged ? newUrl : coverImageUrl;
-    if (coverChanged) setCoverImageUrl(cover);
-
-    const mix = selectedMixUrls.map(u => u === item.url ? newUrl : u);
-    const mixChanged = mix.some((u, i) => u !== selectedMixUrls[i]) || mix.length !== selectedMixUrls.length;
-    if (mixChanged) {
-      setSelectedMixUrls(mix);
-      if (onSelectMixImages) onSelectMixImages(mix);
+    if (coverImageUrl === item.url && onSelectCoverImage) {
+      onSelectCoverImage(newUrl);
     }
-
-    if (coverChanged && onSelectCoverImage) onSelectCoverImage(cover);
+    const currentMix = mixedBackgroundUrls?.length ? mixedBackgroundUrls : selectedMixUrls;
+    if (currentMix.includes(item.url)) {
+      const updatedMix = currentMix.map(u => u === item.url ? newUrl : u);
+      setSelectedMixUrls(updatedMix);
+      if (onSelectMixImages) onSelectMixImages(updatedMix);
+    }
   };
 
-  // Build a photo prompt specific to THIS place by pulling its real description
-  // from the curated guide database (matched by shared name words).
   const buildPlaceAiPrompt = (item) => {
-    const attrs = generateAiDestinationGuide(activeLocation).attractions || [];
-    const sigWords = (s) => (s || '').toLowerCase().replace(/[^a-z ]/g, '').split(/\s+/).filter(w => w.length > 3);
-    const w1 = sigWords(item.placeName);
-    let best = null, bestScore = 0;
-    for (const a of attrs) {
-      const w2 = sigWords(a.name);
-      const common = w1.filter(w => w2.includes(w)).length;
-      if (common > bestScore) { bestScore = common; best = a; }
-    }
-    const detail = bestScore >= 2 && best?.shortDescription
-      ? best.shortDescription.split('.')[0]
-      : '';
-    return `${item.placeName} in ${activeLocation}. ${detail ? detail + '. ' : ''}ultra-realistic photorealistic travel photograph of this exact tourist place, golden hour lighting, vibrant colors, sharp detail, no text, no watermark`;
+    const loc = item.location || activeLocations[0] || 'Kerala';
+    return `${item.placeName} in ${loc}. Ultra-realistic photorealistic travel photograph of this exact tourist place, stunning natural lighting, sharp detail, high resolution, 4k`;
   };
 
-  // Per-place button: get the BEST image for this exact place.
-  // 1) Try the real photo (Google Images → Wikipedia) searched by the place name.
-  // 2) If no real photo exists, fall back to AI generation via Gemini.
-  // 3) If both fail, keep the current image and suggest manual upload.
   const handleGeneratePlaceAi = async (item) => {
     if (aiGeneratingId) return;
     setAiGeneratingId(item.id);
-
-    const searchQuery = `${item.placeName} ${activeLocation}`;
-
-    setStatusMsg(`🔍 Searching real photo for "${item.placeName}"...`);
+    const searchQuery = `${item.placeName} ${item.location || ''}`;
+    setStatusMsg(`🔍 Searching photo for "${item.placeName}"...`);
     try {
       const realUrl = await fetchRealImage(searchQuery);
       if (realUrl) {
         applyEditedImage(item, realUrl);
-        setStatusMsg(`📷 Real photo found for "${item.placeName}" ${GOOGLE_IMAGES_ACTIVE ? '(from Google Images)' : '(from Wikipedia)'}.`);
-        setTimeout(() => setStatusMsg(''), 4500);
+        setStatusMsg(`📷 Photo found for "${item.placeName}".`);
+        setTimeout(() => setStatusMsg(''), 3500);
         return;
       }
     } catch (err) {
       console.warn('Real photo search failed:', err);
     }
 
-    setStatusMsg(`🎨 No real photo found — generating AI image for "${item.placeName}"...`);
+    setStatusMsg(`🎨 Generating AI image for "${item.placeName}"...`);
     try {
-      const aiUrl = await geminiService.generatePosterImage(
-        buildPlaceAiPrompt(item),
-        'photorealistic'
-      );
+      const aiUrl = await geminiService.generatePosterImage(buildPlaceAiPrompt(item), 'photorealistic');
       applyEditedImage(item, aiUrl);
-      setStatusMsg(`🤖 AI image ready for "${item.placeName}". Not right? Tap 📤 Upload to add your own photo.`);
-      setTimeout(() => setStatusMsg(''), 5000);
+      setStatusMsg(`🤖 AI image generated for "${item.placeName}".`);
+      setTimeout(() => setStatusMsg(''), 4000);
     } catch (err) {
       console.warn('Place AI generation failed:', err);
-      setStatusMsg(`⚠️ No photo found for "${item.placeName}". You can upload a photo manually instead.`);
-      setTimeout(() => setStatusMsg(''), 4500);
+      setStatusMsg(`⚠️ Could not generate image for "${item.placeName}". You can upload a photo manually.`);
+      setTimeout(() => setStatusMsg(''), 4000);
     } finally {
       setAiGeneratingId(null);
     }
   };
 
-  // Per-place: upload a real photo manually (used when the AI image isn't correct)
   const handleUploadPlaceImage = (item, file) => {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
       applyEditedImage(item, reader.result);
-      setStatusMsg(`✅ Uploaded your own photo for "${item.placeName}".`);
-      setTimeout(() => setStatusMsg(''), 3500);
+      setStatusMsg(`✅ Uploaded photo for "${item.placeName}".`);
+      setTimeout(() => setStatusMsg(''), 3000);
     };
     reader.readAsDataURL(file);
   };
 
-  const handleApplyAllToForm = () => {
-    const selectedPlacesNames = placesList
-      .filter(p => selectedMixUrls.includes(p.url) || p.url === coverImageUrl)
-      .map(p => p.placeName);
-    
-    const mainPlacesStr = selectedPlacesNames.join(', ');
-    const highlightsText = selectedPlacesNames.map(p => `✓ Sightseeing Excursion to ${p}`).join('\n');
-
-    if (onSelectCoverImage && coverImageUrl) onSelectCoverImage(coverImageUrl);
-    if (onSelectMixImages) onSelectMixImages(selectedMixUrls);
-    if (onSelectMainPlaces) onSelectMainPlaces(mainPlacesStr);
-    if (onSelectIncludedHighlights) onSelectIncludedHighlights(highlightsText);
-
-    setStatusMsg(`✨ Applied ${selectedPlacesNames.length} AI places & Hero Mix to Form!`);
-    setTimeout(() => setStatusMsg(''), 4000);
-  };
-
-  // Generate real AI photographs for every place in the current location, keeping names.
   const handleGenerateAiImages = async () => {
-    if (isGeneratingImages) return;
-    if (!placesList.length) {
-      setStatusMsg('⚠️ Load a location first (e.g. Kochi) before generating AI images.');
-      setTimeout(() => setStatusMsg(''), 3500);
-      return;
-    }
-
+    if (isGeneratingImages || !placesList.length) return;
     setIsGeneratingImages(true);
-    setStatusMsg(`🎨 Preparing to generate ${placesList.length} AI images for "${activeLocation}"...`);
+    setStatusMsg(`🎨 Generating AI photos for all ${placesList.length} tourist spots across ${activeLocations.join(', ')}...`);
 
-    const targets = placesList;
     const generated = [];
-    for (let i = 0; i < targets.length; i++) {
-      const place = targets[i];
-      setStatusMsg(`🎨 Generating AI image ${i + 1}/${targets.length}: "${place.placeName}"...`);
+    for (let i = 0; i < placesList.length; i++) {
+      const place = placesList[i];
+      setStatusMsg(`🎨 Generating photo ${i + 1}/${placesList.length}: "${place.placeName}"...`);
       try {
-        const aiUrl = await geminiService.generatePosterImage(
-          buildPlaceAiPrompt(place),
-          'photorealistic'
-        );
+        const aiUrl = await geminiService.generatePosterImage(buildPlaceAiPrompt(place), 'photorealistic');
         generated.push({ ...place, url: aiUrl });
       } catch (err) {
         console.warn(`AI generation failed for "${place.placeName}":`, err);
@@ -565,214 +546,43 @@ export default function AiPlaceImageSelector({
     }
 
     setPlacesList(generated);
-
-    const cover = generated.find(p => p.isDefaultCover)?.url || generated[0]?.url || '';
-    setCoverImageUrl(cover);
-
-    const initialMix = generated.slice(0, 4).map(p => p.url);
-    setSelectedMixUrls(initialMix);
-
-    if (onSelectCoverImage && cover) onSelectCoverImage(cover);
-    if (onSelectMixImages && initialMix.length) onSelectMixImages(initialMix);
-    if (onSelectMainPlaces) {
-      const names = generated.slice(0, 5).map(p => p.placeName);
-      if (names.length) onSelectMainPlaces(names.join(', '));
-    }
+    if (generated[0]?.url && onSelectCoverImage) onSelectCoverImage(generated[0].url);
+    const newMix = generated.slice(0, 4).map(p => p.url);
+    setSelectedMixUrls(newMix);
+    if (onSelectMixImages) onSelectMixImages(newMix);
 
     setIsGeneratingImages(false);
-    setStatusMsg(`✅ AI-generated ${generated.length} real photos for "${activeLocation}" tourist places (with names) & synced into the tour form!`);
-    setTimeout(() => setStatusMsg(''), 5000);
-  };
-
-  const handleAutoFillEntireTour = () => {
-    const locLower = activeLocation.toLowerCase().trim();
-    const guideData = generateAiDestinationGuide(activeLocation);
-    const selectedPlacesNames = placesList.map(p => p.placeName);
-    const mainPlacesStr = selectedPlacesNames.slice(0, 5).join(', ');
-    const highlightsText = guideData.attractions ? guideData.attractions.slice(0, 4).map(a => `✓ ${a.name} (${a.distance}): ${a.openingHours} | Fee: ${a.entryFee}`).join('\n') : '';
-    const itineraryText = guideData.oneDayItinerary ? guideData.oneDayItinerary.map(slot => `• ${slot.time} - ${slot.title} (${slot.place}): ${slot.desc}`).join('\n') : '';
-    const fullIncludedText = `${highlightsText}\n\n1-DAY SIGHTSEEING TIMETABLE:\n${itineraryText}`;
-
-    // Tailored title and metadata based strictly on the selected location
-    let packageTitle = `${activeLocation} Scenic Highlights & Heritage Trail`;
-    let packageSubtitle = `Thrissur Direct Departure Special • ${placesList.length}+ Sightseeing Spots`;
-    let destinationId = 'ooty-nilgiri-hills';
-    let packagePrice = 14999;
-    let packageOriginalPrice = 17999;
-    let duration = '3 Days / 2 Nights';
-
-    if (locLower.includes('kochi') || locLower.includes('cochin') || locLower.includes('ernakulam')) {
-      packageTitle = 'Queen of Arabian Sea: Kochi Heritage Harbor & Chinese Nets Yatra';
-      packageSubtitle = 'Thrissur Direct Departure Special • Fort Kochi, Dutch Palace & Marine Drive Sunset Cruise';
-      destinationId = 'kochi-heritage-harbor';
-      packagePrice = 8999;
-      packageOriginalPrice = 10999;
-      duration = '2 Days / 1 Night';
-    } else if (locLower.includes('kollam') || locLower.includes('quilon')) {
-      packageTitle = 'Ashtamudi Backwaters & Jatayu Rock: Kollam Heritage Cruise Yatra';
-      packageSubtitle = 'Thrissur Direct Departure Special • Ashtamudi Houseboat, Thangassery Light House & Munroe Island';
-      destinationId = 'kollam-ashtamudi-lake';
-      packagePrice = 13999;
-      packageOriginalPrice = 16999;
-      duration = '2 Days / 1 Night';
-    } else if (locLower.includes('ooty') || locLower.includes('nilgiri')) {
-      packageTitle = 'Queen of Nilgiris: Ooty Heritage Toy Train & Tea Highlands Yatra';
-      packageSubtitle = 'Thrissur Departure Special • Reserved UNESCO Steam Train & Ooty Lake Boating';
-      destinationId = 'ooty-nilgiri-hills';
-      packagePrice = 14999;
-      packageOriginalPrice = 17999;
-      duration = '3 Days / 2 Nights';
-    } else if (locLower.includes('munnar')) {
-      packageTitle = 'Emerald Munnar: Kolukkumalai Sunrise & Rajamalai Tahr Safari';
-      packageSubtitle = 'Thrissur Direct Pickup Escorted Hill Station • World’s Highest Tea Estate at 7,900 ft';
-      destinationId = 'munnar-tea-plantations';
-      packagePrice = 16999;
-      packageOriginalPrice = 19999;
-      duration = '3 Days / 2 Nights';
-    } else if (locLower.includes('kodaikanal') || locLower.includes('kodai')) {
-      packageTitle = 'Princess of Hill Stations: Kodaikanal Star Lake & Pine Forest Yatra';
-      packageSubtitle = 'Thrissur Departure Special • Pedal Boating, Coaker’s 180° Valley Walk & Guna Caves';
-      destinationId = 'kodaikanal-princess-hills';
-      packagePrice = 15999;
-      packageOriginalPrice = 18999;
-      duration = '3 Days / 2 Nights';
-    } else if (locLower.includes('wayanad')) {
-      packageTitle = 'Wayanad Misty Rainforests & Heart Lake Expedition';
-      packageSubtitle = 'Thrissur Direct Escorted Tour • Chembra Peak & Banasura Sagar Lake Speedboating';
-      destinationId = 'wayanad-misty-hills';
-      packagePrice = 16999;
-      packageOriginalPrice = 19999;
-      duration = '3 Days / 2 Nights';
-    } else if (locLower.includes('athirappilly')) {
-      packageTitle = 'Niagara of India: Athirappilly & Vazhachal Falls Day Trail';
-      packageSubtitle = 'Thrissur Direct Pickup Eco-Excursion & Rainforest Safari';
-      destinationId = 'athirappilly-waterfalls';
-      packagePrice = 4999;
-      packageOriginalPrice = 6999;
-      duration = '1 Day / Full Day Tour';
-    } else if (locLower.includes('silent valley')) {
-      packageTitle = 'Silent Valley Rainforest & Wilderness Expedition';
-      packageSubtitle = 'Thrissur Direct Pickup Ecotourism & Rainforest Trail';
-      destinationId = 'silent-valley-national-park';
-      packagePrice = 18999;
-      packageOriginalPrice = 22999;
-      duration = '3 Days / 2 Nights';
-    } else if (locLower.includes('kashi') || locLower.includes('varanasi')) {
-      packageTitle = 'Sacred North Yatra: Kashi Vishwanath, Ayodhya Ram Mandir & Prayagraj';
-      packageSubtitle = 'Thrissur Departure VIP Pilgrimage • Ganga Aarti & Triveni Sangam Holy Dip';
-      destinationId = 'kashi-varanasi';
-      packagePrice = 24999;
-      packageOriginalPrice = 29999;
-      duration = '7 Days / 6 Nights';
-    } else if (locLower.includes('ayodhya')) {
-      packageTitle = 'Shri Ram Janmabhoomi & Sacred Ayodhya Pilgrimage';
-      packageSubtitle = 'Thrissur Direct Flight Escorted Tour • VIP Darshan & Saryu Aarti';
-      destinationId = 'ayodhya-ram-mandir';
-      packagePrice = 28999;
-      packageOriginalPrice = 32999;
-      duration = '6 Days / 5 Nights';
-    } else if (locLower.includes('kashmir')) {
-      packageTitle = 'Paradise on Earth: Kashmir Valley, Gulmarg Snow & Dal Lake Shikara';
-      packageSubtitle = 'Thrissur Direct Flight Escorted Tour • Deluxe Houseboat & Apharwat Peak Gondola';
-      destinationId = 'kashmir-punjab-golden-trail';
-      packagePrice = 32999;
-      packageOriginalPrice = 38999;
-      duration = '6 Days / 5 Nights';
-    } else if (locLower.includes('parambikulam')) {
-      packageTitle = 'Parambikulam Tiger Reserve Rainforest Safari';
-      packageSubtitle = 'Thrissur Direct AC Coach • Bamboo Rafting & Kannimara Giant Teak';
-      destinationId = 'parambikulam-tiger-reserve';
-      packagePrice = 13999;
-      packageOriginalPrice = 16999;
-      duration = '3 Days / 2 Nights';
-    } else if (locLower.includes('puri') || locLower.includes('jagannath') || locLower.includes('konark')) {
-      packageTitle = 'Sacred Odisha Golden Triangle: Puri Jagannath & Konark Sun Temple';
-      packageSubtitle = 'Thrissur Departure Special • 56 Bhog Mahaprasad & Golden Beach';
-      destinationId = 'puri-jagannath';
-      packagePrice = 26999;
-      packageOriginalPrice = 31999;
-      duration = '5 Days / 4 Nights';
-    } else if (locLower.includes('tiruchendur') || locLower.includes('thenkasi')) {
-      packageTitle = 'Tiruchendur Seashore Murugan & Thenkasi Kasi Viswanathar Yatra';
-      packageSubtitle = 'Thrissur Departure Special • Coastal Temple Darshan & Courtallam Falls';
-      destinationId = 'tiruchendur-murugan';
-      packagePrice = 15999;
-      packageOriginalPrice = 18999;
-      duration = '3 Days / 2 Nights';
-    } else if (locLower.includes('gundlupet')) {
-      packageTitle = 'Gundlupet Sunflower Valley & Bandipur Tiger Safari';
-      packageSubtitle = 'Thrissur Direct Pickup Escorted Tour • Golden Flower Blooming Meadows';
-      destinationId = 'gundlupet-sunflowers';
-      packagePrice = 11999;
-      packageOriginalPrice = 14999;
-      duration = '2 Days / 1 Night';
-    } else if (locLower.includes('horanadu')) {
-      packageTitle = 'Annapoorneshwari Horanadu & Western Ghats Pilgrimage';
-      packageSubtitle = 'Thrissur Direct AC Bus Transport • Sacred Mahaprasadam & Kalasa';
-      destinationId = 'annapoorneshwari-horanadu';
-      packagePrice = 14999;
-      packageOriginalPrice = 17999;
-      duration = '3 Days / 2 Nights';
-    }
-
-    // Ensure ONLY images matching this location are used
-    const strictlyLocationMix = selectedMixUrls.length 
-      ? selectedMixUrls 
-      : placesList.slice(0, 4).map(p => p.url);
-
-    const autoPackageData = {
-      title: packageTitle,
-      subtitle: packageSubtitle,
-      duration: duration,
-      price: packagePrice,
-      originalPrice: packageOriginalPrice,
-      badge: '✨ AI Curated Special',
-      image: coverImageUrl || placesList[0]?.url || guideData.heroImage,
-      bgMixImages: strictlyLocationMix,
-      bgMixStyle: blendStyle,
-      mainPlaces: mainPlacesStr,
-      included: fullIncludedText,
-      destinationId: destinationId
-    };
-
-    if (onAutoFillPackage) {
-      onAutoFillPackage(autoPackageData);
-    } else {
-      if (onSelectCoverImage) onSelectCoverImage(autoPackageData.image);
-      if (onSelectMixImages) onSelectMixImages(autoPackageData.bgMixImages);
-      if (onSelectMainPlaces) onSelectMainPlaces(autoPackageData.mainPlaces);
-      if (onSelectIncludedHighlights) onSelectIncludedHighlights(autoPackageData.included);
-    }
-
-    setStatusMsg(`⚡ Auto-filled complete tour package for "${activeLocation}" with strictly related images!`);
+    setStatusMsg(`✅ AI-generated photos for ${generated.length} tourist places!`);
     setTimeout(() => setStatusMsg(''), 4500);
   };
 
-  // Categories list
-  const categories = ['All', ...new Set(placesList.map(p => p.category).filter(Boolean))];
-  const filteredPlaces = activeCategory === 'All' 
-    ? placesList 
-    : placesList.filter(p => p.category === activeCategory);
+  // Filter places by Location Tab and Category
+  const availableLocationTabs = ['All', ...activeLocations];
+  const placesFilteredByLocation = activeLocationTab === 'All'
+    ? placesList
+    : placesList.filter(p => (p.location || '').toLowerCase() === activeLocationTab.toLowerCase());
+
+  const categories = ['All', ...new Set(placesFilteredByLocation.map(p => p.category).filter(Boolean))];
+  const filteredPlaces = activeCategory === 'All'
+    ? placesFilteredByLocation
+    : placesFilteredByLocation.filter(p => p.category === activeCategory);
+
+  const activeMix = mixedBackgroundUrls?.length ? mixedBackgroundUrls : selectedMixUrls;
 
   return (
     <div style={{ background: 'linear-gradient(135deg, rgba(6, 12, 23, 0.95), rgba(12, 24, 48, 0.95))', border: '1px solid var(--border-gold)', borderRadius: '16px', padding: '1.4rem', marginBottom: '1.4rem', boxShadow: '0 12px 30px rgba(0,0,0,0.5)' }}>
       
-      {/* Studio Header */}
+      {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.8rem' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Sparkles size={18} color="var(--gold-primary)" />
             <h4 style={{ fontSize: '1.05rem', fontWeight: 800, fontFamily: 'var(--font-heading)', color: 'var(--gold-light)', margin: 0 }}>
-              AI Location Image &amp; Tourist Places Explorer
+              Multi-Location Tourist Places &amp; Image Studio
             </h4>
           </div>
           <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-            Enter ANY location name (e.g. <strong style={{ color: '#fef08a' }}>Ooty</strong>, <strong style={{ color: '#fef08a' }}>Munnar</strong>, <strong style={{ color: '#fef08a' }}>Kodaikanal</strong>) to instantly load all authentic tourist spots &amp; real photography.{' '}
-            {GOOGLE_IMAGES_ACTIVE ? (
-              <span style={{ color: '#34d399', fontWeight: 700 }}>📷 Photos from Google Images</span>
-            ) : (
-              <span style={{ color: '#93c5fd', fontWeight: 700 }}>📷 Real photos from Wikipedia/Wikimedia</span>
-            )}
+            Enter up to 4 locations (e.g. <strong style={{ color: '#fef08a' }}>Kollam and Munnar</strong>, or <strong style={{ color: '#fef08a' }}>Kollam, Munnar, Kochi, Ooty</strong>). Select spots directly into Sightseeing &amp; Highlights!
           </p>
         </div>
 
@@ -783,31 +593,15 @@ export default function AiPlaceImageSelector({
             className="btn-gold"
             onClick={handleGenerateAiImages}
             disabled={isGeneratingImages}
-            style={{ padding: '0.5rem 1rem', fontSize: '0.8rem', gap: '0.4rem', fontWeight: 800, background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)', opacity: isGeneratingImages ? 0.7 : 1, cursor: isGeneratingImages ? 'wait' : 'pointer' }}
+            style={{ padding: '0.5rem 0.9rem', fontSize: '0.78rem', gap: '0.35rem', fontWeight: 800, background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)', opacity: isGeneratingImages ? 0.7 : 1 }}
           >
-            {isGeneratingImages ? <RefreshCw size={14} className="spin" /> : <ImageIcon size={14} />}
-            {isGeneratingImages ? 'Generating AI Photos...' : '✨ AI Generate Place Photos (with Names)'}
-          </button>
-          <button
-            type="button"
-            className="btn-gold"
-            onClick={handleAutoFillEntireTour}
-            style={{ padding: '0.5rem 1rem', fontSize: '0.8rem', gap: '0.4rem', fontWeight: 800, background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}
-          >
-            <Zap size={14} /> ⚡ Auto-Fill Complete Tour Package
-          </button>
-          <button
-            type="button"
-            className="btn-glass"
-            onClick={handleApplyAllToForm}
-            style={{ padding: '0.5rem 0.9rem', fontSize: '0.8rem', gap: '0.35rem', color: 'var(--gold-light)' }}
-          >
-            <Wand2 size={14} /> Apply Images to Form
+            {isGeneratingImages ? <RefreshCw size={13} className="spin" /> : <ImageIcon size={13} />}
+            {isGeneratingImages ? 'Generating Photos...' : '✨ AI Generate Photos'}
           </button>
         </div>
       </div>
 
-      {/* DYNAMIC SEARCH BAR (Uses div and type="button" to prevent outer form submission/modal close) */}
+      {/* Multi-Location Search Bar */}
       <div style={{ display: 'flex', gap: '0.6rem', marginBottom: '0.8rem', flexWrap: 'wrap' }}>
         <div style={{ position: 'relative', flex: 1, minWidth: '240px' }}>
           <Search size={16} color="var(--gold-primary)" style={{ position: 'absolute', left: '0.9rem', top: '50%', transform: 'translateY(-50%)' }} />
@@ -818,11 +612,10 @@ export default function AiPlaceImageSelector({
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 e.preventDefault();
-                e.stopPropagation();
                 handleSearchSubmit(e);
               }
             }}
-            placeholder="Type ANY location: e.g. Ooty, Munnar, Kodaikanal, Wayanad, Kashmir, Goa, Manali, Paris..."
+            placeholder="Type multiple locations: e.g. Kollam and Munnar, or Kollam, Munnar, Kochi, Ooty..."
             style={{
               width: '100%',
               background: '#040812',
@@ -838,47 +631,99 @@ export default function AiPlaceImageSelector({
         </div>
         <button
           type="button"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            handleSearchSubmit(e);
-          }}
+          onClick={handleSearchSubmit}
           className="btn-gold"
-          style={{ padding: '0.65rem 1.3rem', fontSize: '0.85rem', gap: '0.4rem', fontWeight: 800 }}
+          style={{ padding: '0.65rem 1.2rem', fontSize: '0.82rem', gap: '0.4rem', fontWeight: 800 }}
         >
-          {isLoading ? <RefreshCw size={15} className="spin" /> : <Sparkles size={15} />}
-          Get All Images in {searchInput || 'Location'}
+          {isLoading ? <RefreshCw size={15} className="spin" /> : <Compass size={15} />}
+          Load Places &amp; Photos
         </button>
       </div>
 
-      {/* POPULAR DESTINATION PRESET CHIPS */}
-      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '1.1rem', alignItems: 'center' }}>
-        <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
-          Quick Locations:
+      {/* Active Locations Badges */}
+      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.9rem', alignItems: 'center' }}>
+        <span style={{ fontSize: '0.74rem', color: 'var(--gold-light)', fontWeight: 800 }}>Active Locations:</span>
+        {activeLocations.map((loc, lIdx) => (
+          <span
+            key={lIdx}
+            style={{
+              background: 'rgba(212,175,55,0.18)',
+              border: '1px solid var(--gold-primary)',
+              color: '#fef08a',
+              padding: '0.25rem 0.65rem',
+              borderRadius: '20px',
+              fontSize: '0.78rem',
+              fontWeight: 800,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem'
+            }}
+          >
+            📍 {loc}
+            {activeLocations.length > 1 && (
+              <button
+                type="button"
+                onClick={() => handleRemoveLocation(loc)}
+                style={{ background: 'none', border: 'none', color: '#f87171', fontSize: '0.8rem', cursor: 'pointer', padding: 0, lineHeight: 1 }}
+              >
+                ×
+              </button>
+            )}
+          </span>
+        ))}
+      </div>
+
+      {/* Multi-Location Combo Presets Chips */}
+      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.6rem', alignItems: 'center' }}>
+        <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
+          Popular Combos:
         </span>
-        {POPULAR_DESTINATIONS_CHIPS.map(chip => {
-          const isActive = activeLocation.toLowerCase() === chip.query.toLowerCase();
-          return (
-            <button
-              key={chip.query}
-              type="button"
-              onClick={() => handleSelectPreset(chip)}
-              style={{
-                background: isActive ? 'var(--gold-primary)' : 'rgba(255,255,255,0.06)',
-                color: isActive ? '#000' : 'var(--gold-light)',
-                border: isActive ? '1px solid var(--gold-primary)' : '1px solid rgba(245,158,11,0.25)',
-                borderRadius: '20px',
-                padding: '0.3rem 0.75rem',
-                fontSize: '0.74rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
-              }}
-            >
-              {chip.label}
-            </button>
-          );
-        })}
+        {MULTI_LOCATION_COMBO_PRESETS.map(chip => (
+          <button
+            key={chip.query}
+            type="button"
+            onClick={() => handleSelectPreset(chip.query)}
+            style={{
+              background: 'rgba(139,92,246,0.12)',
+              color: '#c4b5fd',
+              border: '1px solid rgba(139,92,246,0.35)',
+              borderRadius: '16px',
+              padding: '0.22rem 0.65rem',
+              fontSize: '0.72rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            {chip.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Single Location Chips */}
+      <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginBottom: '1rem', alignItems: 'center' }}>
+        <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
+          Single Destinations:
+        </span>
+        {SINGLE_LOCATION_PRESETS.slice(0, 10).map(chip => (
+          <button
+            key={chip.query}
+            type="button"
+            onClick={() => handleSelectPreset(chip.query)}
+            style={{
+              background: 'rgba(255,255,255,0.04)',
+              color: 'var(--text-muted)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '14px',
+              padding: '0.2rem 0.55rem',
+              fontSize: '0.7rem',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
+          >
+            {chip.label}
+          </button>
+        ))}
       </div>
 
       {statusMsg && (
@@ -887,53 +732,90 @@ export default function AiPlaceImageSelector({
         </div>
       )}
 
-      {/* LIVE HERO MIXED BACKGROUND PREVIEW */}
-      <div style={{ background: '#02060e', border: '1px solid rgba(245,158,11,0.35)', borderRadius: '14px', padding: '0.9rem', marginBottom: '1.2rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-          <span style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--gold-light)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <Layers size={15} color="var(--gold-primary)" /> Live Hero Mixed Background ({selectedMixUrls.length} Tourist Places Blended)
-          </span>
+      {/* Batch Select Toolbar into Sightseeing & Highlights */}
+      <div style={{
+        background: 'rgba(255,255,255,0.03)',
+        border: '1px solid rgba(245,158,11,0.3)',
+        borderRadius: '12px',
+        padding: '0.75rem 1rem',
+        marginBottom: '1rem',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: '0.8rem'
+      }}>
+        <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          <button
+            type="button"
+            className="btn-gold"
+            onClick={() => onBatchAddSightseeing && onBatchAddSightseeing(filteredPlaces)}
+            style={{
+              padding: '0.42rem 0.85rem',
+              fontSize: '0.76rem',
+              gap: '0.35rem',
+              background: 'linear-gradient(135deg, #10b981, #059669)',
+              color: '#000',
+              fontWeight: 800
+            }}
+          >
+            <Plus size={13} /> + Add All {filteredPlaces.length} Spots to Sightseeing
+          </button>
 
-          {/* Blend Style Selector */}
-          <div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Blend Mode:</span>
-            {['collage-blend', 'split-grid', 'fade-slide'].map(st => (
-              <button
-                key={st}
-                type="button"
-                onClick={() => setBlendStyle(st)}
-                style={{
-                  background: blendStyle === st ? 'var(--gold-primary)' : 'rgba(255,255,255,0.06)',
-                  color: blendStyle === st ? '#000' : 'var(--text-muted)',
-                  border: 'none', borderRadius: '12px', padding: '0.2rem 0.65rem',
-                  fontSize: '0.68rem', fontWeight: 700, cursor: 'pointer'
-                }}
-              >
-                {st}
-              </button>
-            ))}
-          </div>
+          <button
+            type="button"
+            className="btn-gold"
+            onClick={() => onBatchAddHighlights && onBatchAddHighlights(filteredPlaces)}
+            style={{
+              padding: '0.42rem 0.85rem',
+              fontSize: '0.76rem',
+              gap: '0.35rem',
+              background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+              color: '#000',
+              fontWeight: 800
+            }}
+          >
+            <Sparkles size={13} /> + Add All {filteredPlaces.length} Spots to Highlights
+          </button>
         </div>
 
-        {/* Mixed Background Hero Preview Box */}
-        <div style={{ position: 'relative', height: '150px', borderRadius: '10px', overflow: 'hidden', border: '1px solid var(--border-gold)' }}>
-          <MixedBackground images={selectedMixUrls} style={blendStyle} />
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(6,12,23,0.85) 0%, transparent 65%)', pointerEvents: 'none' }} />
-          <div style={{ position: 'absolute', bottom: '0.7rem', left: '0.9rem', zIndex: 10 }}>
-            <span style={{ background: 'rgba(245,158,11,0.9)', color: '#000', fontSize: '0.65rem', fontWeight: 800, padding: '0.15rem 0.5rem', borderRadius: '10px' }}>
-              Hero Banner Composite
-            </span>
-            <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#fff', marginTop: '0.2rem' }}>
-              {activeLocation} Multi-Attraction Mixed Visual Panorama
-            </div>
-          </div>
+        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+          <span>Sightseeing: <strong style={{ color: '#10b981' }}>{(sightseeingList || []).length} added</strong></span>
+          <span>•</span>
+          <span>Highlights: <strong style={{ color: '#f59e0b' }}>{(highlightsList || []).length} added</strong></span>
         </div>
       </div>
 
-      {/* CATEGORY FILTER TABS */}
+      {/* Location Tabs Filter */}
+      {availableLocationTabs.length > 2 && (
+        <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.8rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          <span style={{ fontSize: '0.74rem', color: 'var(--gold-light)', fontWeight: 800 }}>Filter by Location:</span>
+          {availableLocationTabs.map(tab => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveLocationTab(tab)}
+              style={{
+                background: activeLocationTab === tab ? 'var(--gold-primary)' : 'rgba(255,255,255,0.06)',
+                color: activeLocationTab === tab ? '#000' : 'var(--text-muted)',
+                border: activeLocationTab === tab ? '1px solid var(--gold-primary)' : '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '16px',
+                padding: '0.22rem 0.7rem',
+                fontSize: '0.74rem',
+                fontWeight: 800,
+                cursor: 'pointer'
+              }}
+            >
+              {tab === 'All' ? `All Locations (${placesList.length})` : `📍 ${tab} (${placesList.filter(p => (p.location || '').toLowerCase() === tab.toLowerCase()).length})`}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Category Tabs Filter */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.8rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-        <div style={{ fontSize: '0.84rem', fontWeight: 800, color: 'var(--gold-light)' }}>
-          All Images &amp; Tourist Spots in <span style={{ color: '#fef08a' }}>{activeLocation}</span> ({filteredPlaces.length} Attractions Found):
+        <div style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--gold-light)' }}>
+          Tourist Attractions ({filteredPlaces.length} Spots Available):
         </div>
 
         <div style={{ display: 'flex', gap: '0.3rem', flexWrap: 'wrap' }}>
@@ -943,7 +825,7 @@ export default function AiPlaceImageSelector({
               type="button"
               onClick={() => setActiveCategory(cat)}
               style={{
-                background: activeCategory === cat ? 'rgba(245,158,11,0.2)' : 'rgba(255,255,255,0.04)',
+                background: activeCategory === cat ? 'rgba(245,158,11,0.25)' : 'rgba(255,255,255,0.04)',
                 color: activeCategory === cat ? '#fef08a' : 'var(--text-muted)',
                 border: activeCategory === cat ? '1px solid var(--gold-primary)' : '1px solid rgba(255,255,255,0.08)',
                 borderRadius: '8px', padding: '0.2rem 0.55rem', fontSize: '0.7rem', fontWeight: 700, cursor: 'pointer'
@@ -955,26 +837,44 @@ export default function AiPlaceImageSelector({
         </div>
       </div>
 
-      {/* IMAGES GRID */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '0.75rem', maxHeight: '340px', overflowY: 'auto', paddingRight: '0.3rem' }}>
+      {/* PLACES GRID */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(195px, 1fr))', gap: '0.8rem', maxHeight: '420px', overflowY: 'auto', paddingRight: '0.3rem' }}>
         {filteredPlaces.map((item, idx) => {
           const isCover = coverImageUrl === item.url;
-          const inMix = selectedMixUrls.includes(item.url);
+          const inMix = activeMix.includes(item.url);
+          const isSightseeingAdded = (sightseeingList || []).some(s => (s.name || '').toLowerCase() === item.placeName.toLowerCase());
+          const isHighlightAdded = (highlightsList || []).some(h => (h.title || '').toLowerCase() === item.placeName.toLowerCase());
+
           return (
             <div
               key={item.id || idx}
               style={{
-                background: isCover ? 'rgba(245,158,11,0.12)' : 'rgba(255,255,255,0.03)',
-                border: isCover ? '2px solid var(--gold-primary)' : inMix ? '1.5px solid rgba(139,92,246,0.7)' : '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '12px', overflow: 'hidden', padding: '0.55rem',
-                transition: 'all 0.2s ease', position: 'relative', display: 'flex', flexDirection: 'column'
+                background: isCover 
+                  ? 'rgba(245,158,11,0.12)' 
+                  : isSightseeingAdded || isHighlightAdded 
+                    ? 'rgba(16,185,129,0.08)' 
+                    : 'rgba(255,255,255,0.03)',
+                border: isCover 
+                  ? '2px solid var(--gold-primary)' 
+                  : isSightseeingAdded 
+                    ? '1.5px solid rgba(16,185,129,0.6)' 
+                    : inMix 
+                      ? '1.5px solid rgba(139,92,246,0.7)' 
+                      : '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                padding: '0.55rem',
+                transition: 'all 0.2s ease',
+                position: 'relative',
+                display: 'flex',
+                flexDirection: 'column'
               }}
             >
-              {/* Place Thumbnail Image */}
-              <div style={{ position: 'relative', height: '105px', borderRadius: '8px', overflow: 'hidden', marginBottom: '0.45rem' }}>
-                <img 
-                  src={item.url} 
-                  alt={item.placeName} 
+              {/* Thumbnail + Badges */}
+              <div style={{ position: 'relative', height: '110px', borderRadius: '8px', overflow: 'hidden', marginBottom: '0.45rem' }}>
+                <img
+                  src={item.url}
+                  alt={item.placeName}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   onError={(e) => {
                     e.target.onerror = null;
@@ -985,36 +885,94 @@ export default function AiPlaceImageSelector({
                   #{idx + 1}
                 </span>
 
-                {isCover && (
-                  <span style={{ position: 'absolute', top: '0.3rem', right: '0.3rem', background: '#f59e0b', color: '#000', fontSize: '0.6rem', fontWeight: 900, padding: '0.15rem 0.45rem', borderRadius: '8px', boxShadow: '0 2px 6px rgba(0,0,0,0.4)' }}>
-                    COVER
+                {/* Location Badge */}
+                {item.location && (
+                  <span style={{ position: 'absolute', bottom: '0.3rem', left: '0.3rem', background: 'rgba(9,20,38,0.88)', color: '#fef08a', fontSize: '0.62rem', fontWeight: 800, padding: '0.15rem 0.45rem', borderRadius: '8px', border: '1px solid rgba(245,158,11,0.4)' }}>
+                    📍 {item.location}
                   </span>
                 )}
-                {inMix && !isCover && (
-                  <span style={{ position: 'absolute', top: '0.3rem', right: '0.3rem', background: '#8b5cf6', color: '#fff', fontSize: '0.6rem', fontWeight: 800, padding: '0.15rem 0.45rem', borderRadius: '8px' }}>
-                    IN MIX
-                  </span>
-                )}
+
+                <div style={{ position: 'absolute', top: '0.3rem', right: '0.3rem', display: 'flex', flexDirection: 'column', gap: '0.2rem', alignItems: 'flex-end' }}>
+                  {isCover && (
+                    <span style={{ background: '#f59e0b', color: '#000', fontSize: '0.58rem', fontWeight: 900, padding: '0.1rem 0.4rem', borderRadius: '6px' }}>
+                      COVER
+                    </span>
+                  )}
+                  {inMix && !isCover && (
+                    <span style={{ background: '#8b5cf6', color: '#fff', fontSize: '0.58rem', fontWeight: 800, padding: '0.1rem 0.4rem', borderRadius: '6px' }}>
+                      MIX
+                    </span>
+                  )}
+                  {isSightseeingAdded && (
+                    <span style={{ background: '#10b981', color: '#000', fontSize: '0.58rem', fontWeight: 900, padding: '0.1rem 0.4rem', borderRadius: '6px' }}>
+                      ✓ SIGHTSEEING
+                    </span>
+                  )}
+                  {isHighlightAdded && (
+                    <span style={{ background: '#eab308', color: '#000', fontSize: '0.58rem', fontWeight: 900, padding: '0.1rem 0.4rem', borderRadius: '6px' }}>
+                      ✓ HIGHLIGHT
+                    </span>
+                  )}
+                </div>
               </div>
 
               {/* Place Name & Category */}
-              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#fff', lineHeight: '1.2', marginBottom: '0.2rem' }}>
+              <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#fff', lineHeight: '1.25', marginBottom: '0.2rem' }}>
                 {item.placeName}
               </div>
-              <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', marginBottom: '0.6rem', marginTop: 'auto' }}>
-                {item.category}
+              <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', marginBottom: '0.55rem', marginTop: 'auto' }}>
+                {item.category} {item.location ? `• ${item.location}` : ''}
               </div>
 
-              {/* Action Buttons */}
+              {/* Action Row 1: Add to Sightseeing & Add to Highlights */}
+              <div style={{ display: 'flex', gap: '0.35rem', marginBottom: '0.35rem' }}>
+                <button
+                  type="button"
+                  onClick={() => onToggleSightseeing && onToggleSightseeing(item)}
+                  style={{
+                    flex: 1, padding: '0.32rem 0.35rem', borderRadius: '7px',
+                    border: isSightseeingAdded ? '1px solid #10b981' : '1px solid rgba(16,185,129,0.35)',
+                    background: isSightseeingAdded ? 'rgba(16,185,129,0.28)' : 'rgba(16,185,129,0.1)',
+                    color: isSightseeingAdded ? '#6ee7b7' : '#a7f3d0',
+                    fontSize: '0.67rem', fontWeight: 800, cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.2rem',
+                    transition: 'all 0.15s ease'
+                  }}
+                  title="Add this place into package Sightseeing with photo & description"
+                >
+                  {isSightseeingAdded ? <Check size={11} /> : <Plus size={11} />}
+                  {isSightseeingAdded ? 'Sightseeing ✓' : '+ Sightseeing'}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => onToggleHighlight && onToggleHighlight(item)}
+                  style={{
+                    flex: 1, padding: '0.32rem 0.35rem', borderRadius: '7px',
+                    border: isHighlightAdded ? '1px solid #f59e0b' : '1px solid rgba(245,158,11,0.35)',
+                    background: isHighlightAdded ? 'rgba(245,158,11,0.28)' : 'rgba(245,158,11,0.1)',
+                    color: isHighlightAdded ? '#fef08a' : 'var(--gold-light)',
+                    fontSize: '0.67rem', fontWeight: 800, cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.2rem',
+                    transition: 'all 0.15s ease'
+                  }}
+                  title="Add this place into package Highlights cards"
+                >
+                  {isHighlightAdded ? <Check size={11} /> : <Sparkles size={11} />}
+                  {isHighlightAdded ? 'Highlight ✓' : '+ Highlight'}
+                </button>
+              </div>
+
+              {/* Action Row 2: Set Cover & Mix */}
               <div style={{ display: 'flex', gap: '0.35rem' }}>
                 <button
                   type="button"
                   onClick={() => handleSetCover(item.url, item.placeName)}
                   style={{
-                    flex: 1, padding: '0.3rem 0.35rem', borderRadius: '7px', border: 'none',
+                    flex: 1, padding: '0.28rem 0.35rem', borderRadius: '7px', border: 'none',
                     background: isCover ? '#f59e0b' : 'rgba(255,255,255,0.08)',
                     color: isCover ? '#000' : 'var(--gold-light)',
-                    fontSize: '0.65rem', fontWeight: 800, cursor: 'pointer', transition: 'all 0.15s ease'
+                    fontSize: '0.64rem', fontWeight: 800, cursor: 'pointer'
                   }}
                 >
                   {isCover ? '✓ Cover' : 'Set Cover'}
@@ -1024,39 +982,43 @@ export default function AiPlaceImageSelector({
                   type="button"
                   onClick={() => handleToggleMixPlace(item.url)}
                   style={{
-                    flex: 1, padding: '0.3rem 0.35rem', borderRadius: '7px', border: 'none',
+                    flex: 1, padding: '0.28rem 0.35rem', borderRadius: '7px', border: 'none',
                     background: inMix ? '#8b5cf6' : 'rgba(255,255,255,0.08)',
-                    color: '#fff', fontSize: '0.65rem', fontWeight: 800, cursor: 'pointer', transition: 'all 0.15s ease'
+                    color: '#fff', fontSize: '0.64rem', fontWeight: 800, cursor: 'pointer'
                   }}
                 >
-                  {inMix ? '✓ Hero Mix' : '+ Mix'}
+                  {inMix ? '✓ Mix' : '+ Mix'}
                 </button>
               </div>
 
-              {/* AI Generate / Manual Upload row — generate with name, or upload your own photo */}
-              <div style={{ display: 'flex', gap: '0.35rem', marginTop: '0.4rem' }}>
+              {/* Action Row 3: AI Image / Upload */}
+              <div style={{ display: 'flex', gap: '0.35rem', marginTop: '0.35rem' }}>
                 <button
                   type="button"
                   onClick={() => handleGeneratePlaceAi(item)}
                   disabled={Boolean(aiGeneratingId)}
                   style={{
-                    flex: 1, padding: '0.3rem 0.35rem', borderRadius: '7px', border: '1px solid rgba(139,92,246,0.5)',
+                    flex: 1, padding: '0.28rem 0.35rem', borderRadius: '7px',
+                    border: '1px solid rgba(139,92,246,0.5)',
                     background: aiGeneratingId === item.id ? 'rgba(139,92,246,0.35)' : 'rgba(139,92,246,0.15)',
-                    color: '#c4b5fd', fontSize: '0.65rem', fontWeight: 800, cursor: aiGeneratingId ? 'wait' : 'pointer', transition: 'all 0.15s ease'
+                    color: '#c4b5fd', fontSize: '0.64rem', fontWeight: 800,
+                    cursor: aiGeneratingId ? 'wait' : 'pointer'
                   }}
                 >
-                  {aiGeneratingId === item.id ? <RefreshCw size={11} className="spin" /> : <Sparkles size={11} />}
+                  {aiGeneratingId === item.id ? <RefreshCw size={10} className="spin" /> : <Sparkles size={10} />}
                   {' '}{aiGeneratingId === item.id ? 'Generating...' : '🤖 AI Image'}
                 </button>
 
                 <label
                   style={{
-                    flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.25rem',
-                    padding: '0.3rem 0.35rem', borderRadius: '7px', border: '1px solid rgba(52,211,153,0.5)',
-                    background: 'rgba(16,185,129,0.15)', color: '#6ee7b7', fontSize: '0.65rem', fontWeight: 800, cursor: 'pointer', transition: 'all 0.15s ease'
+                    flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.2rem',
+                    padding: '0.28rem 0.35rem', borderRadius: '7px',
+                    border: '1px solid rgba(52,211,153,0.5)',
+                    background: 'rgba(16,185,129,0.15)', color: '#6ee7b7', fontSize: '0.64rem', fontWeight: 800,
+                    cursor: 'pointer'
                   }}
                 >
-                  <Upload size={11} /> 📤 Upload
+                  <Upload size={10} /> 📤 Upload
                   <input
                     type="file"
                     accept="image/*"

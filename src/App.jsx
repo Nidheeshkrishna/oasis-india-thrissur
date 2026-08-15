@@ -45,6 +45,18 @@ export default function App() {
     setSelectedBookingData(data);
   };
 
+  // Auto-open admin if URL contains #admin or ?admin=true
+  useEffect(() => {
+    const checkAdminUrl = () => {
+      if (window.location.hash === '#admin' || window.location.search.includes('admin=true')) {
+        setIsAdminOpen(true);
+      }
+    };
+    checkAdminUrl();
+    window.addEventListener('hashchange', checkAdminUrl);
+    return () => window.removeEventListener('hashchange', checkAdminUrl);
+  }, []);
+
   // Always land at the top of the page when switching tabs
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -264,7 +276,7 @@ export default function App() {
       {activeTab === 'destinations' && (
         <div style={{ paddingTop: '110px' }}>
           <PopularDestinations 
-            destinations={DESTINATIONS}
+            destinations={destinations}
             onSelectDestination={(dest) => setSelectedDestination(dest)}
             onBookTour={(dest) => handleOpenBooking(dest)}
           />
@@ -278,7 +290,7 @@ export default function App() {
             onBookTour={(pkg) => handleOpenBooking(pkg)}
             onViewDetails={(pkg) => setSelectedPackage(pkg)}
             onSelectDestination={(pkg) => {
-              const matchingDest = DESTINATIONS.find(d => d.id === pkg.destinationId) || DESTINATIONS[0];
+              const matchingDest = destinations.find(d => d.id === pkg.destinationId) || destinations[0];
               setSelectedDestination(matchingDest);
             }}
           />
@@ -376,8 +388,8 @@ export default function App() {
         }}
       />
 
-      {/* Floating WhatsApp & Back-to-Top */}
-      <FloatingActions />
+      {/* Floating WhatsApp, Call, Back-to-Top & Admin Badge */}
+      <FloatingActions onOpenAdmin={() => setIsAdminOpen(true)} />
 
     </div>
   );

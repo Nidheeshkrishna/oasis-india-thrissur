@@ -4,12 +4,12 @@ import {
   BookOpen, ShieldCheck, Check, Trash2, Plus, Search, 
   Lock, Sparkles, Download, Save, AlertCircle, Loader2, Wand2, 
   PenTool, Eye, RefreshCw, Upload, ImagePlus, Type, Copy, Pencil, Send,
-  MonitorPlay, ArrowUp, ArrowDown, Phone, Mail, MapPin, Clock
+  MonitorPlay, ArrowUp, ArrowDown, Phone, Mail, MapPin, Clock, Globe
 } from 'lucide-react';
 import { firestoreService } from '../services/firebase';
 import { geminiService, posterStorage } from '../services/gemini';
 import { catalogService, getLastWriteOk } from '../services/catalog';
-import { AdminFormModal, TourForm, GalleryForm, BlogForm, HeroSlideForm } from './admin/CatalogForms';
+import { AdminFormModal, TourForm, GalleryForm, BlogForm, HeroSlideForm, DestinationForm } from './admin/CatalogForms';
 import ImageUploader from './admin/ImageUploader';
 import MixedBackground from './MixedBackground';
 
@@ -55,10 +55,14 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
   const [galleryFormOpen, setGalleryFormOpen] = useState(false);
   const [blogFormOpen, setBlogFormOpen] = useState(false);
   const [slideFormOpen, setSlideFormOpen] = useState(false);
+  const [destinationFormOpen, setDestinationFormOpen] = useState(false);
+  const [destinationDirty, setDestinationDirty] = useState(false);
   const [editingTour, setEditingTour] = useState(null);
   const [editingGallery, setEditingGallery] = useState(null);
   const [editingBlog, setEditingBlog] = useState(null);
   const [editingSlide, setEditingSlide] = useState(null);
+  const [editingDestination, setEditingDestination] = useState(null);
+  const [destSearchTerm, setDestSearchTerm] = useState('');
   const [catalogMsg, setCatalogMsg] = useState('');
 
   // Poster Management States
@@ -180,6 +184,28 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
 
   const handleMoveSlide = (id, direction) => {
     setHeroSlides(catalogService.moveSlide(id, direction));
+  };
+
+  const handleSaveDestination = (form) => {
+    const updated = editingDestination
+      ? catalogService.updateDestination(editingDestination.id, form)
+      : catalogService.addDestination(form);
+    setDestinations(updated);
+    setDestinationFormOpen(false);
+    setEditingDestination(null);
+    setDestinationDirty(false);
+    if (getLastWriteOk()) {
+      showCatalogMsg(editingDestination ? 'Destination updated on the website!' : 'New destination published to the website!');
+    } else {
+      showCatalogMsg('⚠️ Could not save — image files may be too large for browser storage. Use smaller images.');
+    }
+  };
+
+  const handleDeleteDestination = (id) => {
+    if (confirm('Delete this destination? It will be removed from the public website.')) {
+      setDestinations(catalogService.deleteDestination(id));
+      showCatalogMsg('Destination deleted.');
+    }
   };
 
   // PIN Auth Handler
@@ -634,7 +660,8 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
         }}>
           {[
             { id: 'posters', label: 'AI Poster Studio', icon: ImagePlus, count: posters.length },
-            { id: 'bgmixer', label: 'Background Mixer', icon: Sparkles, count: destinations.length },
+            { id: 'destinations', label: 'Destinations', icon: Globe, count: destinations.length },
+            { id: 'bgmixer', label: 'BG Mixer', icon: Sparkles, count: destinations.length },
             { id: 'contact', label: 'Contact Info', icon: Phone },
             { id: 'bookings', label: 'Bookings', icon: Calendar, count: bookings.length },
             { id: 'customers', label: 'Inquiries', icon: Users, count: inquiries.length },
@@ -814,8 +841,170 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
             </div>
           )}
 
+          {/* ==================== TAB: DESTINATIONS MANAGER ==================== */}
+          {activeTab === 'destinations' && (
+            <div>
+              {/* Header */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
+                <div>
+                  <h3 style={{ fontSize: '1.3rem', fontWeight: 700, color: 'var(--gold-light)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Globe size={22} color="var(--gold-primary)" /> Destinations Manager
+                  </h3>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '0.3rem' }}>
+                    Add, edit or remove destinations — changes publish live to the website.
+                  </p>
+                </div>
+                <button
+                  className="btn-gold"
+                  onClick={() => { setEditingDestination(null); setDestinationFormOpen(true); }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.6rem 1.2rem', fontSize: '0.85rem' }}
+                >
+                  <Plus size={16} /> Add New Destination
+                </button>
+              </div>
+
+              {catalogMsg && (
+                <div style={{ padding: '0.8rem 1.2rem', borderRadius: '10px', background: 'rgba(16,185,129,0.15)', border: '1px solid #10b981', color: '#10b981', marginBottom: '1.5rem', fontSize: '0.88rem', fontWeight: 700 }}>
+                  <Check size={16} style={{ verticalAlign: '-3px', marginRight: '6px' }} />{catalogMsg}
+                </div>
+              )}
+
+              {/* Search bar */}
+              <div style={{ position: 'relative', marginBottom: '1.2rem', maxWidth: '400px' }}>
+                <Search size={16} style={{ position: 'absolute', left: '0.9rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
+                <input
+                  placeholder="Search destinations…"
+                  value={destSearchTerm}
+                  onChange={e => setDestSearchTerm(e.target.value)}
+                  style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-gold)', borderRadius: '10px', color: '#fff', padding: '0.65rem 1rem 0.65rem 2.5rem', fontSize: '0.88rem', outline: 'none' }}
+                />
+              </div>
+
+              {/* Destination Cards Grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem' }}>
+                {destinations
+                  .filter(d => !destSearchTerm || d.name?.toLowerCase().includes(destSearchTerm.toLowerCase()) || d.category?.toLowerCase().includes(destSearchTerm.toLowerCase()) || d.location?.toLowerCase().includes(destSearchTerm.toLowerCase()))
+                  .map(dest => (
+                  <div key={dest.id} className="glass-card" style={{ padding: 0, overflow: 'hidden', position: 'relative' }}>
+                    {/* Image strip */}
+                    <div style={{ position: 'relative', height: '120px', overflow: 'hidden', background: 'rgba(255,255,255,0.05)' }}>
+                      {dest.heroImage ? (
+                        <img src={dest.heroImage} alt={dest.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.style.display = 'none'; }} />
+                      ) : (
+                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.2)', fontSize: '2rem' }}>🌏</div>
+                      )}
+                      {/* Category & Rating badges */}
+                      <div style={{ position: 'absolute', top: '0.5rem', left: '0.5rem', display: 'flex', gap: '0.3rem', flexWrap: 'wrap' }}>
+                        <span className="badge-gold" style={{ fontSize: '0.68rem', padding: '0.1rem 0.5rem' }}>{dest.category}</span>
+                      </div>
+                      <div style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'rgba(0,0,0,0.7)', borderRadius: '8px', padding: '0.2rem 0.5rem', fontSize: '0.72rem', color: '#fef08a', fontWeight: 700 }}>
+                        ⭐ {dest.rating || '4.9'}
+                      </div>
+                    </div>
+
+                    {/* Info */}
+                    <div style={{ padding: '0.9rem 1rem' }}>
+                      <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#fff', marginBottom: '0.2rem', lineHeight: 1.3 }}>{dest.name}</div>
+                      <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', marginBottom: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                        <MapPin size={11} /> {dest.location}
+                      </div>
+                      {/* Highlights preview */}
+                      {Array.isArray(dest.highlights) && dest.highlights.length > 0 && (
+                        <div style={{ marginBottom: '0.6rem' }}>
+                          {dest.highlights.slice(0, 2).map((h, i) => (
+                            <div key={i} style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'flex-start', gap: '0.3rem', marginBottom: '0.15rem' }}>
+                              <span style={{ color: 'var(--gold-primary)', flexShrink: 0, marginTop: '1px' }}>✦</span>
+                              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{h}</span>
+                            </div>
+                          ))}
+                          {dest.highlights.length > 2 && (
+                            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>+{dest.highlights.length - 2} more highlights</div>
+                          )}
+                        </div>
+                      )}
+                      {/* Sightseeing count */}
+                      {Array.isArray(dest.nearbyAttractions) && dest.nearbyAttractions.length > 0 && (
+                        <div style={{ fontSize: '0.72rem', color: '#10b981', marginBottom: '0.6rem' }}>
+                          🗺️ {dest.nearbyAttractions.length} sightseeing spot{dest.nearbyAttractions.length !== 1 ? 's' : ''}
+                        </div>
+                      )}
+                      {/* Pricing & duration */}
+                      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap', marginBottom: '0.8rem' }}>
+                        {dest.startingPrice > 0 && (
+                          <span style={{ fontSize: '0.78rem', color: 'var(--gold-light)', fontWeight: 700 }}>₹{dest.startingPrice?.toLocaleString()}</span>
+                        )}
+                        {dest.duration && (
+                          <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.06)', padding: '0.1rem 0.45rem', borderRadius: '8px' }}>{dest.duration}</span>
+                        )}
+                        {dest.bestTime && (
+                          <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)' }}>Best: {dest.bestTime}</span>
+                        )}
+                      </div>
+                      {/* Actions */}
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button
+                          onClick={() => { setEditingDestination(dest); setDestinationFormOpen(true); }}
+                          style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', padding: '0.5rem', background: 'rgba(212,175,55,0.12)', border: '1px solid var(--border-gold)', color: 'var(--gold-light)', borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, transition: 'all 0.2s' }}
+                          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,175,55,0.22)'; }}
+                          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,175,55,0.12)'; }}
+                        >
+                          <Pencil size={13} /> Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteDestination(dest.id)}
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', padding: '0.5rem 0.8rem', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#f87171', borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, transition: 'all 0.2s' }}
+                          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.2)'; }}
+                          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.1)'; }}
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {destinations.length === 0 && (
+                <div style={{ textAlign: 'center', padding: '4rem 2rem', color: 'rgba(255,255,255,0.3)' }}>
+                  <Globe size={48} style={{ opacity: 0.2, marginBottom: '1rem' }} />
+                  <div style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.5rem' }}>No destinations yet</div>
+                  <div style={{ fontSize: '0.85rem' }}>Click "Add New Destination" to get started.</div>
+                </div>
+              )}
+
+              {/* Destination Form Modal */}
+              {destinationFormOpen && (
+                <AdminFormModal
+                  title={editingDestination ? `Edit: ${editingDestination.name}` : 'Add New Destination'}
+                  icon={Globe}
+                  onClose={() => {
+                    if (destinationDirty && !window.confirm('You have unsaved changes. Discard them and close?')) return;
+                    setDestinationFormOpen(false);
+                    setEditingDestination(null);
+                    setDestinationDirty(false);
+                  }}
+                  dirty={destinationDirty}
+                  fullscreen={false}
+                >
+                  <DestinationForm
+                    initial={editingDestination}
+                    onSave={handleSaveDestination}
+                    onCancel={() => {
+                      if (destinationDirty && !window.confirm('You have unsaved changes. Discard them and close?')) return;
+                      setDestinationFormOpen(false);
+                      setEditingDestination(null);
+                      setDestinationDirty(false);
+                    }}
+                    onDirtyChange={setDestinationDirty}
+                  />
+                </AdminFormModal>
+              )}
+            </div>
+          )}
+
           {/* ==================== TAB: BACKGROUND MIXER STUDIO ==================== */}
           {activeTab === 'bgmixer' && (() => {
+
             const currentDest = destinations.find(d => d.id === selectedDestForMix) || destinations[0] || {};
             
             const handleUpdateMix = (patch) => {

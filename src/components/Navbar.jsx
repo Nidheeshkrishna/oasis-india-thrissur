@@ -280,19 +280,27 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAdmin, onBookCli
           {/* Admin Button */}
           <button
             onClick={onOpenAdmin}
-            title="Open Admin Portal"
-            style={glassPill}
+            title="Open Admin Console (PIN: 2026)"
+            style={{
+              ...glassPill,
+              background: 'linear-gradient(135deg, rgba(245,158,11,0.22), rgba(139,92,246,0.22))',
+              border: '1.5px solid var(--gold-primary)',
+              color: '#fef08a',
+              boxShadow: '0 0 14px rgba(245,158,11,0.3)',
+            }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(139,92,246,0.22)';
-              e.currentTarget.style.borderColor = 'rgba(139,92,246,0.55)';
+              e.currentTarget.style.background = 'linear-gradient(135deg, rgba(245,158,11,0.35), rgba(139,92,246,0.35))';
+              e.currentTarget.style.borderColor = '#fbbf24';
+              e.currentTarget.style.boxShadow = '0 0 20px rgba(245,158,11,0.55)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.08)';
-              e.currentTarget.style.borderColor = 'rgba(245,158,11,0.4)';
+              e.currentTarget.style.background = 'linear-gradient(135deg, rgba(245,158,11,0.22), rgba(139,92,246,0.22))';
+              e.currentTarget.style.borderColor = 'var(--gold-primary)';
+              e.currentTarget.style.boxShadow = '0 0 14px rgba(245,158,11,0.3)';
             }}
           >
-            <UserCheck size={14} />
-            <span>{t('adminPortal')}</span>
+            <ShieldCheck size={15} color="#fbbf24" />
+            <span style={{ fontWeight: 800 }}>Admin Console</span>
           </button>
 
           {/* WhatsApp Button */}
@@ -348,14 +356,14 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAdmin, onBookCli
       {mobileOpen && (
         <div style={{
           position: 'relative', zIndex: 1,
-          background: 'rgba(6,10,22,0.92)',
+          background: 'rgba(6,10,22,0.95)',
           backdropFilter: 'blur(24px)',
           WebkitBackdropFilter: 'blur(24px)',
           borderTop: '1px solid rgba(245,158,11,0.2)',
           padding: '1rem',
           display: 'flex',
           flexDirection: 'column',
-          gap: '0.4rem',
+          gap: '0.5rem',
         }}>
           {navLinks.map((link) => {
             const isActive = activeTab === link.id;
@@ -380,6 +388,32 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAdmin, onBookCli
               </button>
             );
           })}
+          {/* Admin Button in Mobile Menu */}
+          <button
+            onClick={() => { onOpenAdmin(); setMobileOpen(false); }}
+            style={{
+              background: 'linear-gradient(135deg, rgba(245,158,11,0.22), rgba(139,92,246,0.22))',
+              border: '1.5px solid var(--gold-primary)',
+              borderRadius: '10px',
+              color: '#fef08a',
+              fontSize: '0.95rem',
+              fontWeight: 800,
+              padding: '0.75rem 1.2rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginTop: '0.4rem',
+            }}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <ShieldCheck size={16} color="#fbbf24" />
+              <span>Admin Console</span>
+            </span>
+            <span style={{ fontSize: '0.75rem', background: 'rgba(245,158,11,0.25)', padding: '0.15rem 0.5rem', borderRadius: '4px', color: '#fbbf24' }}>
+              PIN: 2026
+            </span>
+          </button>
         </div>
       )}
     </header>
