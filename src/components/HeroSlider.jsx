@@ -458,6 +458,11 @@ export default function HeroSlider({ destinations, onSelectDestination, onBookTo
 
   const slide = allSlides[currentIndex] || allSlides[0];
 
+  // Booking window: admin hero slides can define a booking start date.
+  // Until that date arrives, booking options (Book Now / WhatsApp) stay hidden.
+  const bookingStartDate = slide.bookingStartDate;
+  const bookingsOpen = !bookingStartDate || new Date(`${bookingStartDate}T00:00:00`) >= todayMidnight;
+
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev - 1 + allSlides.length) % allSlides.length);
   };
@@ -738,7 +743,7 @@ export default function HeroSlider({ destinations, onSelectDestination, onBookTo
 
           {/* Action Buttons: upcoming tours → Book Now + Explore; completed tours → Explore only */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', flexWrap: 'wrap' }}>
-            {slide.isUpcomingTour && (
+            {slide.isUpcomingTour && bookingsOpen && (
               <button
                 className="btn-gold btn-cinematic"
                 data-ripple
@@ -750,17 +755,19 @@ export default function HeroSlider({ destinations, onSelectDestination, onBookTo
               </button>
             )}
 
-            <a
-              className="btn-glass btn-cinematic"
-              data-ripple
-              href={`https://wa.me/${getWhatsAppNumber()}?text=${encodeURIComponent(buildQuickEnquiryMessage(slide))}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ textDecoration: 'none', border: '1px solid rgba(37,211,102,0.55)', color: '#4ade80' }}
-            >
-              <MessageCircle size={18} />
-              <span>WhatsApp</span>
-            </a>
+            {bookingsOpen && (
+              <a
+                className="btn-glass btn-cinematic"
+                data-ripple
+                href={`https://wa.me/${getWhatsAppNumber()}?text=${encodeURIComponent(buildQuickEnquiryMessage(slide))}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: 'none', border: '1px solid rgba(37,211,102,0.55)', color: '#4ade80' }}
+              >
+                <MessageCircle size={18} />
+                <span>WhatsApp</span>
+              </a>
+            )}
 
             {!slide.isAIPoster && (
               <button

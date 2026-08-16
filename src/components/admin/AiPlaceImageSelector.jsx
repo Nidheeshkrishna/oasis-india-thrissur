@@ -4,7 +4,6 @@ import {
   RefreshCw, Wand2, ShieldCheck, Search, Filter, ArrowRight, Zap, CheckCircle2,
   Plus, Trash2, Tag, Compass
 } from 'lucide-react';
-import { generateAiDestinationGuide } from '../../services/aiDestinationGenerator';
 import { geminiService } from '../../services/gemini';
 import MixedBackground from '../MixedBackground';
 
@@ -15,51 +14,51 @@ const LOCATION_PLACE_IMAGES = {
     { id: 'ooty-2', placeName: 'Government Botanical Garden & Glasshouse', category: 'Gardens & Tea', url: './ooty-botanical-garden-real.jpg', location: 'Ooty' },
     { id: 'ooty-3', placeName: 'Ooty Lake & Star Boating Jetty', category: 'Lakes & Water', url: './ooty-lake-boating-real.jpg', location: 'Ooty' },
     { id: 'ooty-4', placeName: 'Nilgiri Tea Plantations & Doddabetta Slopes', category: 'Gardens & Tea', url: './ooty-tea-gardens-real.jpg', location: 'Ooty' },
-    { id: 'ooty-5', placeName: 'Doddabetta Peak (8,652 ft) & Telescope House', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80', location: 'Ooty' },
+    { id: 'ooty-5', placeName: 'Doddabetta Peak (8,652 ft) & Telescope House', category: 'Peaks & Views', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Doddabetta_viewOf_Ooty_1.jpg/960px-Doddabetta_viewOf_Ooty_1.jpg', location: 'Ooty' },
     { id: 'ooty-6', placeName: 'Pykara Lake & Cascading Roaring Waterfalls', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1200&q=80', location: 'Ooty' },
-    { id: 'ooty-7', placeName: 'Avalanche Lake & Trout Pine Sanctuary', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80', location: 'Ooty' },
+    { id: 'ooty-7', placeName: 'Avalanche Lake & Trout Pine Sanctuary', category: 'Lakes & Water', url: 'https://upload.wikimedia.org/wikipedia/commons/f/f0/Avalanche_lake_ooty_1.jpg', location: 'Ooty' },
     { id: 'ooty-8', placeName: 'Government Rose Garden (20,000+ Rose Varieties)', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=1200&q=80', location: 'Ooty' },
-    { id: 'ooty-9', placeName: 'Wenlock Downs 9th Mile Shooting Meadow', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80', location: 'Ooty' },
-    { id: 'ooty-10', placeName: 'Emerald Lake & Silent Valley Tea Ridge', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1518457607834-6e8d80c183c5?auto=format&fit=crop&w=1200&q=80', location: 'Ooty' },
+    { id: 'ooty-9', placeName: 'Wenlock Downs 9th Mile Shooting Meadow', category: 'Peaks & Views', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Nilgiri_Biosphere_Reserve-Wenlock_Downs-WUS06099.jpg/960px-Nilgiri_Biosphere_Reserve-Wenlock_Downs-WUS06099.jpg', location: 'Ooty' },
+    { id: 'ooty-10', placeName: 'Emerald Lake & Silent Valley Tea Ridge', category: 'Lakes & Water', url: 'https://upload.wikimedia.org/wikipedia/commons/8/8e/Emerald_Lake_Nilgiris.jpg', location: 'Ooty' },
     { id: 'ooty-11', placeName: 'Highfield Tea Factory & Chocolate Museum', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=1200&q=80', location: 'Ooty' },
     { id: 'ooty-12', placeName: 'Mudumalai Tiger Reserve & Elephant Camp', category: 'Wildlife & Safari', url: 'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1200&q=80', location: 'Ooty' }
   ],
   'kodaikanal': [
     { id: 'kodai-1', placeName: 'Kodaikanal Star Lake & Pedal Boating', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=1200&q=80', isDefaultCover: true, location: 'Kodaikanal' },
     { id: 'kodai-2', placeName: 'Bryant Botanical Park & Floral Lawns', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=1200&q=80', location: 'Kodaikanal' },
-    { id: 'kodai-3', placeName: 'Coaker\'s Walk Promenade & Valley View', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80', location: 'Kodaikanal' },
-    { id: 'kodai-4', placeName: 'Pillar Rocks Vertical Granite Cliffs', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80', location: 'Kodaikanal' },
-    { id: 'kodai-5', placeName: 'Guna Caves (Devil\'s Kitchen Roots)', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=1200&q=80', location: 'Kodaikanal' },
+    { id: 'kodai-3', placeName: 'Coaker\'s Walk Promenade & Valley View', category: 'Peaks & Views', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Kodaikanal_Coaker%27s_Walk.JPG/960px-Kodaikanal_Coaker%27s_Walk.JPG', location: 'Kodaikanal' },
+    { id: 'kodai-4', placeName: 'Pillar Rocks Vertical Granite Cliffs', category: 'Peaks & Views', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Pillar_Rocks%2C_Kodaikanal_Hills.jpg/960px-Pillar_Rocks%2C_Kodaikanal_Hills.jpg', location: 'Kodaikanal' },
+    { id: 'kodai-5', placeName: 'Guna Caves (Devil\'s Kitchen Roots)', category: 'Heritage & Culture', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Guna_Caves_kodaikanal.jpg/960px-Guna_Caves_kodaikanal.jpg', location: 'Kodaikanal' },
     { id: 'kodai-6', placeName: 'Dense Pine Tree Forest Canopy', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80', location: 'Kodaikanal' },
     { id: 'kodai-7', placeName: 'Green Valley View (Suicide Point)', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1200&q=80', location: 'Kodaikanal' },
     { id: 'kodai-8', placeName: 'Silver Cascade 180-ft Falls', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=1200&q=80', location: 'Kodaikanal' },
-    { id: 'kodai-9', placeName: 'Dolphin\'s Nose Cliff & Echo Rock', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80', location: 'Kodaikanal' },
-    { id: 'kodai-10', placeName: 'Mannavanur Eco Lake & Sheep Farm', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80', location: 'Kodaikanal' },
-    { id: 'kodai-11', placeName: 'Poombarai Terraced Village & Temple', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80', location: 'Kodaikanal' }
+    { id: 'kodai-9', placeName: 'Dolphin\'s Nose Cliff & Echo Rock', category: 'Peaks & Views', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Dolphin_Nose%2C_Kodaikanal.jpg/960px-Dolphin_Nose%2C_Kodaikanal.jpg', location: 'Kodaikanal' },
+    { id: 'kodai-10', placeName: 'Mannavanur Eco Lake & Sheep Farm', category: 'Lakes & Water', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Mannavanur_Lake_in_2024-11-09.jpg/960px-Mannavanur_Lake_in_2024-11-09.jpg', location: 'Kodaikanal' },
+    { id: 'kodai-11', placeName: 'Poombarai Terraced Village & Temple', category: 'Heritage & Culture', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Poombarai_Village%2C_Kodaikanal_%2814342648914%29.jpg/960px-Poombarai_Village%2C_Kodaikanal_%2814342648914%29.jpg', location: 'Kodaikanal' }
   ],
   'munnar': [
     { id: 'mun-1', placeName: 'Munnar Emerald Tea Plantations', category: 'Gardens & Tea', url: './munnar-tea-plantations-real.jpg', isDefaultCover: true, location: 'Munnar' },
     { id: 'mun-2', placeName: 'Eravikulam National Park (Rajamalai Tahr)', category: 'Wildlife & Safari', url: 'https://images.unsplash.com/photo-1534567153574-2b12153a87f0?auto=format&fit=crop&w=1200&q=80', location: 'Munnar' },
-    { id: 'mun-3', placeName: 'Mattupetty Dam & Speedboat Lake', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80', location: 'Munnar' },
+    { id: 'mun-3', placeName: 'Mattupetty Dam & Speedboat Lake', category: 'Lakes & Water', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Mattupetty_Lake_View.jpg/960px-Mattupetty_Lake_View.jpg', location: 'Munnar' },
     { id: 'mun-4', placeName: 'Kolukkumalai Sunrise (7,900 ft Cloud-bed)', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?auto=format&fit=crop&w=1200&q=80', location: 'Munnar' },
-    { id: 'mun-5', placeName: 'Anamudi Peak Summit Lookout', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80', location: 'Munnar' },
-    { id: 'mun-6', placeName: 'Kundala Arch Dam & Pedal Boating', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1200&q=80', location: 'Munnar' },
+    { id: 'mun-5', placeName: 'Anamudi Peak Summit Lookout', category: 'Peaks & Views', url: 'https://upload.wikimedia.org/wikipedia/commons/c/c1/AnaimudiPeak_DSC_4834.jpg', location: 'Munnar' },
+    { id: 'mun-6', placeName: 'Kundala Arch Dam & Pedal Boating', category: 'Lakes & Water', url: 'https://upload.wikimedia.org/wikipedia/commons/9/92/Munnar_Kundala_Dam_%284224019133%29.jpg', location: 'Munnar' },
     { id: 'mun-7', placeName: 'Attukad Waterfalls & Forest Cascades', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1200&q=80', location: 'Munnar' },
     { id: 'mun-8', placeName: 'Pothamedu Viewpoint & Cardamom Hills', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1518457607834-6e8d80c183c5?auto=format&fit=crop&w=1200&q=80', location: 'Munnar' }
   ],
   'kollam': [
-    { id: 'kol-1', placeName: 'Ashtamudi Lake & Backwater Houseboat Cruise', category: 'Lakes & Water', url: 'wiki:Ashtamudi Lake', isDefaultCover: true, location: 'Kollam' },
-    { id: 'kol-2', placeName: 'Jatayu Earth\'s Center (Chadayamangalam Rock)', category: 'Adventure & Culture', url: 'wiki:Jatayu Earth\'s Center', location: 'Kollam' },
-    { id: 'kol-3', placeName: 'Thangassery Light House & British Fort', category: 'Heritage & Culture', url: 'wiki:Thangassery Light House', location: 'Kollam' },
-    { id: 'kol-4', placeName: 'Kollam Beach & Mahatma Gandhi Park', category: 'Lakes & Water', url: 'wiki:Kollam Beach', location: 'Kollam' },
-    { id: 'kol-5', placeName: 'Munroe Island (Munroethuruth) Hidden Lagoon', category: 'Lakes & Water', url: 'wiki:Munroe Island', location: 'Kollam' },
-    { id: 'kol-6', placeName: 'Sasthamkotta Freshwater Lake', category: 'Lakes & Water', url: 'wiki:Sasthamkotta Lake', location: 'Kollam' },
-    { id: 'kol-7', placeName: 'Thenmala Dam & Ecotourism Boardwalk', category: 'Nature & Ecotourism', url: 'wiki:Thenmala Dam', location: 'Kollam' },
-    { id: 'kol-8', placeName: 'Thevally Palace & Houseboat Jetty', category: 'Heritage & Culture', url: 'wiki:Thevally Palace', location: 'Kollam' },
-    { id: 'kol-9', placeName: 'Paravur Lake & Puthenkavu Backwater Village', category: 'Lakes & Water', url: 'wiki:Paravur Lake', location: 'Kollam' },
-    { id: 'kol-10', placeName: 'Tangasseri Fort Ruins & Ancient Trade Coast', category: 'Heritage & Culture', url: 'wiki:Tangasseri Fort', location: 'Kollam' },
+    { id: 'kol-1', placeName: 'Ashtamudi Lake & Backwater Houseboat Cruise', category: 'Lakes & Water', url: 'https://upload.wikimedia.org/wikipedia/commons/f/f0/Ashtamudi_Kerala.jpg', isDefaultCover: true, location: 'Kollam' },
+    { id: 'kol-2', placeName: 'Jatayu Earth\'s Center (Chadayamangalam Rock)', category: 'Adventure & Culture', url: 'https://upload.wikimedia.org/wikipedia/commons/5/54/Jatayu_adventure_centre.jpg', location: 'Kollam' },
+    { id: 'kol-3', placeName: 'Thangassery Light House & British Fort', category: 'Heritage & Culture', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Thangassery_Lighthouse_Kollam_Kerala_Mar22_A7C_01634.jpg/960px-Thangassery_Lighthouse_Kollam_Kerala_Mar22_A7C_01634.jpg', location: 'Kollam' },
+    { id: 'kol-4', placeName: 'Kollam Beach & Mahatma Gandhi Park', category: 'Lakes & Water', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Kollam_Beach_April_2023.jpg/960px-Kollam_Beach_April_2023.jpg', location: 'Kollam' },
+    { id: 'kol-5', placeName: 'Munroe Island (Munroethuruth) Hidden Lagoon', category: 'Lakes & Water', url: 'https://upload.wikimedia.org/wikipedia/commons/e/ee/House_Boat_DSW.jpg', location: 'Kollam' },
+    { id: 'kol-6', placeName: 'Sasthamkotta Freshwater Lake', category: 'Lakes & Water', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Sasthamkotta_Lake_4.jpg/960px-Sasthamkotta_Lake_4.jpg', location: 'Kollam' },
+    { id: 'kol-7', placeName: 'Thenmala Dam & Ecotourism Boardwalk', category: 'Nature & Ecotourism', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Ottakkal_Lookout%2C_Thenmala_dam.jpg/960px-Ottakkal_Lookout%2C_Thenmala_dam.jpg', location: 'Kollam' },
+    { id: 'kol-8', placeName: 'Thevally Palace & Houseboat Jetty', category: 'Heritage & Culture', url: 'https://upload.wikimedia.org/wikipedia/commons/6/6d/Thevally_Palace.jpg', location: 'Kollam' },
+    { id: 'kol-9', placeName: 'Paravur Lake & Puthenkavu Backwater Village', category: 'Lakes & Water', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Paravur_Lake%2C_Kollam_-_An_evening_scene.jpg/960px-Paravur_Lake%2C_Kollam_-_An_evening_scene.jpg', location: 'Kollam' },
+    { id: 'kol-10', placeName: 'Tangasseri Fort Ruins & Ancient Trade Coast', category: 'Heritage & Culture', url: 'https://upload.wikimedia.org/wikipedia/commons/9/97/Thangassery_Fort.jpg', location: 'Kollam' },
     { id: 'kol-11', placeName: 'Amritapuri International Ashram', category: 'Spiritual & Wellness', url: 'wiki:Amritapuri', location: 'Kollam' },
-    { id: 'kol-12', placeName: 'Asramam Adventure Park & Maidan', category: 'Nature & Ecotourism', url: 'wiki:Asramam Maidan', location: 'Kollam' }
+    { id: 'kol-12', placeName: 'Asramam Adventure Park & Maidan', category: 'Nature & Ecotourism', url: 'https://upload.wikimedia.org/wikipedia/commons/0/00/Asramam_Link_Road_in_Asramam%2C_Kollam.jpg', location: 'Kollam' }
   ],
   'kochi': [
     { id: 'kc-1', placeName: 'Fort Kochi Chinese Fishing Nets (Cheena Vala)', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=80', isDefaultCover: true, location: 'Kochi' },
@@ -67,36 +66,36 @@ const LOCATION_PLACE_IMAGES = {
     { id: 'kc-3', placeName: 'Paradesi Jewish Synagogue & Jew Town Antiques', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1200&q=80', location: 'Kochi' },
     { id: 'kc-4', placeName: 'Marine Drive Waterfront & Rainbow Bridge Harbor', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=1200&q=80', location: 'Kochi' },
     { id: 'kc-5', placeName: 'St. Francis CSI Church (Vasco da Gama 1503)', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1200&q=80', location: 'Kochi' },
-    { id: 'kc-6', placeName: 'Santa Cruz Cathedral Basilica Fort Kochi', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1548625361-16eb16262438?auto=format&fit=crop&w=1200&q=80', location: 'Kochi' },
+    { id: 'kc-6', placeName: 'Santa Cruz Cathedral Basilica Fort Kochi', category: 'Heritage & Culture', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Santa_Cruz_Basilica_Kochi.jpg/960px-Santa_Cruz_Basilica_Kochi.jpg', location: 'Kochi' },
     { id: 'kc-7', placeName: 'Hill Palace Museum Tripunithura (Royal Seat)', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1200&q=80', location: 'Kochi' },
     { id: 'kc-8', placeName: 'Cherai Beach & Vypin Island Sunset Coast', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80', location: 'Kochi' }
   ],
   'wayanad': [
-    { id: 'way-1', placeName: 'Chembra Peak Heart-Shaped Lake', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1200&q=80', isDefaultCover: true, location: 'Wayanad' },
-    { id: 'way-2', placeName: 'Banasura Sagar Dam Speedboat Lake', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80', location: 'Wayanad' },
-    { id: 'way-3', placeName: 'Edakkal Prehistoric Caves Petroglyphs', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80', location: 'Wayanad' },
-    { id: 'way-4', placeName: 'Kuruva Island Bamboo Rafting', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1200&q=80', location: 'Wayanad' },
+    { id: 'way-1', placeName: 'Chembra Peak Heart-Shaped Lake', category: 'Lakes & Water', url: './wayanad_chembra_heart_lake_ai.png', isDefaultCover: true, location: 'Wayanad' },
+    { id: 'way-2', placeName: 'Banasura Sagar Dam Speedboat Lake', category: 'Lakes & Water', url: './wayanad_banasura_lake_ai.png', location: 'Wayanad' },
+    { id: 'way-3', placeName: 'Edakkal Prehistoric Caves Petroglyphs', category: 'Heritage & Culture', url: 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Edakkal_Caves.jpg', location: 'Wayanad' },
+    { id: 'way-4', placeName: 'Kuruva Island Bamboo Rafting', category: 'Lakes & Water', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Kuruva_Island%2C_Wayanad_%2849152125282%29.jpg/960px-Kuruva_Island%2C_Wayanad_%2849152125282%29.jpg', location: 'Wayanad' },
     { id: 'way-5', placeName: 'Lakkidi Ghat Viewpoint & Clouds', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80', location: 'Wayanad' },
     { id: 'way-6', placeName: 'Muthanga Wildlife Tiger Safari', category: 'Wildlife & Safari', url: 'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1200&q=80', location: 'Wayanad' }
   ],
   'silent valley': [
-    { id: 'sv-1', placeName: 'Misty Evergreen Rainforest Canopy', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80', isDefaultCover: true, location: 'Silent Valley' },
-    { id: 'sv-2', placeName: 'Kunthi River Crystal Stream & Bridge', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1200&q=80', location: 'Silent Valley' },
-    { id: 'sv-3', placeName: 'Lion-Tailed Macaque Wildlife Sanctuary', category: 'Wildlife & Safari', url: 'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1200&q=80', location: 'Silent Valley' },
-    { id: 'sv-4', placeName: 'Sairandhri Watchtower Lookout', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80', location: 'Silent Valley' }
+    { id: 'sv-1', placeName: 'Misty Evergreen Rainforest Canopy', category: 'Gardens & Tea', url: './silent_valley_rainforest_ai.png', isDefaultCover: true, location: 'Silent Valley' },
+    { id: 'sv-2', placeName: 'Kunthi River Crystal Stream & Bridge', category: 'Lakes & Water', url: './silent_valley_kunthi_river_ai.png', location: 'Silent Valley' },
+    { id: 'sv-3', placeName: 'Lion-Tailed Macaque Wildlife Sanctuary', category: 'Wildlife & Safari', url: './silent_valley_wildlife_ai.png', location: 'Silent Valley' },
+    { id: 'sv-4', placeName: 'Sairandhri Watchtower Lookout', category: 'Peaks & Views', url: './silent_valley_rainforest_ai.png', location: 'Silent Valley' }
   ],
   'athirappilly': [
-    { id: 'ath-1', placeName: 'Athirappilly Roaring Waterfall Drop', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=1200&q=80', isDefaultCover: true, location: 'Athirappilly' },
-    { id: 'ath-2', placeName: 'Rainbow Mist Spray & Jungle Rocks', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1200&q=80', location: 'Athirappilly' },
-    { id: 'ath-3', placeName: 'Chalakudy Riverfront Rainforest', category: 'Gardens & Tea', url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80', location: 'Athirappilly' },
-    { id: 'ath-4', placeName: 'Vazhachal Cascades & Forest Trail', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80', location: 'Athirappilly' }
+    { id: 'ath-1', placeName: 'Athirappilly Roaring Waterfall Drop', category: 'Lakes & Water', url: './athirappilly_waterfall_main_ai.png', isDefaultCover: true, location: 'Athirappilly' },
+    { id: 'ath-2', placeName: 'Rainbow Mist Spray & Jungle Rocks', category: 'Lakes & Water', url: './athirappilly_rainbow_spray_ai.png', location: 'Athirappilly' },
+    { id: 'ath-3', placeName: 'Chalakudy Riverfront Rainforest', category: 'Gardens & Tea', url: './athirappilly_twilight_view_ai.png', location: 'Athirappilly' },
+    { id: 'ath-4', placeName: 'Vazhachal Cascades & Forest Trail', category: 'Lakes & Water', url: 'https://upload.wikimedia.org/wikipedia/commons/8/81/The_View_of_the_Athirapally_Falls_during_the_onset_of_Monsoon.jpg', location: 'Athirappilly' }
   ],
   'kashi': [
     { id: 'kas-1', placeName: 'Kashi Vishwanath Jyotirlinga & Corridor', category: 'Heritage & Culture', url: './kashi-vishwanath-real.jpg', isDefaultCover: true, location: 'Kashi' },
     { id: 'kas-2', placeName: 'Dashashwamedh Ghat Evening Ganga Aarti', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1571536802807-30451e3955d8?auto=format&fit=crop&w=1200&q=80', location: 'Kashi' },
     { id: 'kas-3', placeName: 'Sarnath Deer Park & Dhamek Stupa', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1200&q=80', location: 'Kashi' },
     { id: 'kas-4', placeName: 'Manikarnika Sacred Ghat Sunrise', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1200&q=80', location: 'Kashi' },
-    { id: 'kas-5', placeName: 'Prayagraj Triveni Sangam Holy Confluence', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80', location: 'Prayagraj' }
+    { id: 'kas-5', placeName: 'Prayagraj Triveni Sangam Holy Confluence', category: 'Lakes & Water', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Boat_Pilgrims_Triveni_Sangam_Allahabad_Jan24_A7C_08513.jpg/960px-Boat_Pilgrims_Triveni_Sangam_Allahabad_Jan24_A7C_08513.jpg', location: 'Prayagraj' }
   ],
   'ayodhya': [
     { id: 'ayo-1', placeName: 'Shri Ram Janmabhoomi Mandir Complex', category: 'Heritage & Culture', url: './ayodhya-ram-mandir-real.jpg', isDefaultCover: true, location: 'Ayodhya' },
@@ -126,7 +125,7 @@ const LOCATION_PLACE_IMAGES = {
     { id: 'puri-3', placeName: 'Konark Sun Temple 24 Sundial Chariot Wheels', category: 'Heritage & Culture', url: './konark-sun-temple-real.jpg', location: 'Konark' },
     { id: 'puri-4', placeName: 'Lingaraj Temple 180-ft Stone Tower Bhubaneswar', category: 'Heritage & Culture', url: './lingaraj-temple-real.jpg', location: 'Bhubaneswar' },
     { id: 'puri-5', placeName: 'Puri Blue Flag Golden Beach & Sunset', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80', location: 'Puri' },
-    { id: 'puri-6', placeName: 'Chilika Lake Irrawaddy Dolphin Sanctuary', category: 'Wildlife & Safari', url: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1200&q=80', location: 'Chilika' }
+    { id: 'puri-6', placeName: 'Chilika Lake Irrawaddy Dolphin Sanctuary', category: 'Wildlife & Safari', url: 'https://upload.wikimedia.org/wikipedia/commons/9/94/Birds_eyeview_of_Chilika_Lake.jpg', location: 'Chilika' }
   ],
   'tiruchendur': [
     { id: 'tc-1', placeName: 'Tiruchendur Murugan Seashore Temple Tower', category: 'Heritage & Culture', url: './tiruchendur-murugan-real.jpg', isDefaultCover: true, location: 'Tiruchendur' },
@@ -137,12 +136,12 @@ const LOCATION_PLACE_IMAGES = {
   'gundlupet': [
     { id: 'gp-1', placeName: 'Gundlupet Golden Sunflower & Marigold Meadows', category: 'Gardens & Tea', url: './gundlupet-sunflowers-real.jpg', isDefaultCover: true, location: 'Gundlupet' },
     { id: 'gp-2', placeName: 'Bandipur Tiger Reserve Jungle Trail', category: 'Wildlife & Safari', url: './parambikulam-forest-real.jpg', location: 'Bandipur' },
-    { id: 'gp-3', placeName: 'Himavad Gopalaswamy Betta Misty Summit', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80', location: 'Gundlupet' }
+    { id: 'gp-3', placeName: 'Himavad Gopalaswamy Betta Misty Summit', category: 'Peaks & Views', url: 'https://upload.wikimedia.org/wikipedia/commons/e/ed/Gopalswamy_Betta.jpg', location: 'Gundlupet' }
   ],
   'horanadu': [
     { id: 'hn-1', placeName: 'Annapoorneshwari Temple Golden Shrine', category: 'Heritage & Culture', url: './horanadu-annapoorneshwari-real.jpg', isDefaultCover: true, location: 'Horanadu' },
     { id: 'hn-2', placeName: 'Chikmagalur Western Ghats Green Tea Slopes', category: 'Gardens & Tea', url: './munnar-tea-plantations-real.jpg', location: 'Chikmagalur' },
-    { id: 'hn-3', placeName: 'Kalasa Kalaseshwara Ancient Shiva Temple', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1200&q=80', location: 'Kalasa' }
+    { id: 'hn-3', placeName: 'Kalasa Kalaseshwara Ancient Shiva Temple', category: 'Heritage & Culture', url: 'https://upload.wikimedia.org/wikipedia/commons/3/31/Kalaseshwara_Temple%2C_Kalasa.jpg', location: 'Kalasa' }
   ]
 };
 
@@ -175,6 +174,25 @@ const SINGLE_LOCATION_PRESETS = [
 ];
 
 // Split input string into distinct location tokens (supports up to 4 locations)
+
+// Common short names / alternate spellings → canonical location keyword
+const LOCATION_TOKEN_ALIASES = {
+  'varanasi': 'Kashi',
+  'prayagraj': 'Kashi',
+  'cochin': 'Kochi',
+  'ernakulam': 'Kochi',
+  'kodai': 'Kodaikanal',
+  'quilon': 'Kollam',
+  'udhagamandalam': 'Ooty',
+  'ootacamund': 'Ooty',
+  'gulmarg': 'Kashmir',
+  'srinagar': 'Kashmir',
+  'pahalgam': 'Kashmir',
+  'sonamarg': 'Kashmir',
+  'jagannath': 'Puri',
+  'konark': 'Puri'
+};
+
 export const extractLocationTokens = (inputStr = '') => {
   if (!inputStr || typeof inputStr !== 'string') return ['Kollam', 'Munnar'];
   
@@ -214,10 +232,65 @@ export const extractLocationTokens = (inputStr = '') => {
     }
   });
 
-  return results.length ? results.slice(0, 4) : ['Kollam', 'Munnar'];
+  const normalized = results.map(r => LOCATION_TOKEN_ALIASES[r.toLowerCase()] || r);
+  const finalResults = [];
+  normalized.forEach(r => {
+    if (!finalResults.some(x => x.toLowerCase() === r.toLowerCase())) finalResults.push(r);
+  });
+
+  return finalResults.length ? finalResults.slice(0, 4) : ['Kollam', 'Munnar'];
 };
 
 const GENERIC_FALLBACK_IMG = 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80';
+
+// Subject-appropriate fallback when a place photo fails to load
+const CATEGORY_FALLBACKS = {
+  'Lakes & Water': 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+  'Peaks & Views': 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80',
+  'Gardens & Tea': 'https://images.unsplash.com/photo-1518457607834-6e8d80c183c5?auto=format&fit=crop&w=800&q=80',
+  'Heritage & Culture': 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=800&q=80',
+  'Wildlife & Safari': 'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=800&q=80'
+};
+const fallbackFor = (item) => CATEGORY_FALLBACKS[item.category] || GENERIC_FALLBACK_IMG;
+
+// Fetch real tourist places from Wikipedia (public API, no key needed)
+const fetchWikipediaPlaces = async (loc, norm, existingNames = []) => {
+  try {
+    const wikiRes = await fetch(
+      `https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrsearch=${encodeURIComponent(loc + ' tourism attractions')}&gsrlimit=8&prop=pageimages|extracts&piprop=original|thumbnail&pithumbsize=1000&exintro=1&explaintext=1`
+    );
+    if (!wikiRes.ok) return [];
+    const wikiData = await wikiRes.json();
+    const pages = wikiData.query?.pages ? Object.values(wikiData.query.pages) : [];
+    const NOISE_TITLE = /(tourism in|archeparchy|diocese|district tourism|promotion council|list of|wikipedia|railway station|municipality|archdiocese)/i;
+    const existing = new Set(existingNames.map(n => n.toLowerCase()));
+    const seen = new Set();
+    return pages
+      .filter(p => (p.thumbnail?.source || p.original?.source)
+        && p.title.toLowerCase().trim() !== norm
+        && !NOISE_TITLE.test(p.title)
+        && !existing.has(p.title.toLowerCase()))
+      .filter(p => {
+        const t = p.title.toLowerCase();
+        if (seen.has(t)) return false;
+        seen.add(t);
+        return true;
+      })
+      .slice(0, 6)
+      .map((p, idx) => ({
+        id: `wiki-${p.pageid || idx}`,
+        placeName: p.title,
+        category: 'Heritage & Culture',
+        url: p.original?.source || p.thumbnail?.source,
+        isDefaultCover: false,
+        location: loc.trim(),
+        description: p.extract ? p.extract.slice(0, 140) + '...' : `Explore ${p.title} in ${loc.trim()}.`
+      }));
+  } catch (err) {
+    console.warn('Live wiki fetch note:', err);
+    return [];
+  }
+};
 const GOOGLE_CSE_KEY = import.meta.env.VITE_GOOGLE_CSE_KEY || '';
 const GOOGLE_CSE_CX = import.meta.env.VITE_GOOGLE_CSE_CX || '';
 const GOOGLE_IMAGES_ACTIVE = Boolean(GOOGLE_CSE_KEY && GOOGLE_CSE_CX);
@@ -328,10 +401,9 @@ export default function AiPlaceImageSelector({
       const norm = loc.trim().toLowerCase();
       let found = [];
 
-      // Check in LOCATION_PLACE_IMAGES
-      const matchedKey = Object.keys(LOCATION_PLACE_IMAGES).find(k => 
-        k === norm || norm.includes(k) || k.includes(norm)
-      );
+      // Check in LOCATION_PLACE_IMAGES (canonical token → exact key)
+      const canonicalToken = (LOCATION_TOKEN_ALIASES[norm] || loc.trim()).toLowerCase();
+      const matchedKey = Object.keys(LOCATION_PLACE_IMAGES).find(k => k === canonicalToken);
 
       if (matchedKey && LOCATION_PLACE_IMAGES[matchedKey]) {
         found = LOCATION_PLACE_IMAGES[matchedKey].map(p => ({
@@ -340,47 +412,22 @@ export default function AiPlaceImageSelector({
           location: loc.trim(),
           description: `Experience ${p.placeName} in ${loc.trim()}. Guided sightseeing and photo opportunities with OASIS Thrissur.`
         }));
-      } else {
-        // Fallback generator from aiDestinationGuide
-        const guideData = generateAiDestinationGuide(loc);
-        found = guideData.attractions ? guideData.attractions.map((a, i) => ({
-          id: `${loc}-${a.id || i}`,
-          placeName: a.name,
-          category: a.category || a.type || 'Tourist Place',
-          url: a.image && !a.image.includes('images.unsplash.com') ? a.image : `wiki:${a.name}`,
-          isDefaultCover: i === 0,
-          location: loc.trim(),
-          description: a.desc || a.shortDescription || `Visit ${a.name} in ${loc.trim()}.`
-        })) : [];
 
-        // Attempt live Wikipedia fetch if few places found
-        if (found.length < 3) {
-          try {
-            const wikiRes = await fetch(
-              `https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrsearch=${encodeURIComponent(loc + ' tourism attractions')}&gsrlimit=8&prop=pageimages|extracts&piprop=original|thumbnail&pithumbsize=1000&exintro=1&explaintext=1`
-            );
-            if (wikiRes.ok) {
-              const wikiData = await wikiRes.json();
-              const pages = wikiData.query?.pages ? Object.values(wikiData.query.pages) : [];
-              const wikiPlaces = pages
-                .filter(p => (p.thumbnail?.source || p.original?.source) && p.title.toLowerCase().trim() !== norm)
-                .map((p, idx) => ({
-                  id: `wiki-${p.pageid || idx}`,
-                  placeName: p.title,
-                  category: 'Heritage & Culture',
-                  url: p.original?.source || p.thumbnail?.source,
-                  isDefaultCover: false,
-                  location: loc.trim(),
-                  description: p.extract ? p.extract.slice(0, 140) + '...' : `Explore ${p.title} in ${loc.trim()}.`
-                }));
-              if (wikiPlaces.length > 0) {
-                found = [...found, ...wikiPlaces];
-              }
-            }
-          } catch (err) {
-            console.warn('Live wiki fetch note:', err);
+        // Top up with live Wikipedia places when the curated bank is thin
+        if (found.length < 4) {
+          const wikiPlaces = await fetchWikipediaPlaces(loc, norm, found.map(f => f.placeName));
+          if (wikiPlaces.length > 0) {
+            found = [...found, ...wikiPlaces];
           }
         }
+      } else {
+        // Uncurated location: fetch real places from Wikipedia. The fabricated
+        // generic attractions (Central Lake, Peak Viewpoint, Rose Gardens) are
+        // intentionally NOT used — they mislead package creation.
+        const wikiPlaces = await fetchWikipediaPlaces(loc, norm, []);
+        found = wikiPlaces.length > 0
+          ? wikiPlaces.map((p, i) => ({ ...p, isDefaultCover: i === 0 }))
+          : [];
       }
 
       // Resolve real Wikipedia photos for any "wiki:" placeholders
@@ -419,7 +466,9 @@ export default function AiPlaceImageSelector({
       if (onSelectMixImages) onSelectMixImages(initialMix);
     }
 
-    setStatusMsg(`✅ Loaded ${combined.length} tourist spots across ${locs.join(' & ')}! Select spots below for Sightseeing & Highlights.`);
+    setStatusMsg(combined.length
+      ? `✅ Loaded ${combined.length} tourist spots across ${locs.join(' & ')}! Select spots below for Sightseeing & Highlights.`
+      : `⚠️ No verified places found for ${locs.join(' & ')}. Try a nearby famous spot, a preset chip, or check your connection.`);
     setTimeout(() => setStatusMsg(''), 4500);
   };
 
@@ -878,7 +927,8 @@ export default function AiPlaceImageSelector({
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80';
+                    const fb = fallbackFor(item);
+                    if (e.target.src !== fb) e.target.src = fb;
                   }}
                 />
                 <span style={{ position: 'absolute', top: '0.3rem', left: '0.3rem', background: 'rgba(0,0,0,0.8)', color: '#fff', fontSize: '0.62rem', fontWeight: 800, padding: '0.15rem 0.45rem', borderRadius: '8px' }}>

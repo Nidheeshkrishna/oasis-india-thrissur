@@ -1664,6 +1664,11 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
                     </div>
                     <div style={{ color: 'var(--gold-light)', fontSize: '0.9rem', fontWeight: 800, marginBottom: '0.8rem' }}>
                       ₹{s.startingPrice?.toLocaleString('en-IN')} / person
+                      {s.bookingStartDate && (
+                        <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, color: 'var(--text-muted)', marginTop: '0.3rem' }}>
+                          📅 Bookings open: {s.bookingStartDate}
+                        </span>
+                      )}
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '0.8rem', alignItems: 'center' }}>
                       <button

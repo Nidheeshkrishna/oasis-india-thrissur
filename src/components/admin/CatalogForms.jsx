@@ -906,7 +906,7 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange }) {
           {/* Admin AI Place Image & Multi-Location Explorer Studio */}
           <div style={{ gridColumn: '1 / -1' }}>
             <AiPlaceImageSelector
-              locationName={form.mainPlaces || form.title || form.destinationId || 'Kollam and Munnar'}
+              locationName={form.mainPlaces || resolveLocationKeyword(form.title, form.subtitle, form.destinationId, aiLocationInput) || 'Kollam and Munnar'}
               sightseeingList={form.sightseeing}
               highlightsList={form.highlights}
               coverImageUrl={form.image}
@@ -1398,6 +1398,7 @@ export function HeroSlideForm({ initial, onSave, onCancel }) {
     location: initial?.location || '',
     duration: initial?.duration || '5 Days / 4 Nights',
     startingPrice: initial?.startingPrice || '',
+    bookingStartDate: initial?.bookingStartDate || '',
     rating: initial?.rating || 4.9,
     reviewsCount: initial?.reviewsCount || 0
   });
@@ -1494,6 +1495,13 @@ export function HeroSlideForm({ initial, onSave, onCancel }) {
         <div>
           <label style={labelStyle}>Starting Price (₹)</label>
           <input style={fieldStyle} type="number" min="0" value={form.startingPrice} onChange={set('startingPrice')} />
+        </div>
+        <div>
+          <label style={labelStyle}>Bookings Open From (Date)</label>
+          <input style={fieldStyle} type="date" value={form.bookingStartDate} onChange={set('bookingStartDate')} />
+          <div style={{ fontSize: '0.72rem', color: 'var(--text-dim)', marginTop: '0.3rem' }}>
+            Until this date the banner shows the slide but the Book Now / WhatsApp buttons stay hidden.
+          </div>
         </div>
         <div>
           <label style={labelStyle}>Rating</label>
