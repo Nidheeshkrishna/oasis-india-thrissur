@@ -15,12 +15,12 @@ export const getContactData = () => {
 };
 
 export const getWhatsAppNumber = () => {
-  const raw = getContactData().whatsapp || getContactData().phone || '+91 94470 00000';
+  const raw = getContactData().whatsapp || getContactData().phone || '+918921124101';
   return String(raw).replace(/[^\d]/g, '');
 };
 
 export const getPhoneNumber = () => {
-  const raw = getContactData().phone || '+91 94470 00000';
+  const raw = getContactData().phone || '+91 89211 24101';
   return String(raw).replace(/[^\d]/g, '');
 };
 

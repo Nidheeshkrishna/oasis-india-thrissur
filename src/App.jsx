@@ -26,6 +26,7 @@ import { getContactData } from './services/whatsapp';
 import { catalogService } from './services/catalog';
 import { useCatalog } from './hooks/useCatalog';
 import { ShieldCheck, Award, HeartHandshake, PhoneCall, Sparkles, MapPin, Star } from 'lucide-react';
+import { FacebookIcon, InstagramIcon } from './components/SocialIcons';
 import { useLanguage } from './i18n/LanguageContext';
 
 export default function App() {
@@ -318,6 +319,33 @@ export default function App() {
             <p style={{ fontSize: '1.05rem', color: 'var(--text-muted)', lineHeight: 1.8 }}>
               We take pride in absolute transparency, providing only genuine 4K HDR destination photography, 4/5-star luxury stays, and Malayalam-escorted travel management for families and pilgrims across Kerala.
             </p>
+
+            {/* Follow OASIS India on Social Media */}
+            <div style={{ marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border-subtle)' }}>
+              <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--gold-light)', marginBottom: '1rem' }}>
+                Follow OASIS India on Social Media
+              </h3>
+              <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap' }}>
+                <a
+                  href="https://www.facebook.com/p/Oasis-India-Holidays-100090841204193/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-glass btn-cinematic"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: '#4da3ff', border: '1px solid rgba(77,163,255,0.45)' }}
+                >
+                  <FacebookIcon size={18} /> Facebook
+                </a>
+                <a
+                  href="https://www.instagram.com/oasis.india.holidays?igsh=MzN5OTgzNGNiaHhv"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-glass btn-cinematic"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: '#f472b6', border: '1px solid rgba(244,114,182,0.45)' }}
+                >
+                  <InstagramIcon size={18} /> Instagram
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       )}

@@ -1,8 +1,8 @@
 // Initial Editable Company Contact Details for OASIS India Thrissur
 export const initialContactData = {
-  phone: '+91 94470 00000',
+  phone: '+91 89211 24101',
   phoneAlt: '+91 487 2333388',
-  whatsapp: '+91 94470 00000',
+  whatsapp: '+91 89211 24101',
   email: 'sales@oasisindiatours.com',
   emailAlt: 'support@oasisindiatours.com',
   address: 'OASIS India Thrissur, Swaraj Round Main Branch & Airport Escort Desk, Thrissur, Kerala 680001',

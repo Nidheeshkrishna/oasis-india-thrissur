@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { MapPin, Phone, Mail, ShieldCheck, Heart, ArrowUp, MailPlus, CheckCircle2 } from 'lucide-react';
+import { FacebookIcon, InstagramIcon } from './SocialIcons';
 import OasisLogo from './OasisLogo';
 import { useLanguage } from '../i18n/LanguageContext';
 
@@ -130,6 +131,50 @@ export default function Footer({ setActiveTab, onOpenAdmin, onSelectDestination 
             <span className="badge-gold">
               <ShieldCheck size={14} /> Ministry of Tourism Approved
             </span>
+
+            {/* Social Media Links */}
+            <div style={{ display: 'flex', gap: '0.8rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
+              <a
+                href="https://www.facebook.com/p/Oasis-India-Holidays-100090841204193/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Oasis India Holidays on Facebook"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+                  background: 'rgba(24,119,242,0.12)',
+                  border: '1px solid rgba(24,119,242,0.4)',
+                  color: '#4da3ff',
+                  padding: '0.45rem 0.9rem',
+                  borderRadius: '30px',
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  textDecoration: 'none',
+                  transition: 'all 0.25s ease'
+                }}
+              >
+                <FacebookIcon size={16} /> Facebook
+              </a>
+              <a
+                href="https://www.instagram.com/oasis.india.holidays?igsh=MzN5OTgzNGNiaHhv"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Oasis India Holidays on Instagram"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+                  background: 'rgba(225,29,72,0.12)',
+                  border: '1px solid rgba(225,29,72,0.4)',
+                  color: '#f472b6',
+                  padding: '0.45rem 0.9rem',
+                  borderRadius: '30px',
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  textDecoration: 'none',
+                  transition: 'all 0.25s ease'
+                }}
+              >
+                <InstagramIcon size={16} /> Instagram
+              </a>
+            </div>
           </div>
 
           {/* Thrissur Head Office Details */}
@@ -145,7 +190,7 @@ export default function Footer({ setActiveTab, onOpenAdmin, onSelectDestination 
               </div>
               <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
                 <Phone size={18} color="var(--gold-primary)" />
-                <span>+91 94470 00000 / +91 487 2345678</span>
+                <span>+91 89211 24101 / +91 487 2345678</span>
               </div>
               <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
                 <Mail size={18} color="var(--gold-primary)" />

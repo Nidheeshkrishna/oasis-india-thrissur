@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Phone, Mail, MapPin, Clock, MessageSquare, Send, CheckCircle2, ShieldCheck, Sparkles, Loader2 } from 'lucide-react';
+import { FacebookIcon, InstagramIcon } from './SocialIcons';
 import { useLanguage } from '../i18n/LanguageContext';
 import { firestoreService } from '../services/firebase';
 import { catalogService } from '../services/catalog';
@@ -40,9 +41,9 @@ export default function ContactSection({ contactData }) {
   };
 
   const c = contactData || {
-    phone: '+91 94470 00000',
+    phone: '+91 89211 24101',
     phoneAlt: '+91 487 2333388',
-    whatsapp: '+91 94470 00000',
+    whatsapp: '+91 89211 24101',
     email: 'sales@oasisindiatours.com',
     emailAlt: 'support@oasisindiatours.com',
     address: 'OASIS India Thrissur, Swaraj Round Main Branch & Airport Escort Desk, Thrissur, Kerala 680001',
@@ -143,6 +144,36 @@ export default function ContactSection({ contactData }) {
                 </p>
                 <div style={{ fontSize: '0.78rem', color: 'var(--gold-light)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                   <Clock size={13} /> {c.workingHours}
+                </div>
+              </div>
+            </div>
+
+            {/* Follow Us on Social Media */}
+            <div className="glass-card" style={{ padding: '1.4rem', display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
+              <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: 'rgba(139,92,246,0.15)', border: '1px solid rgba(139,92,246,0.4)', color: '#a78bfa', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Sparkles size={22} />
+              </div>
+              <div>
+                <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#a78bfa', marginBottom: '0.3rem' }}>
+                  Follow Us on Social Media
+                </h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', marginTop: '0.4rem' }}>
+                  <a
+                    href="https://www.facebook.com/p/Oasis-India-Holidays-100090841204193/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: '#4da3ff', textDecoration: 'none', fontSize: '0.88rem', fontWeight: 600 }}
+                  >
+                    <FacebookIcon size={17} /> facebook.com/Oasis-India-Holidays
+                  </a>
+                  <a
+                    href="https://www.instagram.com/oasis.india.holidays?igsh=MzN5OTgzNGNiaHhv"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: '#f472b6', textDecoration: 'none', fontSize: '0.88rem', fontWeight: 600 }}
+                  >
+                    <InstagramIcon size={17} /> instagram.com/oasis.india.holidays
+                  </a>
                 </div>
               </div>
             </div>

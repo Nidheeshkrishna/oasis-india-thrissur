@@ -6,7 +6,7 @@ export const translations = {
     brand: 'OASIS India Thrissur',
     topbarBranch: 'Thrissur Swaraj Round Main Branch & Airport Escort Desk',
     topbarAuth: '100% Authentic Licensed Destination Photography • Ministry of Tourism Recognized',
-    helpline: 'Helpline: +91 94470 00000',
+    helpline: 'Helpline: +91 89211 24101',
     language: 'Language',
     // Nav
     nav: {
@@ -182,7 +182,7 @@ export const translations = {
       voucherPickupHub: 'Pickup Hub: ',
       voucherTier: 'Tier: ',
       voucherScan: 'Scan at Pickup Desk',
-      voucherNote: 'For instant assistance, present this voucher at Thrissur Office or call 24x7 Helpline +91 94470 00000.',
+      voucherNote: 'For instant assistance, present this voucher at Thrissur Office or call 24x7 Helpline +91 89211 24101.',
       notes: 'Special Requests (optional)',
       submit: 'Confirm Booking',
       success: 'Booking Confirmed!',
@@ -302,7 +302,7 @@ export const translations = {
     brand: 'ഒയാസിസ് ഇന്ത്യ തൃശൂർ',
     topbarBranch: 'തൃശൂർ സ്വരാജ് റൗണ്ട് മെയിൻ ബ്രാഞ്ച് & എയർപോർട്ട് എസ്കോർട്ട് ഡെസ്ക്',
     topbarAuth: '100% ആധികാരിക ലൈസൻസുള്ള ഡെസ്റ്റിനേഷൻ ഫോട്ടോഗ്രഫി • ടൂറിസം മന്ത്രാലയം അംഗീകൃതം',
-    helpline: 'ഹെൽപ്പ്‌ലൈൻ: +91 94470 00000',
+    helpline: 'ഹെൽപ്പ്‌ലൈൻ: +91 89211 24101',
     language: 'ഭാഷ',
     nav: {
       home: 'ഹോം',
@@ -466,7 +466,7 @@ export const translations = {
       voucherPickupHub: 'പിക്കപ്പ് ഹബ്: ',
       voucherTier: 'തിയർ: ',
       voucherScan: 'പിക്കപ്പ് ഡെസ്കിൽ സ്കാൻ ചെയ്യുക',
-      voucherNote: 'ഉടൻ സഹായത്തിനായി, ഈ വൗച്ചർ തൃശൂർ ഓഫീസിൽ ഹാജരാക്കുക അല്ലെങ്കിൽ 24x7 ഹെൽപ്പ്ലൈൻ +91 94470 00000 എന്ന നമ്പറിൽ വിളിക്കുക.',
+      voucherNote: 'ഉടൻ സഹായത്തിനായി, ഈ വൗച്ചർ തൃശൂർ ഓഫീസിൽ ഹാജരാക്കുക അല്ലെങ്കിൽ 24x7 ഹെൽപ്പ്ലൈൻ +91 89211 24101 എന്ന നമ്പറിൽ വിളിക്കുക.',
       notes: 'പ്രത്യേക അഭ്യർത്ഥനകൾ (ഓപ്ഷണൽ)',
       submit: 'ബുക്കിംഗ് സ്ഥിരീകരിക്കുക',
       success: 'ബുക്കിംഗ് സ്ഥിരീകരിച്ചു!',
@@ -580,7 +580,7 @@ export const translations = {
     brand: 'ஓயாசிஸ் இந்தியா திருச்சூர்',
     topbarBranch: 'திருச்சூர் ஸ்வராஜ் ரவுண்ட் மெயின் கிளை & விமான நிலைய எஸ்கார்ட் டெஸ்க்',
     topbarAuth: '100% அங்கீகரிக்கப்பட்ட உரிமம் பெற்ற டெஸ்டினேஷன் புகைப்படம் • சுற்றுலாத் துறை அங்கீகாரம்',
-    helpline: 'உதவி எண்: +91 94470 00000',
+    helpline: 'உதவி எண்: +91 89211 24101',
     language: 'மொழி',
     nav: {
       home: 'முகப்பு',
@@ -744,7 +744,7 @@ export const translations = {
       voucherPickupHub: 'பிக்கப் மையம்: ',
       voucherTier: 'தரம்: ',
       voucherScan: 'பிக்கப் மேசையில் ஸ்கேன் செய்யவும்',
-      voucherNote: 'உடனடி உதவிக்கு, இந்த வவுச்சரை திருச்சூர் அலுவலகத்தில் காட்டவும் அல்லது 24x7 உதவி எண் +91 94470 00000 ஐ அழைக்கவும்.',
+      voucherNote: 'உடனடி உதவிக்கு, இந்த வவுச்சரை திருச்சூர் அலுவலகத்தில் காட்டவும் அல்லது 24x7 உதவி எண் +91 89211 24101 ஐ அழைக்கவும்.',
       notes: 'சிறப்பு கோரிக்கைகள் (விருப்பம்)',
       submit: 'முன்பதிவை உறுதிப்படுத்து',
       success: 'முன்பதிவு உறுதி!',
