@@ -988,10 +988,61 @@ export const DESTINATIONS = [
       { name: 'Jatayu Earth\'s Center', distance: '38 km', type: 'Adventure' },
       { name: 'Munroe Island', distance: '26 km', type: 'Backwater Village' }
     ],
+  },
+  {
+    id: 'nepal-himalayan-kingdom',
+    name: 'Nepal: Lumbini, Pokhara, Muktinath & Kathmandu',
+    tagline: 'Land of the Himalayas, Sacred Muktinath & Peaceful Lumbini',
+    category: 'International & Mountain',
+    location: 'Lumbini, Pokhara, Muktinath & Kathmandu, Nepal',
+    coordinates: [27.7172, 85.3240],
+    heroImage: './nepal_muktinath_temple.png',
+    bgMixImages: [
+      './nepal_muktinath_temple.png',
+      './nepal_pokhara_phewa_lake.png',
+      './nepal_lumbini_sacred_garden.png',
+      './nepal_kathmandu_pashupatinath.png'
+    ],
+    bgMixStyle: 'collage-blend',
+    galleryImages: [
+      './nepal_muktinath_temple.png',
+      './nepal_pokhara_phewa_lake.png',
+      './nepal_lumbini_sacred_garden.png',
+      './nepal_kathmandu_pashupatinath.png'
+    ],
+    rating: 4.99,
+    reviewsCount: 340,
+    startingPrice: 29000,
+    duration: '13 Days / 12 Nights (7 Nights Nepal Stay)',
+    bestTime: 'October to May (Clear Himalayan Views & Ideal Temple Weather)',
+    weather: { temp: '18°C', condition: 'Pleasant Autumn Breeze & Clear Blue Skies', humidity: '52%', bestSeason: 'Autumn & Spring' },
+    description: 'Experience the divine majesty of Nepal with OASIS India Thrissur. Journey from Kerala with reserved 3rd AC train tickets and comfortable private vehicle transport. Visit the sacred Muktinath Temple at 3,710m altitude for holy 108 spouts bath, explore Lord Buddha birthplace at Lumbini Maya Devi Temple, cruise serene Phewa Lake in Pokhara against Mt. Machapuchare, and receive blessings at holy Pashupatinath & Boudhanath in Kathmandu with dedicated Malayali Tour Manager escort.',
+    highlights: [
+      'Muktinath Temple (3,710 M) Holy 108 Spouts Bath & Jwala Mai Sacred Darshan',
+      'Lumbini Maya Devi Temple (Lord Buddha Birthplace) & World Peace Pagoda',
+      'Pokhara Phewa Lake Boating, Tal Barahi Shrine, Davis Falls & Gupteshwor Cave',
+      'Sarangkot Golden Sunrise Panorama over Annapurna Himalayan Massif',
+      'Sacred Pashupatinath VIP Darshan & Boudhanath Stupa in Kathmandu Valley',
+      'Kerala – Gorakhpur – Kerala 3rd AC Train Tickets & Malayali Tour Manager'
+    ],
+    travelGuide: {
+      howToReach: 'Escorted group train travel from Kerala (Thrissur) to Gorakhpur in reserved 3rd AC coaches, followed by dedicated private luxury vehicle across Nepal.',
+      dressCode: 'Warm layers/jackets for high-altitude Muktinath (3,710m) and Sarangkot; respectful traditional/modest attire for temples and stupas.',
+      localCuisine: 'Authentic Kerala / South Indian vegetarian meals, North Indian buffet spreads, Nepalese Dal Bhat & Steamed Momos.',
+      essentialTips: 'Indian citizens require only original Passport or Voter ID Card (no visa needed). OASIS handles all border permits and temple entry passes.'
+    },
+    nearbyAttractions: [
+      { name: 'Muktinath Temple (3,710 M)', distance: 'Mustang Valley', type: 'Sacred Himalayan Shrine' },
+      { name: 'Maya Devi Temple Lumbini', distance: 'Lumbini Sacred Garden', type: 'UNESCO World Heritage' },
+      { name: 'Phewa Lake & Tal Barahi', distance: 'Pokhara Lakeside', type: 'Scenic Lake & Island Temple' },
+      { name: 'Pashupatinath Temple', distance: 'Kathmandu Valley', type: 'Sacred Shiva Temple' }
+    ],
     hotels: [
-      { name: 'Backwater Royale Houseboat Stay', rating: 'Luxury Houseboat', location: 'Ashtamudi Lake' },
-      { name: 'Kollam Lakeshore Heritage Resort', rating: '4 Star', location: 'Kollam Beach' }
+      { name: 'Grand Hotel Kathmandu / Aloft Kathmandu', rating: '4 Star Deluxe', location: 'Kathmandu' },
+      { name: 'Hotel Mount View / Lakeside Resort', rating: '4 Star Comfort', location: 'Pokhara' },
+      { name: 'Lumbini Garden Resort', rating: '3 Star Deluxe', location: 'Lumbini' }
     ]
   }
 ];
+
 

@@ -35,6 +35,26 @@ export default function DestinationModal({ destination, onClose, onBookTour }) {
   const sideSeenImages = matchingPackage?.placeImages?.filter(img => img.group === 'kashmir') || [];
   const punjabImages = matchingPackage?.placeImages?.filter(img => img.group === 'punjab') || [];
 
+  const packageSightseeingItems = matchingPackage?.placeImages?.length
+    ? matchingPackage.placeImages.map((img, idx) => ({
+        id: `dest-pkg-${idx}`,
+        name: img.name || img.place || img.title,
+        title: img.title || img.name,
+        url: img.url,
+        group: img.group,
+        description: img.description || `Explore ${img.name || img.title} on this exclusive package departure.`
+      }))
+    : (matchingPackage?.mainPlaces || []).map((place, idx) => ({
+        id: `dest-pkg-main-${idx}`,
+        name: place,
+        title: `${place} Sightseeing`,
+        url: matchingPackage?.image || destination.heroImage || '',
+        group: 'Main Attraction',
+        description: `Explore the major scenic and cultural attractions of ${place}.`
+      }));
+
+  const [activePkgSightseeing, setActivePkgSightseeing] = useState(packageSightseeingItems[0] || null);
+
   return (
     <div className="modal-overlay" style={{ zIndex: 1000, overflowY: 'auto' }}>
       <div 
@@ -173,18 +193,20 @@ export default function DestinationModal({ destination, onClose, onBookTour }) {
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     <span style={{
-                      background: '#10b981', color: '#000', fontWeight: 800, fontSize: '0.75rem',
-                      padding: '0.3rem 0.7rem', borderRadius: '12px', display: 'inline-block', marginBottom: '0.5rem'
+                      background: 'linear-gradient(135deg, rgba(212,175,55,0.2), rgba(212,175,55,0.05))',
+                      border: '1px solid var(--border-gold)',
+                      color: 'var(--gold-deep)',
+                      fontWeight: 800,
+                      fontSize: '0.75rem',
+                      padding: '0.3rem 0.7rem',
+                      borderRadius: '12px',
+                      display: 'inline-block',
+                      marginBottom: '0.5rem'
                     }}>
                       {matchingPackage.badge}
                     </span>
                     <div style={{ fontSize: '1.9rem', fontWeight: 800, color: 'var(--gold-deep)' }}>
-                      ₹{matchingPackage.price.toLocaleString('en-IN')}{' '}
-                      {Number(matchingPackage.originalPrice) > Number(matchingPackage.price) && (
-                        <span style={{ fontSize: '0.9rem', color: 'var(--text-dim)', textDecoration: 'line-through' }}>
-                          ₹{matchingPackage.originalPrice.toLocaleString('en-IN')}
-                        </span>
-                      )}
+                      ₹{matchingPackage.price.toLocaleString('en-IN')}
                     </div>
                     <div style={{ display: 'flex', gap: '1rem', marginTop: '0.4rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                       <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
@@ -198,28 +220,79 @@ export default function DestinationModal({ destination, onClose, onBookTour }) {
                 </div>
               </div>
 
-              {/* MAIN PLACES */}
-              {matchingPackage.mainPlaces && matchingPackage.mainPlaces.length > 0 && (
-                <div style={{ marginBottom: '1.8rem' }}>
+              {/* INTERACTIVE SIGHTSEEING HORIZONTAL LIST */}
+              {packageSightseeingItems.length > 0 && (
+                <div style={{ marginBottom: '2rem' }}>
                   <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--gold-deep)', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.8rem' }}>
-                    <MapPin size={18} /> {t('destination.mainPlaces')}
+                    <Camera size={18} /> Sightseeing Highlights (Click to View)
                   </h4>
-                  <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
-                    {matchingPackage.mainPlaces.map((place, idx) => (
-                      <span key={idx} style={{
-                        background: 'linear-gradient(135deg, rgba(212,175,55,0.2), rgba(212,175,55,0.05))',
-                        border: '1px solid var(--border-gold)',
-                        color: 'var(--gold-deep)',
-                        padding: '0.5rem 1.2rem',
-                        borderRadius: '30px',
-                        fontSize: '0.9rem',
-                        fontWeight: 700
-                      }}>
-                        <MapPin size={13} style={{ verticalAlign: '-2px', marginRight: '4px' }} />
-                        {place}
-                      </span>
-                    ))}
+                  
+                  {/* Horizontal Scroll Ribbon */}
+                  <div style={{ display: 'flex', gap: '0.8rem', overflowX: 'auto', paddingBottom: '0.6rem', scrollbarWidth: 'thin' }}>
+                    {packageSightseeingItems.map((item, idx) => {
+                      const isSelected = activePkgSightseeing?.id === item.id;
+                      return (
+                        <div
+                          key={item.id || idx}
+                          onClick={() => setActivePkgSightseeing(item)}
+                          style={{
+                            flex: '0 0 200px',
+                            cursor: 'pointer',
+                            borderRadius: '12px',
+                            overflow: 'hidden',
+                            position: 'relative',
+                            border: isSelected ? '2px solid #fbbf24' : '1px solid var(--border-gold)',
+                            boxShadow: isSelected ? '0 0 16px rgba(251,191,36,0.35)' : 'none',
+                            background: '#0a1628',
+                            transition: 'all 0.3s ease'
+                          }}
+                        >
+                          <div style={{ position: 'relative', height: '110px' }}>
+                            <img src={item.url} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(6,12,23,0.9), transparent)' }} />
+                            <div style={{ position: 'absolute', bottom: '0.4rem', left: '0.5rem', right: '0.5rem', fontSize: '0.82rem', fontWeight: 800, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {item.name}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
+
+                  {/* Active Sightseeing Spotlight Card */}
+                  {activePkgSightseeing && (
+                    <div className="glass-card" style={{
+                      marginTop: '1rem',
+                      padding: '1.2rem',
+                      border: '1px solid var(--border-gold)',
+                      background: 'rgba(10,22,40,0.85)',
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                      gap: '1.2rem',
+                      alignItems: 'center'
+                    }}>
+                      <div
+                        style={{ position: 'relative', height: '180px', borderRadius: '10px', overflow: 'hidden', border: '1px solid var(--border-gold)', cursor: 'pointer' }}
+                        onClick={() => setSelectedPhoto(activePkgSightseeing.url)}
+                      >
+                        <img src={activePkgSightseeing.url} alt={activePkgSightseeing.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <div style={{ position: 'absolute', bottom: '0.5rem', right: '0.5rem', background: 'rgba(0,0,0,0.6)', padding: '0.2rem 0.5rem', borderRadius: '6px', fontSize: '0.7rem', color: '#fff' }}>
+                          🔍 Zoom
+                        </div>
+                      </div>
+                      <div>
+                        <span className="badge-gold" style={{ fontSize: '0.72rem', marginBottom: '0.4rem', display: 'inline-block' }}>
+                          {activePkgSightseeing.name}
+                        </span>
+                        <h4 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff', margin: '0.2rem 0 0.5rem' }}>
+                          {activePkgSightseeing.title}
+                        </h4>
+                        <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, margin: 0 }}>
+                          {activePkgSightseeing.description}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -324,10 +397,39 @@ export default function DestinationModal({ destination, onClose, onBookTour }) {
                 </div>
               </div>
 
-              <div style={{ marginTop: '1.8rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                <button className="btn-gold" style={{ padding: '0.7rem 1.5rem' }} onClick={() => { onClose(); onBookTour(matchingPackage); }}>
-                  <Sparkles size={18} /> {t('destination.bookThisPackage')}
-                </button>
+              <div style={{ marginTop: '1.8rem', display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                {(() => {
+                  const isUpcoming = (() => {
+                    if (!matchingPackage?.departureDate) return true;
+                    try {
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      const tourDate = new Date(`${matchingPackage.departureDate}T00:00:00`);
+                      if (isNaN(tourDate.getTime())) return true;
+                      return tourDate >= today;
+                    } catch {
+                      return true;
+                    }
+                  })();
+
+                  return isUpcoming ? (
+                    <button className="btn-gold" style={{ padding: '0.7rem 1.5rem' }} onClick={() => { onClose(); onBookTour(matchingPackage); }}>
+                      <Sparkles size={18} /> {t('destination.bookThisPackage')}
+                    </button>
+                  ) : (
+                    <div style={{
+                      background: 'rgba(255,255,255,0.05)',
+                      border: '1px solid rgba(255,255,255,0.15)',
+                      borderRadius: '8px',
+                      padding: '0.55rem 1rem',
+                      fontSize: '0.8rem',
+                      color: '#fef08a',
+                      fontWeight: 700
+                    }}>
+                      🚩 Departed on {matchingPackage.departureDate}
+                    </div>
+                  );
+                })()}
                 <a
                   className="btn-glass"
                   href={`https://wa.me/${getWhatsAppNumber()}?text=${encodeURIComponent(buildQuickEnquiryMessage(matchingPackage || destination))}`}
@@ -395,9 +497,8 @@ export default function DestinationModal({ destination, onClose, onBookTour }) {
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 700 }}>
                   {t('destination.signaturePackage')}
                 </div>
-                <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--gold-deep)', margin: '0.4rem 0 1rem' }}>
-                  ₹{(destination.startingPrice || 0).toLocaleString('en-IN')}{' '}
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500 }}>{t('destination.perTraveler')}</span>
+                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--gold-deep)', margin: '0.4rem 0 1rem' }}>
+                  {destination.name} Experience
                 </div>
 
                 <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem', marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>

@@ -186,15 +186,26 @@ export default function Footer({ setActiveTab, onOpenAdmin, onSelectDestination 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', fontSize: '0.9rem' }}>
               <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
                 <MapPin size={18} color="var(--gold-primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
-                <span>OASIS Towers, Swaraj Round North, Near Thrissur Railway Station, Thrissur, Kerala - 680001</span>
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=40%2F3924+Rohini+Plaza+Kokkalai+Thrissur+Kerala"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'inherit', textDecoration: 'none' }}
+                >
+                  40/3924 ROHINI PLAZA, KOKKALAI, THRISSUR, Thrissur, India, Kerala
+                </a>
               </div>
               <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
                 <Phone size={18} color="var(--gold-primary)" />
-                <span>+91 89211 24101 / +91 487 2345678</span>
+                <span>
+                  <a href="tel:+918921124101" style={{ color: 'inherit', textDecoration: 'none' }}>+91 89211 24101</a>
+                  {' / '}
+                  <a href="tel:+918921394179" style={{ color: 'inherit', textDecoration: 'none' }}>+91 89213 94179</a>
+                </span>
               </div>
               <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
                 <Mail size={18} color="var(--gold-primary)" />
-                <span>thrissur@oasisindia.travel</span>
+                <a href="mailto:Oasisindiaholidays@gmail.com" style={{ color: 'inherit', textDecoration: 'none' }}>Oasisindiaholidays@gmail.com</a>
               </div>
             </div>
           </div>

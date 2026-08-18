@@ -746,19 +746,167 @@ export const AI_DESTINATION_DATABASE = {
       { time: '01:00 PM', title: 'Sattvic Lunch', place: 'Kashi Thali', desc: 'Authentic Banarasi Kachori, Sabzi, Malaiyyo & Lassi.' },
       { time: '05:30 PM', title: 'Grand Aarti', place: 'Dashashwamedh Ghat', desc: 'Exclusive VIP boat seating for synchronized twilight brass lamp Aarti.' }
     ]
-  }
+  },
+  'nepal': {
+    locationName: 'Nepal (Himalayan Kingdom & Kathmandu Valley)',
+    tagline: 'Roof of the World, Sacred Pashupatinath & Annapurna Lakes',
+    heroImage: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1920&q=85',
+    nearestStation: 'Raxaul Junction (India-Nepal Border) / Direct Flight to KTM',
+    nearestAirport: 'Tribhuvan International Airport (KTM) – Kathmandu / Pokhara Int Airport (PKR)',
+    bestTime: 'September to May (Crisp Himalayan Sunrise & Clear Peak Vistas)',
+    weather: '19°C • Pleasant Mountain Air • Humidity 55%',
+    googleMapCoordinates: '27.7172° N, 85.3240° E',
+    googleMapLink: 'https://maps.google.com/?q=Kathmandu+Nepal',
+    attractions: [
+      {
+        id: 'nepal-pashupatinath',
+        name: 'Pashupatinath Sacred Shiva Temple & Bagmati Ghats',
+        distance: '4.5 km from Kathmandu Center',
+        travelTime: '15 mins drive',
+        image: 'https://images.unsplash.com/photo-1582650625119-3a31f8418b7d?auto=format&fit=crop&w=1200&q=80',
+        shortDescription: 'One of the holiest Hindu temples in the world dedicated to Lord Shiva, located on the sacred Bagmati River. Features cubic pagoda architecture, silver-sheeted doors, and evening sandhya Maha Aarti.',
+        highlights: ['UNESCO World Heritage 5th-century shrine', 'Sacred Bagmati River twilight Maha Aarti', 'Golden spire pagoda architecture & VIP Darshan'],
+        activities: ['Spiritual Darshan', 'Bagmati Aarti Witnessing', 'Heritage Photography', 'Sacred Rituals'],
+        openingHours: '04:00 AM – 09:00 PM (Daily)',
+        entryFee: 'Free for Indian/Nepalese Nationals (VIP Pass Arranged by OASIS)',
+        bestPhotoSpot: 'Eastern bank terraces facing the central pagoda and Bagmati ghats',
+        mapLink: 'https://maps.google.com/?q=Pashupatinath+Temple+Kathmandu'
+      },
+      {
+        id: 'nepal-phewa-lake',
+        name: 'Pokhara Phewa Lake & Tal Barahi Island Temple',
+        distance: '2 km from Pokhara Lakeside',
+        travelTime: '5 mins drive / Walk',
+        image: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80',
+        shortDescription: 'The second largest lake in Nepal, Phewa Lake mirrors the snowy peaks of Mount Machapuchare (Fishtail) and the Annapurna mountain range. Features colorful wooden boat rides to the island temple of Tal Barahi.',
+        highlights: ['Mirror reflection of Mt. Machapuchare & Annapurna', 'Tal Barahi two-story pagoda island temple', 'Sunset lakeside cafes and mountain walks'],
+        activities: ['Traditional Wooden Boating', 'Island Temple Visit', 'Mountain Reflection Photography', 'Lakeside Strolls'],
+        openingHours: '06:00 AM – 06:30 PM (Daily)',
+        entryFee: 'Boat Ride ₹300 – ₹500',
+        bestPhotoSpot: 'South-west lakeside bank during calm morning sunrise with mountain reflection',
+        mapLink: 'https://maps.google.com/?q=Phewa+Lake+Pokhara'
+      },
+      {
+        id: 'nepal-sarangkot',
+        name: 'Sarangkot Annapurna & Dhaulagiri Sunrise Viewpoint',
+        distance: '11 km from Pokhara Lakeside',
+        travelTime: '25 mins uphill drive',
+        image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80',
+        shortDescription: 'Perched at 1,600m above sea level, Sarangkot offers a panoramic 180-degree view of the Annapurna mountain range (Annapurna I, II, Machapuchare, and Dhaulagiri) turning from purple to fiery gold at dawn.',
+        highlights: ['World-renowned 360° Himalayan sunrise', 'Unobstructed vistas of 8,000m+ Himalayan summits', 'Pokhara Valley & Phewa Lake aerial perspective'],
+        activities: ['Himalayan Sunrise Excursion', 'Panoramic Photography', 'Telescope Peak Gazing'],
+        openingHours: '04:30 AM – 07:00 PM (Best at 05:30 AM Sunrise)',
+        entryFee: '₹100 Entry',
+        bestPhotoSpot: 'Upper Viewpoint Tower facing Annapurna massif at first light',
+        mapLink: 'https://maps.google.com/?q=Sarangkot+Pokhara'
+      },
+      {
+        id: 'nepal-boudhanath',
+        name: 'Boudhanath Stupa (Ancient Tibetan Mandala)',
+        distance: '6 km from Kathmandu Center',
+        travelTime: '20 mins drive',
+        image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1200&q=80',
+        shortDescription: 'One of the largest spherical stupas in the world and center of Tibetan Buddhism in Nepal. Surrounded by monastery rooftops, prayer flags fluttering in mountain breeze, and aromatic Tibetan incense shops.',
+        highlights: ['Massive 36-meter high spherical Buddhist mandala', '108 prayer wheels for clockwise circumambulation', 'Rooftop cafes with panoramic stupa views'],
+        activities: ['Kora (Circumambulation)', 'Monastery Visit', 'Tibetan Singing Bowls & Thangka Art', 'Sunset Viewing'],
+        openingHours: '24 Hours Open (Monasteries 06:00 AM – 06:00 PM)',
+        entryFee: '₹100 Entry',
+        bestPhotoSpot: '3rd-floor rooftop cafe facing the Buddha eyes at golden hour',
+        mapLink: 'https://maps.google.com/?q=Boudhanath+Stupa+Kathmandu'
+      },
+      {
+        id: 'nepal-swayambhunath',
+        name: 'Swayambhunath Monkey Temple Stupa',
+        distance: '3 km west of Kathmandu',
+        travelTime: '12 mins drive',
+        image: 'https://images.unsplash.com/photo-1582650625119-3a31f8418b7d?auto=format&fit=crop&w=1200&q=80',
+        shortDescription: 'Crowning a hilltop overlooking Kathmandu Valley, this 5th-century UNESCO World Heritage site features a gleaming white dome, gilded spire, the all-seeing eyes of Buddha, and ancient stone stupas.',
+        highlights: ['365 stone steps pilgrimage climb', 'Panoramic 360° view of entire Kathmandu Valley', 'Centuries-old stone chaityas & holy monkeys'],
+        activities: ['Hilltop Walk', 'Valley View Watching', 'Temple Blessings', 'Photography'],
+        openingHours: '24 Hours Open (Best for Morning & Sunset)',
+        entryFee: '₹100 Entry',
+        bestPhotoSpot: 'Eastern Stairway Platform overlooking Kathmandu skyline',
+        mapLink: 'https://maps.google.com/?q=Swayambhunath+Kathmandu'
+      },
+      {
+        id: 'nepal-chitwan',
+        name: 'Chitwan National Park Tiger & Rhino Sanctuary',
+        distance: '150 km south-west of Kathmandu',
+        travelTime: 'Escorted AC Tourist Coach',
+        image: 'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1200&q=80',
+        shortDescription: 'Nepal\'s first UNESCO World Heritage National Park protecting the lush subtropical inner Terai lowlands. Famous for open jeep safaris spotting the Great One-Horned Rhinoceros, Bengal Tiger, Gharials, and 500+ bird species.',
+        highlights: ['Close encounters with Greater One-Horned Rhinos', 'Jeep & Canoe river safaris along Rapti River', 'Traditional Tharu cultural dance & village tour'],
+        activities: ['Jungle Jeep Safari', 'Rapti River Canoe Ride', 'Bird Watching', 'Tharu Cultural Show'],
+        openingHours: '06:00 AM – 06:00 PM (Daily)',
+        entryFee: 'Park Permit Included in OASIS Package',
+        bestPhotoSpot: 'Rapti River bank at sunset with elephants in silhouette',
+        mapLink: 'https://maps.google.com/?q=Chitwan+National+Park+Sauraha'
+      },
+      {
+        id: 'nepal-bhaktapur',
+        name: 'Bhaktapur Durbar Square & 55-Window Palace',
+        distance: '13 km east of Kathmandu',
+        travelTime: '30 mins drive',
+        image: 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=1200&q=80',
+        shortDescription: 'A living museum of medieval Newari art and architecture dating from the Malla Kingdom. Highlights include the 55-Window Palace, Golden Gate, and the towering 30-meter high Nyatapola 5-story pagoda temple.',
+        highlights: ['Nyatapola Temple — Highest pagoda in Nepal (1702)', '55-Window Royal Palace & Golden Gate (Sun Dhoka)', 'Pottery Square with traditional artisan wheel craft'],
+        activities: ['Heritage Architecture Walk', 'Pottery Making Observation', 'King Curd (Juju Dhau) Tasting'],
+        openingHours: '07:00 AM – 07:00 PM (Daily)',
+        entryFee: '₹100 for SAARC Citizens',
+        bestPhotoSpot: 'Nyatapola Temple stone staircase looking over the square',
+        mapLink: 'https://maps.google.com/?q=Bhaktapur+Durbar+Square'
+      },
+      {
+        id: 'nepal-nagarkot',
+        name: 'Nagarkot Himalayan Panoramic & Everest View Ridge',
+        distance: '32 km east of Kathmandu (Altitude 2,175m)',
+        travelTime: '1 hr drive',
+        image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80',
+        shortDescription: 'High-altitude ridge on the northeastern rim of Kathmandu Valley. Famous for world-class panoramic views of 8 Himalayan mountain ranges, including sunrise vistas of Mount Everest on clear horizon days.',
+        highlights: ['Panoramic view of 8 out of 14 world\'s highest ranges', 'Crisp pine forest mountain walks & fresh air', 'Breathtaking sunrise over eastern Himalayan summits'],
+        activities: ['Sunrise View Excursion', 'Pine Trail Hiking', 'Mountain Panorama Photography'],
+        openingHours: '24 Hours Open (Best at 05:15 AM Sunrise)',
+        entryFee: 'Free Entry',
+        bestPhotoSpot: 'Nagarkot View Tower at dawn facing Mount Everest ridge',
+        mapLink: 'https://maps.google.com/?q=Nagarkot+View+Tower'
+      }
+    ],
+    oneDayItinerary: [
+      { time: '05:30 AM', title: 'Sarangkot Sunrise', place: 'Sarangkot Ridge Pokhara', desc: 'Behold the golden sun illuminate Annapurna I and Machapuchare peaks.' },
+      { time: '08:30 AM', title: 'Pashupatinath VIP Darshan', place: 'Pashupatinath Temple', desc: 'Special Vedic darshan at the holy Shiva sanctum on the banks of Bagmati.' },
+      { time: '11:00 AM', title: 'Boudhanath Tibetan Mandala', place: 'Boudhanath Stupa', desc: 'Circumambulate with prayer wheels and explore Tibetan monastery art.' },
+      { time: '01:00 PM', title: 'Authentic Himalayan Lunch', place: 'Lakeside / Heritage Dining', desc: 'Enjoy authentic Nepalese Dal Bhat Thali, Momos & multi-cuisine lunch.' },
+      { time: '03:30 PM', title: 'Swayambhunath Monkey Temple', place: 'Swayambhunath Hill', desc: 'Admire ancient 5th-century stupas and 360-degree Kathmandu Valley views.' },
+      { time: '05:30 PM', title: 'Phewa Lake Boating & Tal Barahi', place: 'Phewa Lake Pokhara', desc: 'Scenic private wooden boat cruise to island shrine with mountain reflections.' },
+      { time: '07:00 PM', title: 'Pashupatinath Bagmati Maha Aarti', place: 'Bagmati River Ghats', desc: 'Witness grand synchronized brass lamp twilight Maha Aarti with Vedic chanting.' }
+    ]
+  },
+  'kathmandu': null,
+  'pokhara': null,
+  'chitwan': null
 };
+
+// Aliases for Nepal
+AI_DESTINATION_DATABASE['kathmandu'] = AI_DESTINATION_DATABASE['nepal'];
+AI_DESTINATION_DATABASE['pokhara'] = AI_DESTINATION_DATABASE['nepal'];
+AI_DESTINATION_DATABASE['chitwan'] = AI_DESTINATION_DATABASE['nepal'];
 
 /**
  * Universal AI Destination Guide Generator Function
  * Accepts any location name string and returns a complete prompt-compliant destination guide object.
  */
 export function generateAiDestinationGuide(locationInput = 'Kodaikanal') {
-  const normalizedKey = locationInput.trim().toLowerCase();
+  const normalizedKey = (locationInput || '').trim().toLowerCase();
   
   if (AI_DESTINATION_DATABASE[normalizedKey]) {
     return AI_DESTINATION_DATABASE[normalizedKey];
   }
+
+  // Check substring matches
+  if (normalizedKey.includes('nepal') || normalizedKey.includes('kathmandu') || normalizedKey.includes('pokhara') || normalizedKey.includes('chitwan') || normalizedKey.includes('everest') || normalizedKey.includes('pashupatinath')) {
+    return AI_DESTINATION_DATABASE['nepal'];
+  }
+
 
   // Dynamic Generator Fallback for any location
   const locName = locationInput.trim() || 'Kodaikanal';

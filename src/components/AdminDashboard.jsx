@@ -3,15 +3,17 @@ import {
   X, LayoutDashboard, Calendar, Users, Package, Image as ImageIcon, 
   BookOpen, ShieldCheck, Check, Trash2, Plus, Search, 
   Lock, Sparkles, Download, Save, AlertCircle, Loader2, Wand2, 
-  PenTool, Eye, RefreshCw, Upload, ImagePlus, Type, Copy, Pencil, Send,
+  PenTool, Eye, RefreshCw, Upload, ImagePlus, Type, Copy, Pencil, Edit3, Edit, Send,
   MonitorPlay, ArrowUp, ArrowDown, Phone, Mail, MapPin, Clock, Globe
 } from 'lucide-react';
-import { firestoreService } from '../services/firebase';
+import { firestoreService, isFirebaseConnected } from '../services/firebase';
 import { geminiService, posterStorage } from '../services/gemini';
-import { catalogService, getLastWriteOk } from '../services/catalog';
+import { catalogService, initCatalogFromCloud, getLastWriteOk } from '../services/catalog';
+
 import { AdminFormModal, TourForm, GalleryForm, BlogForm, HeroSlideForm, DestinationForm } from './admin/CatalogForms';
 import ImageUploader from './admin/ImageUploader';
 import MixedBackground from './MixedBackground';
+import PackageModal from './PackageModal';
 
 const ADMIN_PIN = '2026';
 const SESSION_KEY = 'oasis_admin_session';
@@ -23,15 +25,18 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
   });
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState('');
-  const [activeTab, setActiveTab] = useState('posters');
+  const [activeTab, setActiveTab] = useState('tours');
+  const [previewTourPkg, setPreviewTourPkg] = useState(null);
+  const [tourSearchTerm, setTourSearchTerm] = useState('');
+  const [tourStatusFilter, setTourStatusFilter] = useState('all'); // 'all' | 'active' | 'inactive'
   
   // Data States
   const [contactForm, setContactForm] = useState(contactData || {
     phone: '+91 89211 24101',
-    phoneAlt: '+91 487 2333388',
+    phoneAlt: '+91 89211 24101',
     whatsapp: '+91 89211 24101',
-    email: 'sales@oasisindiatours.com',
-    emailAlt: 'support@oasisindiatours.com',
+    email: 'Oasisindiaholidays@gmail.com',
+    emailAlt: 'Oasisindiaholidays@gmail.com',
     address: 'OASIS India Thrissur, Swaraj Round Main Branch & Airport Escort Desk, Thrissur, Kerala 680001',
     workingHours: 'Mon - Sat: 9:00 AM - 8:00 PM | Sun: 10:00 AM - 5:00 PM',
     escortDesk: 'Cochin International Airport (COK) & Thrissur Railway Station Pickup Desk'
@@ -80,10 +85,27 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
   const [previewPoster, setPreviewPoster] = useState(null);
   const [apiStatus, setApiStatus] = useState('');
 
-  // Load data on mount
+  const isTourActive = (departureDate) => {
+    if (!departureDate) return true;
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tourDate = new Date(`${departureDate}T00:00:00`);
+      if (isNaN(tourDate.getTime())) return true;
+      return tourDate >= today;
+    } catch {
+      return true;
+    }
+  };
+  const activeToursCount = tours.filter(p => isTourActive(p.departureDate)).length;
+
+  // Load data on mount and auto-sync with Firebase in background
   useEffect(() => {
     loadAdminData();
     setPosters(posterStorage.getPosters());
+    if (isFirebaseConnected()) {
+      initCatalogFromCloud();
+    }
   }, []);
 
   // Check API key status
@@ -102,6 +124,7 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
     setBookings(bData);
     setInquiries(iData);
   };
+
 
   // Catalog Save/Delete Handlers
   const showCatalogMsg = (msg) => {
@@ -202,9 +225,10 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
   };
 
   const handleDeleteDestination = (id) => {
-    if (confirm('Delete this destination? It will be removed from the public website.')) {
-      setDestinations(catalogService.deleteDestination(id));
-      showCatalogMsg('Destination deleted.');
+    if (confirm('Delete this destination? It will be removed immediately from the public website and deleted from Firebase cloud.')) {
+      const updated = catalogService.deleteDestination(id);
+      setDestinations(updated);
+      showCatalogMsg('✓ Destination removed from website and deleted from Firebase cloud.');
     }
   };
 
@@ -592,8 +616,16 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
               <h2 style={{ fontSize: '1.3rem', fontWeight: 800, fontFamily: 'var(--font-heading)', color: 'var(--gold-light)' }}>
                 OASIS Thrissur • Admin Console
               </h2>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                 <span>Authenticated</span>
+                <span>•</span>
+                <span style={{ 
+                  color: isFirebaseConnected() ? '#10b981' : '#f59e0b',
+                  display: 'flex', alignItems: 'center', gap: '0.25rem'
+                }}>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: isFirebaseConnected() ? '#10b981' : '#f59e0b', display: 'inline-block' }} />
+                  Firebase {isFirebaseConnected() ? 'Cloud Active (chatapp-a9181)' : 'Demo Cache'}
+                </span>
                 <span>•</span>
                 <span style={{ 
                   color: apiStatus === 'connected' ? 'var(--emerald-accent)' : '#f59e0b',
@@ -606,7 +638,28 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+            {/* Real-time Cloud Indicator (No manual sync button needed) */}
+            {isFirebaseConnected() && (
+              <div
+                style={{
+                  background: 'rgba(16,185,129,0.12)',
+                  border: '1px solid rgba(16,185,129,0.4)',
+                  color: '#6ee7b7',
+                  padding: '0.35rem 0.8rem',
+                  borderRadius: '20px',
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.45rem'
+                }}
+              >
+                <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#10b981', display: 'inline-block', boxShadow: '0 0 8px #10b981' }} />
+                <span>Auto Cloud Sync</span>
+              </div>
+            )}
+
             <button
               onClick={() => {
                 setIsAuthenticated(false);
@@ -649,6 +702,7 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
           </div>
         </div>
 
+
         {/* Admin Navigation Tabs - High Contrast & High Visibility */}
         <div style={{
           display: 'flex',
@@ -658,65 +712,116 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
           borderBottom: '1px solid var(--border-gold)',
           background: '#091322'
         }}>
-          {[
-            { id: 'posters', label: 'AI Poster Studio', icon: ImagePlus, count: posters.length },
-            { id: 'destinations', label: 'Destinations', icon: Globe, count: destinations.length },
-            { id: 'bgmixer', label: 'BG Mixer', icon: Sparkles, count: destinations.length },
-            { id: 'contact', label: 'Contact Info', icon: Phone },
-            { id: 'bookings', label: 'Bookings', icon: Calendar, count: bookings.length },
-            { id: 'customers', label: 'Inquiries', icon: Users, count: inquiries.length },
-            { id: 'slides', label: 'Hero Banner', icon: MonitorPlay, count: heroSlides.length },
-            { id: 'tours', label: 'Tours', icon: Package, count: tours.length },
-            { id: 'gallery', label: 'Gallery', icon: ImageIcon, count: galleryItems.length },
-            { id: 'blogs', label: 'Blog', icon: BookOpen, count: blogs.length }
-          ].map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setActiveTab(tab.id)}
-                style={{
-                  background: isActive
-                    ? 'linear-gradient(135deg, rgba(212,175,55,0.3), rgba(212,175,55,0.12))'
-                    : 'rgba(255, 255, 255, 0.07)',
-                  border: isActive ? '1px solid var(--gold-primary)' : '1px solid rgba(255, 255, 255, 0.15)',
-                  color: isActive ? '#fef08a' : '#ffffff',
-                  fontSize: '0.84rem',
-                  fontWeight: isActive ? '800' : '600',
-                  padding: '0.45rem 0.85rem',
-                  borderRadius: '20px',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.45rem',
-                  whiteSpace: 'nowrap',
-                  boxShadow: isActive ? '0 0 12px rgba(212,175,55,0.3)' : 'none',
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                <Icon size={15} color={isActive ? '#fef08a' : 'var(--gold-light)'} />
-                <span>{tab.label}</span>
-                {tab.count !== undefined && (
-                  <span style={{
-                    background: isActive ? 'var(--gold-primary)' : 'rgba(255,255,255,0.18)',
-                    color: isActive ? '#000000' : '#ffffff',
-                    padding: '0.12rem 0.45rem',
-                    borderRadius: '10px',
-                    fontSize: '0.72rem',
-                    fontWeight: 800
-                  }}>
-                    {tab.count}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
+                {[
+                  { id: 'tours', label: 'Tours', icon: Package, count: activeToursCount },
+                  { id: 'bookings', label: 'Bookings', icon: Calendar, count: bookings.length },
+                  { id: 'customers', label: 'Inquiries', icon: Users, count: inquiries.length },
+                  { id: 'destinations', label: 'Destinations', icon: Globe, count: destinations.length },
+                  { id: 'slides', label: 'Hero Banner', icon: MonitorPlay, count: heroSlides.length },
+                  { id: 'contact', label: 'Contact Info', icon: Phone },
+                  { id: 'posters', label: 'AI Poster Studio', icon: ImagePlus, count: posters.length },
+                  { id: 'bgmixer', label: 'BG Mixer', icon: Sparkles, count: destinations.length },
+                  { id: 'gallery', label: 'Gallery', icon: ImageIcon, count: galleryItems.length },
+                  { id: 'blogs', label: 'Blog', icon: BookOpen, count: blogs.length }
+                ].map((tab) => {
+                  const Icon = tab.icon;
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setActiveTab(tab.id)}
+                      style={{
+                        background: isActive
+                          ? 'linear-gradient(135deg, rgba(212,175,55,0.3), rgba(212,175,55,0.12))'
+                          : 'rgba(255, 255, 255, 0.07)',
+                        border: isActive ? '1px solid var(--gold-primary)' : '1px solid rgba(255, 255, 255, 0.15)',
+                        color: isActive ? '#fef08a' : '#ffffff',
+                        fontSize: '0.84rem',
+                        fontWeight: isActive ? '800' : '600',
+                        padding: '0.45rem 0.85rem',
+                        borderRadius: '20px',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.45rem',
+                        whiteSpace: 'nowrap',
+                        boxShadow: isActive ? '0 0 12px rgba(212,175,55,0.3)' : 'none',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <Icon size={15} color={isActive ? '#fef08a' : 'var(--gold-light)'} />
+                      <span>{tab.label}</span>
+                      {tab.count !== undefined && (
+                        <span style={{
+                          background: isActive ? 'var(--gold-primary)' : 'rgba(255,255,255,0.18)',
+                          color: isActive ? '#000000' : '#ffffff',
+                          padding: '0.12rem 0.45rem',
+                          borderRadius: '10px',
+                          fontSize: '0.72rem',
+                          fontWeight: 800
+                        }}>
+                          {tab.count}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
 
-        {/* Content Section */}
-        <div style={{ padding: '1.8rem', overflowY: 'auto', flexGrow: 1 }}>
+              {/* Content Section */}
+              <div style={{ padding: '1.8rem', overflowY: 'auto', flexGrow: 1 }}>
+
+                {/* Quick Metrics & Overview Dashboard for Admin */}
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '1rem',
+                  marginBottom: '1.8rem'
+                }}>
+                  <div className="glass-card" style={{ padding: '1.1rem 1.3rem', background: 'rgba(212,175,55,0.08)', border: '1px solid var(--border-gold)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'linear-gradient(135deg, rgba(212,175,55,0.3), rgba(212,175,55,0.1))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fef08a' }}>
+                      <Package size={22} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>Tour Packages</div>
+                      <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#fff' }}>{activeToursCount} Active</div>
+                    </div>
+                  </div>
+
+            <div className="glass-card" style={{ padding: '1.1rem 1.3rem', background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.3)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'linear-gradient(135deg, rgba(59,130,246,0.3), rgba(59,130,246,0.1))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#93c5fd' }}>
+                <Calendar size={22} />
+              </div>
+              <div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>Total Bookings</div>
+                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#fff' }}>{bookings.length} Received</div>
+              </div>
+            </div>
+
+            <div className="glass-card" style={{ padding: '1.1rem 1.3rem', background: 'rgba(168,85,247,0.08)', border: '1px solid rgba(168,85,247,0.3)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'linear-gradient(135deg, rgba(168,85,247,0.3), rgba(168,85,247,0.1))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#d8b4fe' }}>
+                <Users size={22} />
+              </div>
+              <div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>Traveler Inquiries</div>
+                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#fff' }}>{inquiries.length} Messages</div>
+              </div>
+            </div>
+
+            <div className="glass-card" style={{ padding: '1.1rem 1.3rem', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.3)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'linear-gradient(135deg, rgba(16,185,129,0.3), rgba(16,185,129,0.1))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6ee7b7' }}>
+                <Globe size={22} />
+              </div>
+              <div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>Cloud Sync</div>
+                <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#6ee7b7', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
+                  {isFirebaseConnected() ? 'Online (Firebase)' : 'Local Cache'}
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* ==================== TAB: EDITABLE CONTACT INFO ==================== */}
           {activeTab === 'contact' && (
@@ -739,7 +844,8 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
               <form onSubmit={(e) => {
                 e.preventDefault();
                 if (onUpdateContact) onUpdateContact(contactForm);
-                setContactMsg('✓ Contact details saved and updated live on website!');
+                firestoreService.saveContact(contactForm);
+                setContactMsg('✓ Contact details saved and updated live on website & cloud!');
                 setTimeout(() => setContactMsg(''), 4000);
               }} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 
@@ -758,7 +864,7 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
 
                 <div>
                   <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--gold-light)', fontWeight: 700, marginBottom: '0.3rem' }}>
-                    Landline / Alt Phone
+                    Alternate / Direct Phone
                   </label>
                   <input
                     type="text"
@@ -989,6 +1095,12 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
                   <DestinationForm
                     initial={editingDestination}
                     onSave={handleSaveDestination}
+                    onDelete={(id) => {
+                      handleDeleteDestination(id);
+                      setDestinationFormOpen(false);
+                      setEditingDestination(null);
+                      setDestinationDirty(false);
+                    }}
                     onCancel={() => {
                       if (destinationDirty && !window.confirm('You have unsaved changes. Discard them and close?')) return;
                       setDestinationFormOpen(false);
@@ -1710,63 +1822,340 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
           {/* ==================== TAB: TOUR PACKAGES ==================== */}
           {activeTab === 'tours' && (
             <div>
+              {/* Header & Controls */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--gold-light)' }}>
-                    Tour Packages Catalogue
+                  <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--gold-light)', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
+                    <Package size={22} color="var(--gold-primary)" /> Tour Packages Manager
                   </h3>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem', marginTop: '0.2rem' }}>
-                    Changes publish instantly to the website Tour Packages section.
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.84rem', marginTop: '0.3rem' }}>
+                    View, preview, create and edit all tour packages shown on your public website.
                   </p>
                 </div>
-                <button className="btn-gold" style={{ padding: '0.5rem 1.2rem', fontSize: '0.85rem' }} onClick={() => { setEditingTour(null); setTourDirty(false); setTourFormOpen(true); }}>
-                  <Plus size={16} /> Add New Tour
-                </button>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', flexWrap: 'wrap' }}>
+                  {/* Instant Search Bar */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border-gold)', borderRadius: '25px', padding: '0.45rem 1rem', width: '260px' }}>
+                    <Search size={15} color="var(--gold-primary)" />
+                    <input
+                      type="text"
+                      placeholder="Search packages by name or place..."
+                      value={tourSearchTerm}
+                      onChange={(e) => setTourSearchTerm(e.target.value)}
+                      style={{ background: 'none', border: 'none', color: '#fff', fontSize: '0.84rem', width: '100%', outline: 'none' }}
+                    />
+                  </div>
+
+                  <button
+                    className="btn-gold"
+                    style={{ padding: '0.6rem 1.4rem', fontSize: '0.88rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.45rem' }}
+                    onClick={() => { setEditingTour(null); setTourDirty(false); setTourFormOpen(true); }}
+                  >
+                    <Plus size={18} /> Add New Tour Package
+                  </button>
+                </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.2rem' }}>
-                {tours.map((p) => (
-                  <div key={p.id} className="glass-card" style={{ padding: '1.2rem' }}>
-                    <div style={{ position: 'relative' }}>
-                      <img src={p.image} alt={p.title} style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: '8px', marginBottom: '0.8rem' }} />
-                      <span style={{
-                        position: 'absolute', top: '8px', left: '8px',
-                        background: 'rgba(6,12,23,0.85)', color: 'var(--gold-light)',
-                        fontSize: '0.7rem', fontWeight: 700, padding: '0.25rem 0.6rem', borderRadius: '12px'
-                      }}>
-                        {p.badge || 'Package'}
-                      </span>
-                    </div>
-                    <div style={{ fontWeight: 700, fontSize: '0.98rem', marginBottom: '0.3rem', lineHeight: 1.35 }}>{p.title}</div>
-                    <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginBottom: '0.4rem' }}>
-                      {p.duration} • {p.mainPlaces?.join(', ') || '—'}
-                    </div>
-                    <div style={{ color: 'var(--gold-light)', fontSize: '0.95rem', fontWeight: 800, marginBottom: '0.8rem' }}>
-                      ₹{p.price?.toLocaleString('en-IN')}
-                      {p.originalPrice > p.price && (
-                        <span style={{ color: 'var(--text-dim)', fontSize: '0.75rem', textDecoration: 'line-through', marginLeft: '0.5rem', fontWeight: 500 }}>
-                          ₹{p.originalPrice.toLocaleString('en-IN')}
-                        </span>
-                      )}
-                    </div>
-                    <div style={{ display: 'flex', gap: '0.5rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '0.8rem' }}>
+              {/* Notification Toast Message */}
+              {catalogMsg && (
+                <div style={{ padding: '0.8rem 1.2rem', borderRadius: '12px', background: 'rgba(16,185,129,0.18)', border: '1px solid #10b981', color: '#6ee7b7', marginBottom: '1.5rem', fontSize: '0.88rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Sparkles size={16} /> {catalogMsg}
+                </div>
+              )}
+              {/* Helper for Tour Active Status based on Start Date */}
+              {(() => {
+                const isTourActive = (departureDate) => {
+                  if (!departureDate) return true;
+                  try {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const tourDate = new Date(`${departureDate}T00:00:00`);
+                    if (isNaN(tourDate.getTime())) return true;
+                    return tourDate >= today;
+                  } catch {
+                    return true;
+                  }
+                };
+
+                const activeCount = tours.filter(p => isTourActive(p.departureDate)).length;
+                const inactiveCount = tours.filter(p => !isTourActive(p.departureDate)).length;
+
+                const filteredTours = tours.filter(p => {
+                  const isActive = isTourActive(p.departureDate);
+                  if (tourStatusFilter === 'active' && !isActive) return false;
+                  if (tourStatusFilter === 'inactive' && isActive) return false;
+                  if (!tourSearchTerm.trim()) return true;
+                  const q = tourSearchTerm.toLowerCase();
+                  return (p.title || '').toLowerCase().includes(q) ||
+                    (p.subtitle || '').toLowerCase().includes(q) ||
+                    (Array.isArray(p.mainPlaces) ? p.mainPlaces.join(' ') : String(p.mainPlaces || '')).toLowerCase().includes(q) ||
+                    (p.badge || '').toLowerCase().includes(q);
+                });
+
+                return (
+                  <>
+                    {/* Status Filter Tabs */}
+                    <div style={{ display: 'flex', gap: '0.6rem', marginBottom: '1.2rem', flexWrap: 'wrap', alignItems: 'center' }}>
                       <button
-                        onClick={() => { setEditingTour(p); setTourDirty(false); setTourFormOpen(true); }}
-                        className="btn-glass"
-                        style={{ flex: 1, justifyContent: 'center', padding: '0.45rem', fontSize: '0.8rem' }}
+                        type="button"
+                        onClick={() => setTourStatusFilter('all')}
+                        style={{
+                          background: tourStatusFilter === 'all' ? 'var(--gold-primary)' : 'rgba(255,255,255,0.06)',
+                          color: tourStatusFilter === 'all' ? '#000' : '#fff',
+                          border: tourStatusFilter === 'all' ? '1px solid var(--gold-primary)' : '1px solid rgba(255,255,255,0.15)',
+                          borderRadius: '20px',
+                          padding: '0.35rem 0.9rem',
+                          fontSize: '0.8rem',
+                          fontWeight: 800,
+                          cursor: 'pointer',
+                          transition: 'all 0.15s ease'
+                        }}
                       >
-                        <Pencil size={14} /> Edit
+                        All Packages ({tours.length})
                       </button>
+
                       <button
-                        onClick={() => handleDeleteTour(p.id)}
-                        style={{ background: 'rgba(239,68,68,0.15)', border: 'none', color: '#ef4444', padding: '0.45rem 0.8rem', borderRadius: '10px', cursor: 'pointer' }}
+                        type="button"
+                        onClick={() => setTourStatusFilter('active')}
+                        style={{
+                          background: tourStatusFilter === 'active' ? '#10b981' : 'rgba(16,185,129,0.12)',
+                          color: tourStatusFilter === 'active' ? '#000' : '#6ee7b7',
+                          border: '1px solid #10b981',
+                          borderRadius: '20px',
+                          padding: '0.35rem 0.9rem',
+                          fontSize: '0.8rem',
+                          fontWeight: 800,
+                          cursor: 'pointer',
+                          transition: 'all 0.15s ease'
+                        }}
                       >
-                        <Trash2 size={15} />
+                        🟢 Active ({activeCount})
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setTourStatusFilter('inactive')}
+                        style={{
+                          background: tourStatusFilter === 'inactive' ? '#ef4444' : 'rgba(239,68,68,0.12)',
+                          color: tourStatusFilter === 'inactive' ? '#fff' : '#fca5a5',
+                          border: '1px solid #ef4444',
+                          borderRadius: '20px',
+                          padding: '0.35rem 0.9rem',
+                          fontSize: '0.8rem',
+                          fontWeight: 800,
+                          cursor: 'pointer',
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        🔴 Inactive / Departed ({inactiveCount})
                       </button>
                     </div>
-                  </div>
-                ))}
-              </div>
+
+                    {/* Tour Packages Cards Grid */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.4rem' }}>
+                      {filteredTours.map((p) => {
+                        const spotsCount = (p.sightseeing || p.placeImages || []).length;
+                        const active = isTourActive(p.departureDate);
+                        return (
+                          <div key={p.id} className="glass-card" style={{ padding: '0', overflow: 'hidden', border: active ? '1px solid var(--border-gold)' : '1px solid rgba(239,68,68,0.4)', display: 'flex', flexDirection: 'column', borderRadius: '14px', background: 'rgba(6,12,23,0.85)' }}>
+                            
+                            {/* Package Cover Photo with Clean Top Header Bar */}
+                            <div style={{ position: 'relative', height: '180px', overflow: 'hidden' }}>
+                              <img src={p.image || './ooty-toy-train-real.jpg'} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: active ? 'none' : 'grayscale(35%)' }} />
+                              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(6,12,23,0.95) 0%, rgba(6,12,23,0.35) 50%, rgba(6,12,23,0.7) 100%)' }} />
+                              
+                              {/* Unified Top Header Bar: Badge on Left, Day/Night Duration on Right */}
+                              <div style={{ position: 'absolute', top: '10px', left: '10px', right: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', zIndex: 5 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', maxWidth: '65%' }}>
+                                  {p.badge ? (
+                                    <span style={{
+                                      background: 'rgba(6,12,23,0.9)',
+                                      border: '1px solid var(--border-gold)',
+                                      color: 'var(--gold-light)',
+                                      fontSize: '0.72rem',
+                                      fontWeight: 800,
+                                      padding: '0.25rem 0.65rem',
+                                      borderRadius: '12px',
+                                      whiteSpace: 'nowrap',
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis'
+                                    }}>
+                                      {p.badge}
+                                    </span>
+                                  ) : null}
+
+                                  {/* Active / Inactive Status Pill */}
+                                  <span style={{
+                                    background: active ? 'rgba(16,185,129,0.92)' : 'rgba(239,68,68,0.92)',
+                                    color: '#fff',
+                                    fontSize: '0.68rem',
+                                    fontWeight: 800,
+                                    padding: '0.2rem 0.5rem',
+                                    borderRadius: '10px',
+                                    whiteSpace: 'nowrap'
+                                  }}>
+                                    {active ? '🟢 Active' : '🔴 Inactive'}
+                                  </span>
+                                </div>
+
+                                {/* Top Right Duration Pill */}
+                                <span style={{
+                                  background: 'rgba(16,185,129,0.92)',
+                                  color: '#fff',
+                                  fontSize: '0.74rem',
+                                  fontWeight: 800,
+                                  padding: '0.25rem 0.65rem',
+                                  borderRadius: '12px',
+                                  whiteSpace: 'nowrap',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.3rem',
+                                  boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                                  marginLeft: 'auto'
+                                }}>
+                                  <Clock size={12} /> {p.duration || '3 Days / 2 Nights'}
+                                </span>
+                              </div>
+
+                              {/* Bottom Photo Overlay: Selling Price & Departure Date */}
+                              <div style={{ position: 'absolute', bottom: '10px', left: '12px', right: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', zIndex: 5 }}>
+                                <div>
+                                  <span style={{ fontSize: '0.66rem', color: 'rgba(255,255,255,0.7)', display: 'block', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.04em' }}>Selling Price</span>
+                                  <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--gold-deep)', textShadow: '0 2px 8px rgba(0,0,0,0.95)', lineHeight: 1.1 }}>
+                                    ₹{p.price ? Number(p.price).toLocaleString('en-IN') : '0'} <span style={{ fontSize: '0.72rem', color: '#fff', fontWeight: 500 }}>/ person</span>
+                                  </div>
+                                </div>
+
+                                {p.departureDate && (
+                                  <span style={{ fontSize: '0.72rem', color: active ? '#fef08a' : '#fca5a5', fontWeight: 700, background: 'rgba(0,0,0,0.75)', border: active ? '1px solid rgba(212,175,55,0.3)' : '1px solid rgba(239,68,68,0.4)', padding: '0.25rem 0.55rem', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                                    <Calendar size={11} color={active ? 'var(--gold-primary)' : '#ef4444'} /> {p.departureDate}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Card Body */}
+                            <div style={{ padding: '1.2rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                              
+                              {/* Title & Subtitle */}
+                              <h4 style={{ fontWeight: 800, fontSize: '1.05rem', color: '#fff', margin: '0 0 0.35rem', lineHeight: 1.35 }}>
+                                {p.title}
+                              </h4>
+                              {p.subtitle && (
+                                <p style={{ color: 'var(--gold-light)', fontSize: '0.8rem', margin: '0 0 0.75rem', fontStyle: 'italic', lineHeight: 1.4 }}>
+                                  "{p.subtitle}"
+                                </p>
+                              )}
+
+                              {/* Structured Day/Night Duration & Spots Count Ribbon */}
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
+                                <span style={{
+                                  background: 'rgba(212,175,55,0.12)',
+                                  border: '1px solid rgba(212,175,55,0.3)',
+                                  color: '#fef08a',
+                                  fontSize: '0.74rem',
+                                  fontWeight: 700,
+                                  padding: '0.25rem 0.6rem',
+                                  borderRadius: '8px',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.35rem'
+                                }}>
+                                  <Clock size={12} color="var(--gold-primary)" /> {p.duration || '3 Days / 2 Nights'}
+                                </span>
+
+                                {spotsCount > 0 && (
+                                  <span style={{
+                                    background: 'rgba(168,85,247,0.12)',
+                                    border: '1px solid rgba(168,85,247,0.3)',
+                                    color: '#d8b4fe',
+                                    fontSize: '0.74rem',
+                                    fontWeight: 700,
+                                    padding: '0.25rem 0.6rem',
+                                    borderRadius: '8px',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '0.35rem'
+                                  }}>
+                                    📍 {spotsCount} Sightseeing Spots
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Places Chips */}
+                              {p.mainPlaces && (
+                                <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                                  {(Array.isArray(p.mainPlaces) ? p.mainPlaces : String(p.mainPlaces).split(',')).slice(0, 4).map((place, pIdx) => (
+                                    <span key={pIdx} style={{
+                                      background: 'rgba(255,255,255,0.06)',
+                                      border: '1px solid rgba(255,255,255,0.1)',
+                                      color: 'var(--text-muted)',
+                                      fontSize: '0.72rem',
+                                      padding: '0.2rem 0.55rem',
+                                      borderRadius: '10px',
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      gap: '0.25rem'
+                                    }}>
+                                      <MapPin size={10} color="var(--gold-light)" /> {typeof place === 'string' ? place.trim() : place}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+
+                              {/* Card Actions Footer */}
+                              <div style={{ display: 'flex', gap: '0.6rem', marginTop: 'auto', borderTop: '1px solid var(--border-subtle)', paddingTop: '0.9rem' }}>
+                                <button
+                                  type="button"
+                                  onClick={() => setPreviewTourPkg(p)}
+                                  className="btn-glass"
+                                  style={{ flex: 1, padding: '0.5rem', fontSize: '0.82rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem' }}
+                                  title="Preview live traveler experience"
+                                >
+                                  <Eye size={15} color="var(--gold-primary)" /> Preview
+                                </button>
+                                
+                                <button
+                                  type="button"
+                                  onClick={() => { setEditingTour(p); setTourDirty(false); setTourFormOpen(true); }}
+                                  className="btn-gold"
+                                  style={{ flex: 1, padding: '0.5rem', fontSize: '0.82rem', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem' }}
+                                >
+                                  <Pencil size={14} /> Edit
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteTour(p.id)}
+                                  style={{
+                                    background: 'rgba(239,68,68,0.14)',
+                                    border: '1px solid rgba(239,68,68,0.4)',
+                                    color: '#f87171',
+                                    borderRadius: '10px',
+                                    padding: '0.5rem 0.85rem',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '0.35rem',
+                                    fontSize: '0.82rem',
+                                    fontWeight: 700,
+                                    transition: 'all 0.2s ease'
+                                  }}
+                                  title="Delete Tour Package permanently"
+                                >
+                                  <Trash2 size={14} /> Delete
+                                </button>
+                              </div>
+
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </>
+                );
+              })()}
             </div>
           )}
 
@@ -1903,6 +2292,12 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
             <TourForm
               initial={editingTour}
               onSave={handleSaveTour}
+              onDelete={(id) => {
+                handleDeleteTour(id);
+                setTourFormOpen(false);
+                setEditingTour(null);
+                setTourDirty(false);
+              }}
               onDirtyChange={() => setTourDirty(true)}
               onCancel={() => {
                 if (tourDirty && !window.confirm('You have unsaved changes in this tour. Discard them and close?')) return;
@@ -2006,6 +2401,15 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
               </div>
             </div>
           </div>
+        )}
+
+        {/* Live Traveler Experience Preview Modal */}
+        {previewTourPkg && (
+          <PackageModal
+            pkg={previewTourPkg}
+            onClose={() => setPreviewTourPkg(null)}
+            onBookTour={() => setPreviewTourPkg(null)}
+          />
         )}
 
       </div>

@@ -1,20 +1,39 @@
 // Firebase Service Module for OASIS India Thrissur
 import { initializeApp, getApps } from 'firebase/app';
-import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+import { 
+  getFirestore, 
+  collection, 
+  getDocs, 
+  getDoc,
+  addDoc, 
+  updateDoc, 
+  deleteDoc, 
+  doc, 
+  setDoc 
+} from 'firebase/firestore';
+import { 
+  getStorage, 
+  ref, 
+  uploadBytes, 
+  uploadString, 
+  getDownloadURL, 
+  deleteObject 
+} from 'firebase/storage';
 
 // Default Firebase Configuration template
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyDemoKeyOasisThrissur2026",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "oasis-india-thrissur.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "oasis-india-thrissur",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "oasis-india-thrissur.appspot.com",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_SENDER_ID || "98765432101",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:98765432101:web:abcdef123456"
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "chatapp-a9181.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "chatapp-a9181",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "chatapp-a9181.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_SENDER_ID || "824770841743",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:824770841743:web:7111a5c56890e613a4b4fa"
 };
 
 // Initialize Firebase App
 let app;
 let db;
+let storage;
 
 try {
   if (!getApps().length) {
@@ -23,11 +42,161 @@ try {
     app = getApps()[0];
   }
   db = getFirestore(app);
+  storage = getStorage(app);
 } catch (e) {
-  console.warn("Firebase initialized in reactive demo state mode:", e.message);
+  console.warn("Firebase initialization warning:", e.message);
 }
 
-// Initial Mock Datasets for Firestore Fallback
+// Check if live cloud credentials are active
+export const isFirebaseConnected = () => {
+  const key = import.meta.env.VITE_FIREBASE_API_KEY;
+  return Boolean(key && !key.includes('DemoKey') && key.length > 10);
+};
+
+// Sanitizer to remove all `undefined` values (Firestore rejects undefined fields)
+export function sanitizeForFirestore(data) {
+  if (data === undefined) return null;
+  if (data === null || typeof data !== 'object') return data;
+  if (Array.isArray(data)) {
+    return data.map(sanitizeForFirestore).filter(v => v !== undefined);
+  }
+  const clean = {};
+  for (const [key, value] of Object.entries(data)) {
+    if (value !== undefined) {
+      clean[key] = sanitizeForFirestore(value);
+    }
+  }
+  return clean;
+}
+
+// ==========================================
+// 📦 FIREBASE CLOUD STORAGE SERVICE
+// ==========================================
+export const storageService = {
+  isConfigured() {
+    return isFirebaseConnected();
+  },
+
+  /**
+   * Upload an image File / Blob to Firebase Cloud Storage
+   */
+  async uploadFile(file, folder = 'uploads') {
+    if (!file) throw new Error('No file provided for upload');
+    
+    if (storage && this.isConfigured()) {
+      try {
+        const cleanName = (file.name || 'image.jpg').replace(/[^a-zA-Z0-9.-]/g, '_');
+        const filePath = `oasis-india-thrissur/${folder}/${Date.now()}_${cleanName}`;
+        const storageRef = ref(storage, filePath);
+        
+        const snapshot = await uploadBytes(storageRef, file, {
+          contentType: file.type || 'image/jpeg'
+        });
+        const downloadUrl = await getDownloadURL(snapshot.ref);
+        return { success: true, url: downloadUrl, path: filePath };
+      } catch (err) {
+        console.warn('Firebase Cloud Storage upload fallback to base64:', err.message);
+      }
+    }
+
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        resolve({ success: true, url: e.target.result, isLocal: true });
+      };
+      reader.readAsDataURL(file);
+    });
+  },
+
+  /**
+   * Upload a base64 / data URL string to Firebase Cloud Storage
+   */
+  async uploadBase64(base64Str, filename = 'generated-poster.png', folder = 'posters') {
+    if (!base64Str) return null;
+
+    if (storage && this.isConfigured() && base64Str.startsWith('data:image')) {
+      try {
+        const filePath = `oasis-india-thrissur/${folder}/${Date.now()}_${filename}`;
+        const storageRef = ref(storage, filePath);
+        await uploadString(storageRef, base64Str, 'data_url');
+        const downloadUrl = await getDownloadURL(storageRef);
+        return { success: true, url: downloadUrl, path: filePath };
+      } catch (err) {
+        console.warn('Firebase Storage uploadBase64 fallback:', err.message);
+      }
+    }
+
+    return { success: true, url: base64Str, isLocal: true };
+  },
+
+  /**
+   * Delete a file from Firebase Cloud Storage by path
+   */
+  async deleteFile(storagePath) {
+    if (!storage || !this.isConfigured() || !storagePath) return false;
+    try {
+      const storageRef = ref(storage, storagePath);
+      await deleteObject(storageRef);
+      return true;
+    } catch (err) {
+      console.warn('Firebase Storage delete warning:', err.message);
+      return false;
+    }
+  },
+
+  /**
+   * Automatically detect if image is a base64 data URL and upload to Firebase Storage,
+   * returning the permanent cloud download URL.
+   */
+  async uploadImageIfBase64(imgUrlOrBase64, folder = 'catalog-images', filename = 'image.png') {
+    if (!imgUrlOrBase64 || typeof imgUrlOrBase64 !== 'string') return imgUrlOrBase64;
+    if (imgUrlOrBase64.startsWith('data:image')) {
+      const res = await this.uploadBase64(imgUrlOrBase64, filename, folder);
+      return res?.url || imgUrlOrBase64;
+    }
+    return imgUrlOrBase64;
+  },
+
+  /**
+   * Upload an array of images or placeImage objects to Firebase Storage if they contain base64 data
+   */
+  async uploadImagesArrayIfBase64(imagesArray, folder = 'catalog-images') {
+    if (!Array.isArray(imagesArray)) return imagesArray;
+    const uploaded = await Promise.all(
+      imagesArray.map(async (item, idx) => {
+        if (typeof item === 'string') {
+          return await this.uploadImageIfBase64(item, folder, `img_${idx}_${Date.now()}.png`);
+        }
+        if (item && typeof item === 'object' && item.url) {
+          const newUrl = await this.uploadImageIfBase64(item.url, folder, `place_${idx}_${Date.now()}.png`);
+          return { ...item, url: newUrl };
+        }
+        return item;
+      })
+    );
+    return uploaded;
+  }
+};
+
+// Local Storage Helper functions to maintain instant reactive UI state
+const getStorageItem = (key, defaultData) => {
+  try {
+    const saved = localStorage.getItem(`oasis_db_${key}`);
+    return saved ? JSON.parse(saved) : defaultData;
+  } catch (e) {
+    return defaultData;
+  }
+};
+
+const setStorageItem = (key, data) => {
+  try {
+    localStorage.setItem(`oasis_db_${key}`, JSON.stringify(data));
+  } catch (e) {
+    console.error("Local storage error:", e);
+  }
+};
+
+// Initial Mock Datasets
 const INITIAL_BOOKINGS = [
   {
     id: 'OASIS-BK-9021',
@@ -97,29 +266,31 @@ const INITIAL_INQUIRIES = [
   }
 ];
 
-// Local Storage Helper functions to maintain reactive state
-const getStorageItem = (key, defaultData) => {
-  try {
-    const saved = localStorage.getItem(`oasis_db_${key}`);
-    return saved ? JSON.parse(saved) : defaultData;
-  } catch (e) {
-    return defaultData;
-  }
-};
-
-const setStorageItem = (key, data) => {
-  try {
-    localStorage.setItem(`oasis_db_${key}`, JSON.stringify(data));
-  } catch (e) {
-    console.error("Storage error:", e);
-  }
-};
-
-// Firestore CRUD Wrappers
+// ==========================================
+// 🔥 FIRESTORE REALTIME CRUD SERVICE
+// ==========================================
 export const firestoreService = {
-  // Bookings
+  // ---- Bookings ----
   async getBookings() {
-    return getStorageItem('bookings', INITIAL_BOOKINGS);
+    const local = getStorageItem('bookings', INITIAL_BOOKINGS);
+    if (db && isFirebaseConnected()) {
+      try {
+        const snap = await getDocs(collection(db, 'oasis_bookings'));
+        if (!snap.empty) {
+          const cloudList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          setStorageItem('bookings', cloudList);
+          return cloudList;
+        } else if (local && local.length > 0) {
+          // Cloud is empty, automatically seed to Firebase Firestore
+          for (const b of local) {
+            await setDoc(doc(db, 'oasis_bookings', String(b.id)), sanitizeForFirestore(b), { merge: true });
+          }
+        }
+      } catch (err) {
+        console.warn('Firestore getBookings error:', err.message);
+      }
+    }
+    return local;
   },
 
   async createBooking(bookingData) {
@@ -133,6 +304,14 @@ export const firestoreService = {
     };
     const updated = [newBooking, ...bookings];
     setStorageItem('bookings', updated);
+
+    if (db && isFirebaseConnected()) {
+      try {
+        await setDoc(doc(db, 'oasis_bookings', newBooking.id), sanitizeForFirestore(newBooking));
+      } catch (err) {
+        console.warn('Firestore createBooking error:', err.message);
+      }
+    }
     return newBooking;
   },
 
@@ -140,6 +319,14 @@ export const firestoreService = {
     const bookings = getStorageItem('bookings', INITIAL_BOOKINGS);
     const updated = bookings.map(b => b.id === id ? { ...b, status: newStatus } : b);
     setStorageItem('bookings', updated);
+
+    if (db && isFirebaseConnected()) {
+      try {
+        await updateDoc(doc(db, 'oasis_bookings', id), { status: newStatus });
+      } catch (err) {
+        console.warn('Firestore updateBookingStatus error:', err.message);
+      }
+    }
     return updated;
   },
 
@@ -147,12 +334,38 @@ export const firestoreService = {
     const bookings = getStorageItem('bookings', INITIAL_BOOKINGS);
     const updated = bookings.filter(b => b.id !== id);
     setStorageItem('bookings', updated);
+
+    if (db && isFirebaseConnected()) {
+      try {
+        await deleteDoc(doc(db, 'oasis_bookings', id));
+      } catch (err) {
+        console.warn('Firestore deleteBooking error:', err.message);
+      }
+    }
     return updated;
   },
 
-  // Customer Inquiries
+  // ---- Inquiries ----
   async getInquiries() {
-    return getStorageItem('inquiries', INITIAL_INQUIRIES);
+    const local = getStorageItem('inquiries', INITIAL_INQUIRIES);
+    if (db && isFirebaseConnected()) {
+      try {
+        const snap = await getDocs(collection(db, 'oasis_inquiries'));
+        if (!snap.empty) {
+          const cloudList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          setStorageItem('inquiries', cloudList);
+          return cloudList;
+        } else if (local && local.length > 0) {
+          // Cloud is empty, automatically seed to Firebase Firestore
+          for (const i of local) {
+            await setDoc(doc(db, 'oasis_inquiries', String(i.id)), sanitizeForFirestore(i), { merge: true });
+          }
+        }
+      } catch (err) {
+        console.warn('Firestore getInquiries error:', err.message);
+      }
+    }
+    return local;
   },
 
   async createInquiry(inquiryData) {
@@ -165,6 +378,14 @@ export const firestoreService = {
     };
     const updated = [newInquiry, ...inquiries];
     setStorageItem('inquiries', updated);
+
+    if (db && isFirebaseConnected()) {
+      try {
+        await setDoc(doc(db, 'oasis_inquiries', newInquiry.id), sanitizeForFirestore(newInquiry));
+      } catch (err) {
+        console.warn('Firestore createInquiry error:', err.message);
+      }
+    }
     return newInquiry;
   },
 
@@ -172,8 +393,179 @@ export const firestoreService = {
     const inquiries = getStorageItem('inquiries', INITIAL_INQUIRIES);
     const updated = inquiries.map(i => i.id === id ? { ...i, status: newStatus } : i);
     setStorageItem('inquiries', updated);
+
+    if (db && isFirebaseConnected()) {
+      try {
+        await updateDoc(doc(db, 'oasis_inquiries', id), { status: newStatus });
+      } catch (err) {
+        console.warn('Firestore updateInquiryStatus error:', err.message);
+      }
+    }
     return updated;
+  },
+
+  async deleteInquiry(id) {
+    const inquiries = getStorageItem('inquiries', INITIAL_INQUIRIES);
+    const updated = inquiries.filter(i => i.id !== id);
+    setStorageItem('inquiries', updated);
+
+    if (db && isFirebaseConnected()) {
+      try {
+        await deleteDoc(doc(db, 'oasis_inquiries', id));
+      } catch (err) {
+        console.warn('Firestore deleteInquiry error:', err.message);
+      }
+    }
+    return updated;
+  },
+
+  // ---- Company Contact Settings ----
+  async getContact(defaultData) {
+    const local = getStorageItem('company_contact', defaultData);
+    if (db && isFirebaseConnected()) {
+      try {
+        const snap = await getDoc(doc(db, 'oasis_settings', 'company_contact'));
+        if (snap.exists()) {
+          const cloudData = snap.data();
+          setStorageItem('company_contact', cloudData);
+          return cloudData;
+        } else if (local) {
+          // Cloud is empty, seed to Firebase Firestore
+          await setDoc(doc(db, 'oasis_settings', 'company_contact'), sanitizeForFirestore(local), { merge: true });
+        }
+      } catch (err) {
+        console.warn('Firestore getContact error:', err.message);
+      }
+    }
+    return local;
+  },
+
+  async saveContact(contactData) {
+    setStorageItem('company_contact', contactData);
+    if (db && isFirebaseConnected()) {
+      try {
+        await setDoc(doc(db, 'oasis_settings', 'company_contact'), sanitizeForFirestore(contactData), { merge: true });
+      } catch (err) {
+        console.warn('Firestore saveContact error:', err.message);
+      }
+    }
+    return contactData;
+  },
+
+  // ---- Cloud Catalog Sync (Tours, Destinations, Gallery, Blogs, Slides) ----
+  async syncCatalogToCloud(collectionName, items) {
+    if (!db || !isFirebaseConnected() || !Array.isArray(items)) return false;
+    try {
+      for (const item of items) {
+        if (item && item.id) {
+          const cleanItem = sanitizeForFirestore(item);
+          await setDoc(doc(db, `oasis_${collectionName}`, String(item.id)), cleanItem, { merge: true });
+        }
+      }
+      return true;
+    } catch (err) {
+      console.warn(`Firestore sync error for ${collectionName}:`, err.message);
+      throw err;
+    }
+  },
+
+  async fetchCatalogFromCloud(collectionName, defaultItems) {
+    if (!db || !isFirebaseConnected()) return defaultItems;
+    try {
+      const snap = await getDocs(collection(db, `oasis_${collectionName}`));
+      if (!snap.empty) {
+        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      }
+    } catch (err) {
+      console.warn(`Firestore fetch error for ${collectionName}:`, err.message);
+    }
+    return defaultItems;
+  },
+
+  async saveCatalogItem(collectionName, item) {
+    if (!db || !isFirebaseConnected() || !item?.id) return;
+    try {
+      const cleanItem = sanitizeForFirestore(item);
+      await setDoc(doc(db, `oasis_${collectionName}`, String(item.id)), cleanItem, { merge: true });
+    } catch (err) {
+      console.warn(`Firestore save error on ${collectionName}:`, err.message);
+    }
+  },
+
+  async deleteCatalogItem(collectionName, id) {
+    if (!db || !isFirebaseConnected() || !id) return;
+    try {
+      await deleteDoc(doc(db, `oasis_${collectionName}`, String(id)));
+    } catch (err) {
+      console.warn(`Firestore delete error on ${collectionName}:`, err.message);
+    }
+  },
+
+  // ---- 1-Click Sync All Datasets to Firestore ----
+  async syncAllToCloud({ tours, destinations, gallery, blogs, slides, contact, bookings, inquiries }) {
+    if (!db || !isFirebaseConnected()) {
+      return { success: false, message: 'Firebase configuration is missing or invalid in .env' };
+    }
+    try {
+      let count = 0;
+      if (tours?.length) {
+        await this.syncCatalogToCloud('tours', tours);
+        count += tours.length;
+      }
+      if (destinations?.length) {
+        await this.syncCatalogToCloud('destinations', destinations);
+        count += destinations.length;
+      }
+      if (gallery?.length) {
+        await this.syncCatalogToCloud('gallery', gallery);
+        count += gallery.length;
+      }
+      if (blogs?.length) {
+        await this.syncCatalogToCloud('blogs', blogs);
+        count += blogs.length;
+      }
+      if (slides?.length) {
+        await this.syncCatalogToCloud('slides', slides);
+        count += slides.length;
+      }
+      if (contact) {
+        await this.saveContact(contact);
+        count += 1;
+      }
+      if (bookings?.length) {
+        for (const b of bookings) {
+          await setDoc(doc(db, 'oasis_bookings', String(b.id)), sanitizeForFirestore(b), { merge: true });
+        }
+        count += bookings.length;
+      }
+      if (inquiries?.length) {
+        for (const i of inquiries) {
+          await setDoc(doc(db, 'oasis_inquiries', String(i.id)), sanitizeForFirestore(i), { merge: true });
+        }
+        count += inquiries.length;
+      }
+      return { 
+        success: true, 
+        message: `✓ Successfully synchronized ${count} records across all collections to Firebase Firestore!` 
+      };
+    } catch (err) {
+      console.error('Firebase Sync Error:', err);
+      // Helpful error explanations
+      if (err.message && err.message.includes('permission-denied')) {
+        return { 
+          success: false, 
+          message: '⚠️ Permission Denied: Please enable Firestore Test Mode or set rules to "allow read, write: if true;" in Firebase Console.' 
+        };
+      }
+      if (err.message && (err.message.includes('not-found') || err.message.includes('NOT_FOUND'))) {
+        return {
+          success: false,
+          message: '⚠️ Firestore Database not found: Please click "Create database" in Firebase Console -> Firestore Database.'
+        };
+      }
+      return { success: false, message: `⚠️ Sync Error: ${err.message}` };
+    }
   }
 };
 
-export { db };
+export { db, storage };

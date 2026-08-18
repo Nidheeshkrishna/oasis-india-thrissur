@@ -341,17 +341,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
               );
             })()}
 
-            {/* Interactive Route & Pickup Map on Booking Time */}
-            <RouteMapVisualizer
-              routePoints={routeStops}
-              pickupPoints={availablePickups}
-              dropPoints={availableDrops}
-              destinationName={formData.destination || formData.packageName}
-              initialPickup={formData.pickupLocation}
-              initialDrop={formData.dropLocation}
-              onPickupChange={(p) => setFormData(f => ({ ...f, pickupLocation: p }))}
-              onDropChange={(d) => setFormData(f => ({ ...f, dropLocation: d }))}
-            />
+            {/* Interactive Route & Pickup Map on Booking Time - Hidden per user directive */}
 
             {/* Travelers Count */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem', marginBottom: '2rem' }}>

@@ -3,6 +3,8 @@ import { Upload, Sparkles, Trash2, Check, Search, MapPin as MapPinIcon, Wand2, L
 import { PRESET_IMAGES } from './ImageUploader';
 import { findTopPlaces } from '../../data/topPlacesData';
 import { geminiService } from '../../services/gemini';
+import { storageService } from '../../services/firebase';
+
 
 const GOOGLE_KEY_STORAGE = 'oasis_google_img_key';
 const GOOGLE_CX_STORAGE = 'oasis_google_img_cx';
@@ -189,13 +191,19 @@ export default function ItemImagePicker({
     setCandidates(matchImages(val));
   };
 
-  const handleFileUpload = (files) => {
+  const handleFileUpload = async (files) => {
     const file = files && files[0];
     if (!file || !file.type.startsWith('image/')) return;
-    const reader = new FileReader();
-    reader.onload = (e) => onChange && onChange(e.target.result);
-    reader.readAsDataURL(file);
+    try {
+      const res = await storageService.uploadFile(file, 'attraction-images');
+      if (res && res.url) {
+        addUrl(res.url);
+      }
+    } catch (err) {
+      console.warn('ItemImagePicker file upload error:', err);
+    }
   };
+
 
   const selectedSet = new Set(Array.isArray(images) ? images : []);
   const topPlaces = findTopPlaces(aiPrompt);

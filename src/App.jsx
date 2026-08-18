@@ -102,6 +102,7 @@ export default function App() {
           <HeroSlider 
             destinations={destinations}
             onSelectDestination={(dest) => setSelectedDestination(dest)}
+            onViewPackage={(pkg) => setSelectedPackage(pkg)}
             onBookTour={(dest) => handleOpenBooking(dest)}
           />
 

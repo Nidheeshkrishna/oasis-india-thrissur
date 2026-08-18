@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Package, Image as ImageIcon, BookOpen, Save, MonitorPlay, Sparkles, Compass, Eye, Check, Navigation, Clock, Wand2, RefreshCw } from 'lucide-react';
+import { X, Package, Image as ImageIcon, BookOpen, Save, MonitorPlay, Sparkles, Compass, Eye, Check, Navigation, Clock, Wand2, RefreshCw, Upload, Loader2, Layers, Plus, Trash2, ChevronUp, ChevronDown, Copy, Tag, Video, Calendar } from 'lucide-react';
 import { DESTINATIONS } from '../../data/destinationsData';
 import { catalogService } from '../../services/catalog';
+import { storageService } from '../../services/firebase';
+import MixedBackground from '../MixedBackground';
 import ImageUploader from './ImageUploader';
 import AiPlaceImageSelector from './AiPlaceImageSelector';
 import ItemImagePicker from './ItemImagePicker';
@@ -38,6 +40,10 @@ const labelStyle = {
 };
 
 const PRESET_BADGES = [
+  '🏛️ Heritage',
+  '🛕 Divine',
+  '✈️ International',
+  '🏖️ Vacation',
   '🔥 Bestseller',
   '✨ New Launch',
   '🌟 Signature Yatra',
@@ -47,6 +53,111 @@ const PRESET_BADGES = [
   '💎 Premium Pilgrimage',
   '⭐ Highly Recommended'
 ];
+
+export const PLACE_PHOTO_LIBRARY = {
+  pokhara: {
+    name: 'Pokhara',
+    title: 'Pokhara Phewa Lake & Annapurna Reflections',
+    url: './nepal_pokhara_phewa_lake.png',
+    description: 'Tranquil lakeside paradise reflecting snow-capped Mount Machapuchare (Fishtail). Includes private boat ride to Tal Barahi Island Temple, roaring Davis Falls, and Gupteshwor Mahadev cave.'
+  },
+  muktinath: {
+    name: 'Muktinath (3,710 M)',
+    title: 'Muktinath Holy Temple (3,710 M Altitude)',
+    url: './nepal_muktinath_temple.png',
+    description: 'The sacred Vishnu & Buddhist shrine perched at 3,710m altitude in the Mustang Himalayas. Holy bath under the 108 stone water spouts (Mukti Dhara) and eternal natural flame shrine of Jwala Mai.'
+  },
+  kathmandu: {
+    name: 'Kathmandu',
+    title: 'Sacred Pashupatinath & Boudhanath Stupa',
+    url: './nepal_kathmandu_pashupatinath.png',
+    description: 'Revered spiritual capital of Nepal. Experience VIP darshan at the holy Pashupatinath Temple on the banks of Bagmati river, circumambulate the massive Boudhanath UNESCO Buddhist Stupa, and explore Swayambhunath.'
+  },
+  lumbini: {
+    name: 'Lumbini',
+    title: 'Lumbini Sacred Garden & Maya Devi Temple',
+    url: './nepal_lumbini_sacred_garden.png',
+    description: 'UNESCO World Heritage site and sacred birthplace of Lord Gautama Buddha. Visit ancient Maya Devi Temple, 3rd-century BC Ashoka Pillar, sacred Pushkarini pool, and World Peace Pagoda.'
+  },
+  sarangkot: {
+    name: 'Sarangkot Sunrise',
+    title: 'Sarangkot Golden Himalayan Sunrise Viewpoint',
+    url: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80',
+    description: 'Spectacular 5:00 AM hilltop panoramic view of golden morning sunlight breaking across the Annapurna I, Machapuchare (Fishtail), and Dhaulagiri mountain ranges.'
+  },
+  pashupatinath: {
+    name: 'Pashupatinath',
+    title: 'Holy Pashupatinath Temple Darshan & Bagmati Aarti',
+    url: './nepal_kathmandu_pashupatinath.png',
+    description: 'Ancient sacred pagoda temple of Lord Shiva along the holy Bagmati River in Kathmandu. Special VIP morning darshan and evening Bagmati Ganga Aarti.'
+  },
+  munnar: {
+    name: 'Munnar',
+    title: 'Munnar Misty Tea Plantations & Eravikulam',
+    url: 'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=1200&q=80',
+    description: 'Lush rolling emerald tea estates, misty mountain valleys, Eravikulam National Park (Nilgiri Tahr habitat), and scenic Mattupetty Dam boating.'
+  },
+  athirappilly: {
+    name: 'Athirappilly',
+    title: 'Athirappilly Grand Niagara of India Waterfalls',
+    url: './athirappilly-falls-real.jpg',
+    description: 'Majestic 80-foot natural cascading waterfall nestled in the lush Chalakudy river basin with Vazhachal rainforest trails.'
+  },
+  wayanad: {
+    name: 'Wayanad',
+    title: 'Wayanad Chembra Heart Lake & Banasura Sagar',
+    url: './wayanad_chembra_heart_lake_ai.png',
+    description: 'Pristine rainforest retreat featuring heart-shaped Chembra Lake, ancient Edakkal stone-age caves, and Banasura Sagar earthen dam.'
+  },
+  varanasi: {
+    name: 'Varanasi / Kashi',
+    title: 'Kashi Vishwanath Temple & Ganga Aarti',
+    url: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1200&q=80',
+    description: 'Spiritual heart of India. VIP Darshan at Kashi Vishwanath Golden Temple corridor and enchanting evening Ganga Aarti at Dashashwamedh Ghat.'
+  },
+  ayodhya: {
+    name: 'Ayodhya',
+    title: 'Ayodhya Shri Ram Janmabhoomi Mandir',
+    url: './ayodhya-ram-mandir-real.jpg',
+    description: 'Magnificent newly consecrated grand Shri Ram Mandir, Hanumangarhi temple, and serene evening Aarti at Saryu river ghats.'
+  },
+  kashmir: {
+    name: 'Kashmir Valley',
+    title: 'Srinagar Dal Lake Shikara & Gulmarg Gondola',
+    url: 'https://images.unsplash.com/photo-1595815771614-ade9d652a65d?auto=format&fit=crop&w=1200&q=80',
+    description: 'Paradise on Earth. Romantic Shikara ride on Dal Lake, floating houseboat stay, and high-altitude Gulmarg snow Gondola cable car ride.'
+  },
+  ooty: {
+    name: 'Ooty',
+    title: 'Ooty Nilgiri Heritage Toy Train & Botanical Gardens',
+    url: './ooty-toy-train-real.jpg',
+    description: 'UNESCO Heritage steam toy train ride, 55-acre Government Botanical Gardens, and pedal boating across misty Ooty Lake.'
+  },
+  kovalam: {
+    name: 'Kovalam Beach',
+    title: 'Kovalam Lighthouse Beach & Sunset Promenade',
+    url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
+    description: 'Crescent-shaped golden sand beaches, historic red-and-white striped lighthouse, and refreshing Arabian Sea coastal breeze.'
+  },
+  alleppey: {
+    name: 'Alleppey Backwaters',
+    title: 'Alleppey Luxury Houseboat Cruise & Vembanad Lake',
+    url: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=80',
+    description: 'Tranquil palm-fringed backwaters, traditional Kettuvallam luxury houseboat cruise, and authentic Kerala village canals.'
+  }
+};
+
+export function getMatchingPlacePhotos(query) {
+  if (!query || typeof query !== 'string') return [];
+  const q = query.toLowerCase().trim();
+  const results = [];
+  for (const [key, item] of Object.entries(PLACE_PHOTO_LIBRARY)) {
+    if (q.includes(key) || key.includes(q) || item.name.toLowerCase().includes(q) || item.title.toLowerCase().includes(q)) {
+      results.push(item);
+    }
+  }
+  return results;
+}
 
 export function AdminFormModal({ title, icon: Icon, onClose, children, fullscreen = false, dirty = false }) {
   const requestClose = () => {
@@ -155,6 +266,7 @@ const resolveRoutePoints = (initial) => {
 // Helper to resolve clean location keyword from text or destination
 const resolveLocationKeyword = (title = '', subtitle = '', destId = '', inputLoc = '') => {
   const combined = `${title} ${subtitle} ${destId} ${inputLoc}`.toLowerCase();
+  if (combined.includes('nepal') || combined.includes('kathmandu') || combined.includes('pokhara') || combined.includes('chitwan') || combined.includes('everest') || combined.includes('pashupatinath') || combined.includes('sarangkot')) return 'Nepal';
   if (combined.includes('kodaikanal') || combined.includes('kodai')) return 'Kodaikanal';
   if (combined.includes('munnar')) return 'Munnar';
   if (combined.includes('ooty') || combined.includes('nilgiri')) return 'Ooty';
@@ -172,11 +284,12 @@ const resolveLocationKeyword = (title = '', subtitle = '', destId = '', inputLoc
   if (combined.includes('gundlupet')) return 'Gundlupet';
   if (combined.includes('horanadu')) return 'Horanadu';
   
-  return title.trim() || inputLoc.trim() || 'Ooty';
+  return title.trim() || inputLoc.trim() || 'Nepal';
 };
 
 const resolveDestinationIdFromKeyword = (key = '') => {
   const k = key.toLowerCase();
+  if (k.includes('nepal') || k.includes('kathmandu') || k.includes('pokhara') || k.includes('chitwan') || k.includes('everest')) return 'nepal-himalayan-kingdom';
   if (k.includes('kodaikanal') || k.includes('kodai')) return 'kodaikanal-princess-hills';
   if (k.includes('munnar')) return 'munnar-tea-plantations';
   if (k.includes('ooty') || k.includes('nilgiri')) return 'ooty-nilgiri-hills';
@@ -196,7 +309,306 @@ const resolveDestinationIdFromKeyword = (key = '') => {
   if (k.includes('thenkasi')) return 'thenkasi-viswanathar';
   if (k.includes('gundlupet')) return 'gundlupet-sunflowers';
   if (k.includes('horanadu')) return 'annapoorneshwari-horanadu';
-  return DESTINATIONS[0]?.id || 'ooty-nilgiri-hills';
+  return DESTINATIONS[0]?.id || 'nepal-himalayan-kingdom';
+};
+
+// Comprehensive Complete Blueprints for Instant 1-Click Package Autofill
+export const AUTOFILL_DESTINATION_BLUEPRINTS = {
+  'nepal': {
+    keyword: 'Nepal',
+    displayName: 'Nepal (Kathmandu, Pokhara & Chitwan)',
+    title: 'Himalayan Marvels: Nepal Kathmandu Valley, Pokhara Lakes & Annapurna Sunrise Yatra',
+    subtitle: 'Thrissur / Cochin Departure Special • Sacred Pashupatinath Darshan, Phewa Lake Boating & Sarangkot Himalayan Sunrise',
+    destinationId: 'nepal-himalayan-kingdom',
+    durationDays: 6,
+    durationNights: 5,
+    price: 38999,
+    originalPrice: 45999,
+    badge: '✨ International Bestseller',
+    image: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1920&q=85',
+    bgMixImages: [
+      'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1582650625119-3a31f8418b7d?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1200&q=80'
+    ],
+    bgMixStyle: 'collage-blend',
+    mainPlaces: 'Kathmandu, Pokhara, Chitwan, Nagarkot, Bhaktapur, Pashupatinath, Phewa Lake, Sarangkot',
+    included: `Return Flight Assistance from Cochin / Thrissur to Kathmandu
+5 Nights Luxury 4-Star Hotel Accommodation (Twin / Double Sharing)
+Daily Buffet Breakfast & Chef-Curated Multi-Cuisine Dinners
+Dedicated AC Tourist Coach with Experienced Mountain Driver & Escort
+VIP Darshan Passes for Pashupatinath & Guhyeshwari Temple
+Sarangkot Sunrise Excursion with Annapurna Himalayan Views
+Scenic Phewa Lake Boating & Tal Barahi Island Temple Visit
+Chitwan National Park Jungle Safari & Tharu Cultural Folk Dance
+All Nepal Tourist Entry Permits, TIMS Cards & Heritage Site Fees
+Dedicated Malayalam & English speaking OASIS Tour Manager throughout`,
+    sightseeing: [
+      {
+        name: 'Pashupatinath Temple & Sacred Bagmati River',
+        image: 'https://images.unsplash.com/photo-1582650625119-3a31f8418b7d?auto=format&fit=crop&w=1200&q=80',
+        images: ['https://images.unsplash.com/photo-1582650625119-3a31f8418b7d?auto=format&fit=crop&w=1200&q=80'],
+        text: 'UNESCO World Heritage 5th-century sacred Shiva shrine on the Bagmati River. Witness golden pagoda architecture and evening sandhya Maha Aarti.',
+        video: '',
+        location: 'Kathmandu'
+      },
+      {
+        name: 'Pokhara Phewa Lake & Tal Barahi Island Temple',
+        image: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80',
+        images: ['https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80'],
+        text: 'Serene freshwater lake in Pokhara mirroring Mt. Machapuchare and the Annapurna range. Includes private boat cruise to the island temple of Tal Barahi.',
+        video: '',
+        location: 'Pokhara'
+      },
+      {
+        name: 'Sarangkot Annapurna & Dhaulagiri Sunrise Viewpoint',
+        image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80',
+        images: ['https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80'],
+        text: 'Perched at 1,600m above sea level, Sarangkot offers a world-famous 360-degree golden sunrise panorama across Annapurna I, Machapuchare and Dhaulagiri.',
+        video: '',
+        location: 'Pokhara'
+      },
+      {
+        name: 'Swayambhunath Monkey Temple Stupa',
+        image: 'https://images.unsplash.com/photo-1582650625119-3a31f8418b7d?auto=format&fit=crop&w=1200&q=80',
+        images: ['https://images.unsplash.com/photo-1582650625119-3a31f8418b7d?auto=format&fit=crop&w=1200&q=80'],
+        text: 'Ancient 5th-century Buddhist stupa atop a Kathmandu hilltop with all-seeing Buddha eyes, prayer wheels and 360-degree valley vistas.',
+        video: '',
+        location: 'Kathmandu'
+      },
+      {
+        name: 'Boudhanath Stupa (Tibetan Mandala)',
+        image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1200&q=80',
+        images: ['https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1200&q=80'],
+        text: 'One of the largest spherical stupas in the world. Experience peaceful chanting, prayer wheels, Tibetan thangkas, and rooftop sunset cafes.',
+        video: '',
+        location: 'Kathmandu'
+      },
+      {
+        name: 'Chitwan National Park Tiger & Rhino Safari',
+        image: 'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1200&q=80',
+        images: ['https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1200&q=80'],
+        text: 'UNESCO World Heritage subtropical wildlife sanctuary. Open jeep safari to spot the endangered One-Horned Rhinoceros, Bengal Tigers, and birdlife.',
+        video: '',
+        location: 'Chitwan'
+      },
+      {
+        name: 'Bhaktapur Durbar Square & 55-Window Palace',
+        image: 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=1200&q=80',
+        images: ['https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=1200&q=80'],
+        text: 'Medieval Newari open-air museum featuring the 55-Window Palace, Golden Gate, Nyatapola five-tier pagoda, and traditional artisan pottery squares.',
+        video: '',
+        location: 'Bhaktapur'
+      },
+      {
+        name: 'Nagarkot Himalayan Mount Everest Panoramic Ridge',
+        image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80',
+        images: ['https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80'],
+        text: 'High-altitude mountain ridge at 2,175m offering sunrise horizon panoramas of 8 Himalayan ranges including Mount Everest on clear morning skies.',
+        video: '',
+        location: 'Nagarkot'
+      }
+    ],
+    highlights: [
+      {
+        title: 'Sarangkot Golden Annapurna Himalayan Sunrise',
+        image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80',
+        images: ['https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80'],
+        location: 'Pokhara'
+      },
+      {
+        title: 'Phewa Lake Wooden Boat Ride with Fishtail Reflection',
+        image: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80',
+        images: ['https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80'],
+        location: 'Pokhara'
+      },
+      {
+        title: 'Pashupatinath Evening Sacred Bagmati Maha Aarti',
+        image: 'https://images.unsplash.com/photo-1582650625119-3a31f8418b7d?auto=format&fit=crop&w=1200&q=80',
+        images: ['https://images.unsplash.com/photo-1582650625119-3a31f8418b7d?auto=format&fit=crop&w=1200&q=80'],
+        location: 'Kathmandu'
+      },
+      {
+        title: 'Chitwan Jungle Safari & One-Horned Rhino Sighting',
+        image: 'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1200&q=80',
+        images: ['https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1200&q=80'],
+        location: 'Chitwan'
+      }
+    ],
+    routePoints: [
+      { name: 'Thrissur Swaraj Round Main Office', type: 'start', address: 'Thrissur, Kerala', time: '05:00 AM', lat: 10.5276, lng: 76.2144 },
+      { name: 'Cochin International Airport (COK)', type: 'pickup', address: 'Nedumbassery, Kochi', time: '06:30 AM', lat: 10.1518, lng: 76.3930 },
+      { name: 'Kathmandu Tribhuvan Airport (KTM)', type: 'stop', address: 'Kathmandu Valley, Nepal', time: '01:30 PM', lat: 27.6966, lng: 85.3591 },
+      { name: 'Pashupatinath & Boudhanath Stupa', type: 'stop', address: 'Kathmandu, Nepal', time: '04:30 PM', lat: 27.7105, lng: 85.3487 },
+      { name: 'Pokhara Phewa Lake & Lakeside', type: 'stop', address: 'Pokhara, Gandaki, Nepal', time: '09:00 AM', lat: 28.2096, lng: 83.9856 },
+      { name: 'Sarangkot Mountain Viewpoint', type: 'stop', address: 'Sarangkot, Pokhara, Nepal', time: '05:15 AM', lat: 28.2439, lng: 83.9486 },
+      { name: 'Chitwan National Park Jungle Camp', type: 'stop', address: 'Sauraha, Chitwan, Nepal', time: '02:00 PM', lat: 27.5794, lng: 84.4988 },
+      { name: 'Nagarkot Himalayan Panorama Ridge', type: 'stop', address: 'Nagarkot, Bhaktapur, Nepal', time: '04:30 PM', lat: 27.7172, lng: 85.5200 },
+      { name: 'Cochin International Airport / Thrissur Return', type: 'drop', address: 'Thrissur Swaraj Round, Kerala', time: '08:30 PM', lat: 10.5276, lng: 76.2144 }
+    ]
+  },
+  'kashmir': {
+    keyword: 'Kashmir',
+    displayName: 'Kashmir & Punjab Golden Circuit',
+    title: 'Paradise on Earth: Kashmir Valley, Gulmarg Snow & Dal Lake Shikara',
+    subtitle: 'Thrissur Direct Flight Escorted Tour • Deluxe Houseboat, Apharwat Gondola & Golden Temple Amritsar',
+    destinationId: 'kashmir-punjab-golden-trail',
+    durationDays: 7,
+    durationNights: 6,
+    price: 49999,
+    originalPrice: 57999,
+    badge: 'Luxury Himalayan Escape',
+    image: './kashmir_paradise_ai.png',
+    bgMixImages: ['./kashmir_paradise_ai.png', './dal-lake-shikara-real.jpg', './gulmarg-real.jpg', './golden-temple-amritsar-real.jpg'],
+    bgMixStyle: 'collage-blend',
+    mainPlaces: 'Srinagar, Gulmarg, Pahalgam, Sonamarg, Amritsar',
+    included: `Round-trip Cochin to Srinagar flight arrangements
+Deluxe Dal Lake Houseboat overnight stay & shikara transfers
+Gulmarg Gondola (Phase 1 & 2) VIP priority cable car tickets
+Sonamarg Thajiwas Glacier pony trek with warm gear
+Golden Temple VIP Darshan entry & Wagah Border reserved seats
+Luxury AC coach between Srinagar, Gulmarg, Pahalgam & Amritsar
+Daily breakfast & dinner with Kashmiri Wazwan & Punjabi specials
+Dedicated Malayalam & English speaking OASIS tour manager throughout`,
+    sightseeing: [
+      { name: 'Dal Lake Royal Shikara & Floating Gardens', image: './dal-lake-shikara-real.jpg', images: ['./dal-lake-shikara-real.jpg'], text: 'Mirror-still lake waters, floating lotus gardens, and traditional shikara rides.', location: 'Srinagar' },
+      { name: 'Gulmarg Gondola & Mount Apharwat Peak', image: './gulmarg-real.jpg', images: ['./gulmarg-real.jpg'], text: 'World-famous high altitude cable car ascending to 13,780 ft snow peaks.', location: 'Gulmarg' },
+      { name: 'Amritsar Golden Temple (Harmandir Sahib)', image: './golden-temple-amritsar-real.jpg', images: ['./golden-temple-amritsar-real.jpg'], text: 'Spiritual sanctum, holy sarovar dip, and community langar meal.', location: 'Amritsar' }
+    ],
+    highlights: [
+      { title: 'Dal Lake Houseboat Twilight', image: './dal-lake-shikara-real.jpg', location: 'Srinagar' },
+      { title: 'Gulmarg Gondola Snow Ridge', image: './gulmarg-real.jpg', location: 'Gulmarg' }
+    ],
+    routePoints: [
+      { name: 'Thrissur Swaraj Round', type: 'start', address: 'Thrissur, Kerala', time: '04:30 AM', lat: 10.5276, lng: 76.2144 },
+      { name: 'Cochin International Airport (COK)', type: 'pickup', address: 'Nedumbassery, Kerala', time: '06:00 AM', lat: 10.1518, lng: 76.3930 },
+      { name: 'Srinagar Airport (SXR)', type: 'stop', address: 'Srinagar, Kashmir', time: '02:00 PM', lat: 33.9871, lng: 74.7744 },
+      { name: 'Gulmarg Gondola Base', type: 'stop', address: 'Gulmarg, Kashmir', time: '09:00 AM', lat: 34.0484, lng: 74.3805 },
+      { name: 'Amritsar Golden Temple', type: 'stop', address: 'Amritsar, Punjab', time: '04:00 PM', lat: 31.6200, lng: 74.8765 },
+      { name: 'Return to Thrissur', type: 'drop', address: 'Thrissur Swaraj Round', time: '09:00 PM', lat: 10.5276, lng: 76.2144 }
+    ]
+  },
+  'munnar': {
+    keyword: 'Munnar',
+    displayName: 'Munnar Tea Highlands',
+    title: 'Emerald Munnar: Kolukkumalai Sunrise & Rajamalai Tahr Safari',
+    subtitle: 'Thrissur Direct Pickup Escorted Hill Station & Treehouse Resort Retreat',
+    destinationId: 'munnar-tea-plantations',
+    durationDays: 3,
+    durationNights: 2,
+    price: 15999,
+    originalPrice: 18999,
+    badge: 'Popular Hill Station',
+    image: './munnar-tea-plantations-real.jpg',
+    bgMixImages: ['./munnar-tea-plantations-real.jpg', 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Mattupetty_Lake_View.jpg/960px-Mattupetty_Lake_View.jpg'],
+    bgMixStyle: 'collage-blend',
+    mainPlaces: 'Munnar, Kolukkumalai, Eravikulam, Mattupetty, Kundala',
+    included: `Private Luxury AC Vehicle from Thrissur Swaraj Round\n4-Star Resort Stay with Breakfast & Multi-course Dinner\nEravikulam National Park Safari Tickets\nKolukkumalai Sunrise 4x4 Jeep Safari\nMattupetty Dam Speedboating\nDedicated Malayalam speaking OASIS escort`,
+    sightseeing: [
+      { name: 'Eravikulam Rajamalai Nilgiri Tahr Sanctuary', image: 'https://images.unsplash.com/photo-1534567153574-2b12153a87f0?auto=format&fit=crop&w=1200&q=80', images: ['https://images.unsplash.com/photo-1534567153574-2b12153a87f0?auto=format&fit=crop&w=1200&q=80'], text: 'Habitat of the endangered Nilgiri Tahr with scenic rolling tea slopes.', location: 'Munnar' },
+      { name: 'Kolukkumalai Tea Estate (7,900 ft)', image: 'https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?auto=format&fit=crop&w=1200&q=80', images: ['https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?auto=format&fit=crop&w=1200&q=80'], text: 'Highest organic tea estate in the world with breathtaking cloud-bed sunrise.', location: 'Munnar' }
+    ],
+    highlights: [
+      { title: 'Kolukkumalai Cloud-Bed Sunrise', image: 'https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?auto=format&fit=crop&w=1200&q=80', location: 'Munnar' }
+    ],
+    routePoints: [
+      { name: 'Thrissur Swaraj Round', type: 'start', address: 'Thrissur, Kerala', time: '06:00 AM', lat: 10.5276, lng: 76.2144 },
+      { name: 'Munnar Town', type: 'stop', address: 'Munnar, Idukki', time: '11:00 AM', lat: 10.0889, lng: 77.0595 },
+      { name: 'Return to Thrissur', type: 'drop', address: 'Thrissur, Kerala', time: '07:00 PM', lat: 10.5276, lng: 76.2144 }
+    ]
+  },
+  'ooty': {
+    keyword: 'Ooty',
+    displayName: 'Ooty Nilgiri Hills & Toy Train',
+    title: 'Queen of Nilgiris: Ooty Heritage Toy Train & Tea Highlands Yatra',
+    subtitle: 'Thrissur Departure Special • Reserved UNESCO Steam Train & Ooty Lake Boating',
+    destinationId: 'ooty-nilgiri-hills',
+    durationDays: 3,
+    durationNights: 2,
+    price: 14999,
+    originalPrice: 17999,
+    badge: 'Heritage UNESCO Tour',
+    image: './ooty-toy-train-real.jpg',
+    bgMixImages: ['./ooty-toy-train-real.jpg', './ooty-botanical-garden-real.jpg', './ooty-lake-boating-real.jpg', './ooty-tea-gardens-real.jpg'],
+    bgMixStyle: 'collage-blend',
+    mainPlaces: 'Ooty, Coonoor, Doddabetta, Pykara Lake, Nilgiri Steam Rail',
+    included: `Luxury AC Coach from Thrissur Swaraj Round\nReserved VIP Seats for Nilgiri UNESCO Toy Train\n4-Star Hill Resort Accommodation with Breakfast & Dinner\nGovernment Botanical Gardens & Italian Glasshouse Entry\nOoty Lake Boating & Doddabetta Peak Safari\nMalayalam/English speaking OASIS guide throughout`,
+    sightseeing: [
+      { name: 'Nilgiri Mountain Toy Train (UNESCO)', image: './ooty-toy-train-real.jpg', images: ['./ooty-toy-train-real.jpg'], text: 'Historic steam locomotive chugging through Nilgiri mountain gorges and tunnels.', location: 'Ooty' },
+      { name: 'Government Botanical Garden', image: './ooty-botanical-garden-real.jpg', images: ['./ooty-botanical-garden-real.jpg'], text: '55-acre botanical wonderland featuring 1,000+ exotic floral species and glasshouse.', location: 'Ooty' }
+    ],
+    highlights: [
+      { title: 'Nilgiri Heritage Steam Ride', image: './ooty-toy-train-real.jpg', location: 'Ooty' }
+    ],
+    routePoints: [
+      { name: 'Thrissur Swaraj Round', type: 'start', address: 'Thrissur, Kerala', time: '06:00 AM', lat: 10.5276, lng: 76.2144 },
+      { name: 'Palakkad By-pass Junction', type: 'pickup', address: 'Palakkad, Kerala', time: '07:30 AM', lat: 10.7867, lng: 76.6548 },
+      { name: 'Ooty Charing Cross', type: 'stop', address: 'Ooty, Tamil Nadu', time: '12:30 PM', lat: 11.4102, lng: 76.6950 },
+      { name: 'Return to Thrissur', type: 'drop', address: 'Thrissur, Kerala', time: '08:00 PM', lat: 10.5276, lng: 76.2144 }
+    ]
+  }
+};
+
+// Dynamic helper to resolve any destination blueprint
+export const getDestinationAutofillBlueprint = (query = '', allDests = []) => {
+  const q = (query || '').trim().toLowerCase();
+  if (!q) return AUTOFILL_DESTINATION_BLUEPRINTS['nepal'];
+
+  // 1. Direct blueprint match
+  for (const [key, bp] of Object.entries(AUTOFILL_DESTINATION_BLUEPRINTS)) {
+    if (q.includes(key) || key.includes(q)) return bp;
+  }
+
+  // 2. Lookup in all destinations catalog
+  const matchedDest = allDests.find(d => 
+    (d.name && d.name.toLowerCase().includes(q)) || 
+    (d.id && d.id.toLowerCase().includes(q)) || 
+    (d.location && d.location.toLowerCase().includes(q))
+  );
+
+  // 3. Fallback to AI guide generation
+  const guide = generateAiDestinationGuide(query);
+  const locName = guide.locationName || query;
+  const pDays = 4;
+  const pNights = 3;
+
+  return {
+    keyword: locName,
+    displayName: locName,
+    title: `${locName} Signature Expedition & Highlights Tour`,
+    subtitle: `Thrissur Direct Departure Special • Premium Escorted Sightseeing in ${locName}`,
+    destinationId: matchedDest?.id || resolveDestinationIdFromKeyword(locName),
+    durationDays: pDays,
+    durationNights: pNights,
+    price: matchedDest?.startingPrice || 18999,
+    originalPrice: matchedDest ? Math.round(matchedDest.startingPrice * 1.2) : 22999,
+    badge: '✨ Special Departure',
+    image: matchedDest?.heroImage || guide.heroImage || 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=85',
+    bgMixImages: matchedDest?.bgMixImages || [guide.heroImage, ...(guide.attractions || []).map(a => a.image).filter(Boolean).slice(0, 3)],
+    bgMixStyle: 'collage-blend',
+    mainPlaces: matchedDest?.nearbyAttractions?.map(a => a.name).join(', ') || (guide.attractions || []).map(a => a.name).slice(0, 4).join(', ') || locName,
+    included: (matchedDest?.highlights || [`Private AC Luxury Vehicle from Thrissur Swaraj Round`, `4-Star Accommodation with Daily Breakfast & Dinner`, `All Entry Fees & Guided Sightseeing Permits in ${locName}`, `Experienced Malayalam/English speaking OASIS Tour Escort`]).join('\n'),
+    sightseeing: (guide.attractions || []).map(a => ({
+      name: a.name,
+      image: a.image || '',
+      images: a.image ? [a.image] : [],
+      text: a.shortDescription || `Visit ${a.name} in ${locName}.`,
+      video: '',
+      location: locName
+    })),
+    highlights: (guide.attractions || []).slice(0, 4).map(a => ({
+      title: a.name,
+      image: a.image || '',
+      images: a.image ? [a.image] : [],
+      location: locName
+    })),
+    routePoints: [
+      { name: 'Thrissur Swaraj Round Main Office', type: 'start', address: 'Thrissur, Kerala', time: '06:00 AM', lat: 10.5276, lng: 76.2144 },
+      { name: `${locName} Center / Resort`, type: 'stop', address: `${locName}`, time: '01:00 PM', lat: 10.5000, lng: 76.5000 },
+      { name: 'Return to Thrissur Swaraj Round', type: 'drop', address: 'Thrissur, Kerala', time: '08:00 PM', lat: 10.5276, lng: 76.2144 }
+    ]
+  };
 };
 
 // Helpers for clean Days and Nights duration separation
@@ -219,7 +631,110 @@ export const formatDurationString = (d, n) => {
   return `${days} ${days === 1 ? 'Day' : 'Days'} / ${nights} ${nights === 1 ? 'Night' : 'Nights'}`;
 };
 
-export function TourForm({ initial, onSave, onCancel, onDirtyChange }) {
+export const addDaysToDate = (dateStr, daysToAdd) => {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return '';
+    d.setDate(d.getDate() + parseInt(daysToAdd || 0, 10));
+    return d.toISOString().split('T')[0];
+  } catch {
+    return '';
+  }
+};
+
+export const calculateDaysBetween = (startStr, endStr) => {
+  if (!startStr || !endStr) return 0;
+  try {
+    const d1 = new Date(startStr);
+    const d2 = new Date(endStr);
+    if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return 0;
+    const diffTime = d2.getTime() - d1.getTime();
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    return diffDays > 0 ? diffDays : 1;
+  } catch {
+    return 0;
+  }
+};
+
+export const getLocationSlogans = (locKeyword) => {
+  const locLower = (locKeyword || '').toLowerCase();
+  if (!locLower) return [];
+  if (locLower.includes('nepal') || locLower.includes('kathmandu') || locLower.includes('pokhara') || locLower.includes('muktinath') || locLower.includes('lumbini')) {
+    return [
+      '7 Nights Spiritual & Scenic Journey • Kerala – Gorakhpur 3rd AC Train Included • Malayali Tour Manager',
+      'Himalayan Bliss • Pokhara Phewa Lake Boating & High Altitude Muktinath (3,710 M) Holy Darshan',
+      'Lumbini Buddha Birthplace, VIP Pashupatinath Darshan & Sarangkot Himalayan Sunrise'
+    ];
+  }
+  if (locLower.includes('kashmir') || locLower.includes('srinagar') || locLower.includes('gulmarg')) {
+    return [
+      'Paradise on Earth • Dal Lake Luxury Shikara Stay & Gulmarg Snow Gondola Ride',
+      'Pahalgam Betaab Valley & Sonamarg Golden Meadow Expedition with AC Transport',
+      'Thrissur Direct Flight Escorted Tour • Deluxe Houseboat & Apharwat Gondola'
+    ];
+  }
+  if (locLower.includes('munnar')) {
+    return [
+      'Thrissur Departure Special • Kolukkumalai Sunrise & Rajamalai Nilgiri Tahr Safari',
+      'Misty Tea Plantations, Mattupetty Lake Boating & Treehouse Luxury Resort Retreat',
+      'Emerald Munnar & Lock Heart Gap Spice Plantation Escape'
+    ];
+  }
+  if (locLower.includes('ooty') || locLower.includes('nilgiri')) {
+    return [
+      'Queen of Nilgiris • Reserved UNESCO Steam Toy Train & Ooty Lake Boating',
+      'Emerald Tea Estates, Doddabetta Peak Panoramic View & Botanical Glasshouse',
+      'Ooty & Mudumalai Wildlife Safari with Coonoor Heritage Express'
+    ];
+  }
+  if (locLower.includes('wayanad')) {
+    return [
+      'High Altitude Rainforest Retreat • Chembra Heart Lake Trek & Banasura Boating',
+      'Misty Wayanad Highlands & Muthanga Wildlife Tiger Safari',
+      'Lakkidi Sea of Clouds, Bamboo Rafting & 4-Star Plantation Villa Stay'
+    ];
+  }
+  if (locLower.includes('kodaikanal') || locLower.includes('kodai')) {
+    return [
+      'Princess of Hill Stations • Star Lake Pedal Boating & Pine Forest Walk',
+      'Kodaikanal Mist & Mannavanur Switzerland Sheep Farm Retreat',
+      'Kodai Romantic Valley • Pillar Rocks & Silver Cascade Waterfalls'
+    ];
+  }
+  if (locLower.includes('kashi') || locLower.includes('varanasi') || locLower.includes('ayodhya') || locLower.includes('prayagraj')) {
+    return [
+      'Sacred North Yatra • Kashi Vishwanath VIP Darshan, Ayodhya Ram Mandir & Prayagraj Sangam',
+      'Ganga Twilight Maha Aarti, Sunrise Ganges Boat Ride & Banarasi Heritage Tour',
+      'Thrissur Departure VIP Pilgrimage • Ganga Aarti & Triveni Sangam Holy Dip'
+    ];
+  }
+  if (locLower.includes('athirappilly')) {
+    return [
+      'Niagara of India • Chalakudy Riverfront & Roaring 80-ft Falls Escorted Tour',
+      'Athirappilly Rainforest Luxury Resort Stay & Sholayar Jungle Safari'
+    ];
+  }
+  if (locLower.includes('parambikulam')) {
+    return [
+      'Parambikulam Tiger Reserve Rainforest & Bamboo Rafting Safari',
+      'Thrissur Direct AC Coach • 450-yr-old Kannimara Giant Teak & Jungle Safari'
+    ];
+  }
+  if (locLower.includes('puri') || locLower.includes('odisha')) {
+    return [
+      'Odisha Golden Triangle • Shree Jagannath 56 Bhog Mahaprasad & Konark Sun Temple',
+      'Blue Flag Golden Beach & Chilika Lake Dolphin Cruise Escorted Tour'
+    ];
+  }
+  return [
+    `Thrissur Direct Escorted Tour • Premium Handcrafted Sightseeing Journey`,
+    `Deluxe Resort Stay with Private AC Transport & Malayali Tour Escort`,
+    `Scenic Landscapes, Guided Heritage Sightseeing & Daily Buffet Meals`
+  ];
+};
+
+export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete }) {
   const allDestinations = catalogService.getDestinations() || DESTINATIONS;
   const isEditing = Boolean(initial && (initial.id || initial.title));
   const defaultDest = allDestinations.find(d => d.id === initial?.destinationId) || allDestinations[0] || {};
@@ -230,26 +745,81 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange }) {
   const [durationDays, setDurationDays] = useState(initialDuration.days);
   const [durationNights, setDurationNights] = useState(initialDuration.nights);
 
+  const initialStartDate = initial?.departureDate || new Date().toISOString().split('T')[0];
+  const initialEndDate = initial?.returnDate || (initialDuration.days ? addDaysToDate(initialStartDate, initialDuration.days - 1) : '');
+
   const [form, setForm] = useState({
     title: initial?.title || '',
     subtitle: initial?.subtitle || '',
     destinationId: initial?.destinationId || defaultDest.id || (allDestinations[0]?.id || ''),
     duration: initial?.duration || formatDurationString(initialDuration.days, initialDuration.nights),
+    departureDate: initialStartDate,
+    returnDate: initialEndDate,
     price: initial?.price !== undefined ? initial.price : '',
-    originalPrice: initial?.originalPrice !== undefined ? initial.originalPrice : '',
+    originalPrice: 0,
     badge: initial?.badge || '✨ New Launch',
     image: initial?.image || (isEditing ? defaultDest.heroImage : '') || './ooty-toy-train-real.jpg',
     bgMixImages: initial?.bgMixImages || (defaultDest.bgMixImages ? [...defaultDest.bgMixImages] : []),
     bgMixStyle: initial?.bgMixStyle || 'collage-blend',
     mainPlaces: isEditing ? formatAsString(initial?.mainPlaces, ', ', defaultDest.nearbyAttractions?.map(a => a.name) || []) : (initial?.mainPlaces ? formatAsString(initial.mainPlaces) : ''),
     included: isEditing ? formatAsString(initial?.included, '\n', defaultDest.highlights || []) : (initial?.included ? formatAsString(initial.included, '\n') : ''),
-    sightseeing: initial?.sightseeing || [],
+    sightseeing: (initial?.sightseeing && initial.sightseeing.length > 0)
+      ? initial.sightseeing
+      : (initial?.placeImages && initial.placeImages.length > 0)
+        ? initial.placeImages.map(p => ({
+            name: p.name || p.title || 'Sightseeing',
+            title: p.title || p.name || 'Attraction',
+            image: p.url || p.image || '',
+            text: p.description || p.text || '',
+            description: p.description || p.text || ''
+          }))
+        : [],
     highlights: initial?.highlights || [],
     routePoints: initial?.routePoints ? resolveRoutePoints(initial) : []
   });
 
   const [aiLocationInput, setAiLocationInput] = useState(defaultLoc);
   const [aiStatusMessage, setAiStatusMessage] = useState('');
+  const [smartFillInput, setSmartFillInput] = useState(defaultLoc || 'Nepal');
+
+  // Instant Smart Auto-Fill handler for any destination (e.g. Nepal, Kashmir, Munnar, etc.)
+  const handleApplySmartAutofill = (destName) => {
+    const targetKey = (destName || smartFillInput || form.title || 'Nepal').trim();
+    const bp = getDestinationAutofillBlueprint(targetKey, allDestinations);
+    if (bp) {
+      const newDays = bp.durationDays || 3;
+      const newNights = bp.durationNights || (newDays > 1 ? newDays - 1 : 0);
+      setDurationDays(newDays);
+      setDurationNights(newNights);
+      
+      const matchedDestId = bp.destinationId || allDestinations.find(d => d.id.includes(bp.keyword.toLowerCase()))?.id || form.destinationId;
+
+      setForm(prev => ({
+        ...prev,
+        title: bp.title,
+        subtitle: bp.subtitle,
+        destinationId: matchedDestId || prev.destinationId,
+        duration: formatDurationString(newDays, newNights),
+        price: bp.price !== undefined ? bp.price : prev.price,
+        originalPrice: bp.originalPrice !== undefined ? bp.originalPrice : prev.originalPrice,
+        badge: bp.badge || prev.badge,
+        image: bp.image || prev.image,
+        bgMixImages: bp.bgMixImages?.length ? bp.bgMixImages : prev.bgMixImages,
+        bgMixStyle: bp.bgMixStyle || prev.bgMixStyle || 'collage-blend',
+        mainPlaces: bp.mainPlaces || prev.mainPlaces,
+        included: bp.included || prev.included,
+        sightseeing: Array.isArray(bp.sightseeing) && bp.sightseeing.length ? bp.sightseeing : prev.sightseeing,
+        highlights: Array.isArray(bp.highlights) && bp.highlights.length ? bp.highlights : prev.highlights,
+        routePoints: Array.isArray(bp.routePoints) && bp.routePoints.length ? bp.routePoints : prev.routePoints
+      }));
+
+      setAiLocationInput(bp.keyword || targetKey);
+      setSmartFillInput(bp.keyword || targetKey);
+      setAiStatusMessage(`✨ Auto-Filled all details for "${bp.displayName || bp.keyword}"! Title, pricing, 8+ sightseeing spots, photos & GPS route points applied.`);
+      setTimeout(() => setAiStatusMessage(''), 5000);
+      if (onDirtyChange) onDirtyChange(true);
+    }
+  };
 
   // Slogan & Title Generator state
   const [suggestedTitles, setSuggestedTitles] = useState([]);
@@ -287,12 +857,16 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange }) {
     setActiveStep(target);
   };
 
-  // Handle Days change
+  // Handle Days change & sync End Date
   const handleDaysChange = (newDays) => {
     const d = Math.max(1, parseInt(newDays, 10) || 1);
     setDurationDays(d);
     const computed = formatDurationString(d, durationNights);
-    setForm(prev => ({ ...prev, duration: computed }));
+    setForm(prev => ({
+      ...prev,
+      duration: computed,
+      returnDate: prev.departureDate ? addDaysToDate(prev.departureDate, d - 1) : prev.returnDate
+    }));
   };
 
   // Handle Nights change
@@ -308,7 +882,39 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange }) {
     setDurationDays(days);
     setDurationNights(nights);
     const computed = formatDurationString(days, nights);
-    setForm(prev => ({ ...prev, duration: computed }));
+    setForm(prev => ({
+      ...prev,
+      duration: computed,
+      returnDate: prev.departureDate ? addDaysToDate(prev.departureDate, days - 1) : prev.returnDate
+    }));
+  };
+
+  // Handle Start Date change
+  const handleStartDateChange = (newStartDate) => {
+    setForm(prev => {
+      const updated = { ...prev, departureDate: newStartDate };
+      if (newStartDate && durationDays) {
+        updated.returnDate = addDaysToDate(newStartDate, durationDays - 1);
+      }
+      return updated;
+    });
+  };
+
+  // Handle End Date change
+  const handleEndDateChange = (newEndDate) => {
+    setForm(prev => {
+      const updated = { ...prev, returnDate: newEndDate };
+      if (prev.departureDate && newEndDate) {
+        const diff = calculateDaysBetween(prev.departureDate, newEndDate);
+        if (diff >= 1) {
+          const newNights = diff > 1 ? diff - 1 : 0;
+          setDurationDays(diff);
+          setDurationNights(newNights);
+          updated.duration = formatDurationString(diff, newNights);
+        }
+      }
+      return updated;
+    });
   };
 
   // Handle Linked Destination dropdown change (avoids wiping user-entered price or duration)
@@ -337,7 +943,14 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange }) {
     const locLower = locKeyword.toLowerCase();
     
     let presets = [];
-    if (locLower.includes('ooty') || locLower.includes('nilgiri')) {
+    if (locLower.includes('nepal') || locLower.includes('kathmandu') || locLower.includes('pokhara') || locLower.includes('everest') || locLower.includes('pashupatinath') || locLower.includes('sarangkot')) {
+      presets = [
+        { title: 'Himalayan Marvels: Nepal Kathmandu Valley, Pokhara Lakes & Annapurna Sunrise Yatra', slogan: 'Thrissur / Cochin Departure Special • Sacred Pashupatinath Darshan, Phewa Lake Boating & Sarangkot Himalayan Sunrise' },
+        { title: 'Nepal Heritage & Sacred Yatra: Pashupatinath, Guhyeshwari & Boudhanath Stupa', slogan: 'VIP Temple Darshan, Bagmati Evening Maha Aarti & 4-Star Hotel Escorted Package' },
+        { title: 'Nepal Himalayan Panorama & Chitwan Wildlife Tiger Safari', slogan: 'Annapurna Sarangkot Dawn, Pokhara Phewa Boating & Chitwan Rhino Jeep Safari' },
+        { title: 'Kathmandu, Pokhara & Nagarkot Mount Everest Sunrise Trail', slogan: 'UNESCO World Heritage Valley, Himalayan Reflection Lakes & Private AC Transport' }
+      ];
+    } else if (locLower.includes('ooty') || locLower.includes('nilgiri')) {
       presets = [
         { title: 'Queen of Nilgiris: Ooty Heritage Toy Train & Tea Highlands Yatra', slogan: 'Thrissur Departure Special • Reserved UNESCO Steam Train & Ooty Lake Boating' },
         { title: 'Ooty Emerald Tea Plantations & Doddabetta Mountain Summit Trail', slogan: 'Misty High Altitude Retreat with Italian Sunken Glasshouse & Lake Cycling' },
@@ -420,6 +1033,7 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange }) {
     setShowTitleSuggester(true);
   };
 
+
   const handleApplyTitleAndSlogan = (item) => {
     setForm(prev => ({
       ...prev,
@@ -494,21 +1108,252 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange }) {
     updateListItem('highlights', idx, { title: suggested });
   };
 
+  const [generatingSpotAiIdx, setGeneratingSpotAiIdx] = useState(null);
+  const [uploadingSpotIdx, setUploadingSpotIdx] = useState(null);
+  const [generatingCoverAi, setGeneratingCoverAi] = useState(false);
+  const [uploadingCoverFile, setUploadingCoverFile] = useState(false);
+
+  const handleGenerateCoverAiPhoto = async () => {
+    const loc = form.title || form.subtitle || 'Scenic Luxury Tour Destination';
+    setGeneratingCoverAi(true);
+    try {
+      const prompt = `Photorealistic majestic travel photography of ${loc}. Ultra high resolution, golden hour lighting, cinematic travel agency cover photograph.`;
+      const cloudUrl = await geminiService.generatePosterImage(prompt, 'photorealistic');
+      if (cloudUrl) {
+        setForm(f => ({ ...f, image: cloudUrl }));
+      }
+    } catch (err) {
+      alert(`AI Image Generation notice: ${err.message || 'Could not generate image'}`);
+    } finally {
+      setGeneratingCoverAi(false);
+    }
+  };
+
+  const handleUploadCoverPhotoFile = async (file) => {
+    if (!file) return;
+    setUploadingCoverFile(true);
+    try {
+      const res = await storageService.uploadFile(file, 'tours-covers');
+      if (res && res.url) {
+        setForm(f => ({ ...f, image: res.url }));
+      }
+    } catch (err) {
+      alert(`Upload error: ${err.message || 'Could not upload file'}`);
+    } finally {
+      setUploadingCoverFile(false);
+    }
+  };
+
+  const [generatingMixAi, setGeneratingMixAi] = useState(false);
+  const [uploadingMixFile, setUploadingMixFile] = useState(false);
+  const [mixAiPrompt, setMixAiPrompt] = useState('');
+
+  const handleAddImageToMix = (url) => {
+    if (!url) return;
+    setForm(prev => {
+      const current = prev.bgMixImages || (prev.image ? [prev.image] : []);
+      if (current.includes(url)) return prev;
+      return { ...prev, bgMixImages: [...current, url] };
+    });
+  };
+
+  const handleRemoveImageFromMix = (idx) => {
+    setForm(prev => {
+      const current = prev.bgMixImages || [];
+      return { ...prev, bgMixImages: current.filter((_, i) => i !== idx) };
+    });
+  };
+
+  const handleSyncSightseeingToMix = () => {
+    const spotImages = (form.sightseeing || []).map(s => s.image || s.url).filter(Boolean);
+    if (spotImages.length === 0) {
+      alert('No sightseeing spot photos found to sync yet. Add some sightseeing spots below first!');
+      return;
+    }
+    setForm(prev => {
+      const existing = prev.bgMixImages || (prev.image ? [prev.image] : []);
+      const set = new Set([...existing, ...spotImages]);
+      return { ...prev, bgMixImages: Array.from(set) };
+    });
+  };
+
+  const handleGenerateMixAiPhoto = async (customText) => {
+    const query = customText || mixAiPrompt || form.title || 'Scenic Travel Destination';
+    setGeneratingMixAi(true);
+    try {
+      const prompt = `Photorealistic majestic travel photography of ${query}. Breathtaking scenic landscape, 8k resolution, cinematic golden hour lighting.`;
+      const cloudUrl = await geminiService.generatePosterImage(prompt, 'photorealistic');
+      if (cloudUrl) {
+        handleAddImageToMix(cloudUrl);
+        setMixAiPrompt('');
+      }
+    } catch (err) {
+      alert(`AI Image Generation notice: ${err.message || 'Could not generate image'}`);
+    } finally {
+      setGeneratingMixAi(false);
+    }
+  };
+
+  const handleUploadMixPhotoFile = async (file) => {
+    if (!file) return;
+    setUploadingMixFile(true);
+    try {
+      const res = await storageService.uploadFile(file, 'bg-mix');
+      if (res && res.url) {
+        handleAddImageToMix(res.url);
+      }
+    } catch (err) {
+      alert(`Upload error: ${err.message || 'Could not upload file'}`);
+    } finally {
+      setUploadingMixFile(false);
+    }
+  };
+
+  const handleGenerateSpotAiPhoto = async (idx) => {
+    const s = (form.sightseeing || [])[idx];
+    if (!s) return;
+    const spotName = s.name || s.title || form.title || 'Scenic Destination';
+    setGeneratingSpotAiIdx(idx);
+    try {
+      const prompt = `Photorealistic majestic travel photography of ${spotName} in ${form.title || 'Nepal/India'}. Breathtaking scenic landscape, clear vibrant details, golden hour lighting.`;
+      const cloudUrl = await geminiService.generatePosterImage(prompt, 'photorealistic');
+      if (cloudUrl) {
+        updateListItem('sightseeing', idx, { image: cloudUrl });
+      }
+    } catch (err) {
+      alert(`AI Image Generation notice: ${err.message || 'Could not generate image. Please check API key or upload an image.'}`);
+    } finally {
+      setGeneratingSpotAiIdx(null);
+    }
+  };
+
+  const handleUploadSpotPhotoFile = async (idx, file) => {
+    if (!file) return;
+    setUploadingSpotIdx(idx);
+    try {
+      const res = await storageService.uploadFile(file, 'sightseeing');
+      if (res && res.url) {
+        updateListItem('sightseeing', idx, { image: res.url });
+      }
+    } catch (err) {
+      alert(`Upload error: ${err.message || 'Could not upload file'}`);
+    } finally {
+      setUploadingSpotIdx(null);
+    }
+  };
+
   const removeListItem = (key, index) =>
     setForm(prev => ({ ...prev, [key]: (prev[key] || []).filter((_, i) => i !== index) }));
+
+  const handleMoveSpot = (idx, direction) => {
+    setForm(prev => {
+      const list = [...(prev.sightseeing || [])];
+      const targetIdx = idx + direction;
+      if (targetIdx < 0 || targetIdx >= list.length) return prev;
+      const temp = list[idx];
+      list[idx] = list[targetIdx];
+      list[targetIdx] = temp;
+      return { ...prev, sightseeing: list };
+    });
+  };
+
+  const handleDuplicateSpot = (idx) => {
+    setForm(prev => {
+      const list = [...(prev.sightseeing || [])];
+      const item = list[idx];
+      if (!item) return prev;
+      const copy = { ...item, name: `${item.name || 'Sightseeing'} (Copy)` };
+      list.splice(idx + 1, 0, copy);
+      return { ...prev, sightseeing: list };
+    });
+  };
+
+  const handleBatchAdd5Spots = (circuit) => {
+    let presetSpots = [];
+    if (circuit === 'nepal') {
+      presetSpots = [
+        PLACE_PHOTO_LIBRARY.kathmandu,
+        PLACE_PHOTO_LIBRARY.pashupatinath,
+        PLACE_PHOTO_LIBRARY.pokhara,
+        PLACE_PHOTO_LIBRARY.sarangkot,
+        PLACE_PHOTO_LIBRARY.muktinath
+      ];
+    } else if (circuit === 'kerala') {
+      presetSpots = [
+        PLACE_PHOTO_LIBRARY.munnar,
+        PLACE_PHOTO_LIBRARY.athirappilly,
+        PLACE_PHOTO_LIBRARY.wayanad,
+        PLACE_PHOTO_LIBRARY.alleppey,
+        PLACE_PHOTO_LIBRARY.kovalam
+      ];
+    } else if (circuit === 'pilgrimage') {
+      presetSpots = [
+        PLACE_PHOTO_LIBRARY.varanasi,
+        PLACE_PHOTO_LIBRARY.ayodhya,
+        PLACE_PHOTO_LIBRARY.kathmandu,
+        PLACE_PHOTO_LIBRARY.muktinath,
+        PLACE_PHOTO_LIBRARY.lumbini
+      ];
+    } else if (circuit === 'kashmir') {
+      presetSpots = [
+        PLACE_PHOTO_LIBRARY.kashmir,
+        PLACE_PHOTO_LIBRARY.ooty,
+        PLACE_PHOTO_LIBRARY.munnar,
+        PLACE_PHOTO_LIBRARY.athirappilly,
+        PLACE_PHOTO_LIBRARY.wayanad
+      ];
+    }
+
+    const newItems = (presetSpots || []).filter(Boolean).map(p => ({
+      name: p.name,
+      title: p.title,
+      image: p.url,
+      url: p.url,
+      text: p.description,
+      description: p.description,
+      timing: 'Morning to Afternoon',
+      ticketInfo: 'Entry & Passes Handled by OASIS',
+      category: 'Sightseeing'
+    }));
+
+    setForm(prev => ({
+      ...prev,
+      sightseeing: [...(prev.sightseeing || []), ...newItems]
+    }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const { pickupPoints: _pickupPoints, dropPoints: _dropPoints, ...rest } = form;
+    
+    // Clean and sync sightseeing and placeImages
+    const cleanSightseeing = (form.sightseeing || []).map(s => ({
+      name: s.name || s.title || 'Sightseeing',
+      title: s.title || s.name || 'Attraction',
+      image: s.image || s.url || form.image,
+      url: s.image || s.url || form.image,
+      text: s.text || s.description || '',
+      description: s.text || s.description || '',
+      category: s.category || 'Sightseeing',
+      timing: s.timing || '',
+      ticketInfo: s.ticketInfo || '',
+      video: s.video || '',
+      travelMode: s.travelMode || '',
+      travelerTip: s.travelerTip || '',
+      location: s.location || ''
+    }));
+
     onSave({
       ...rest,
       duration: form.duration || formatDurationString(durationDays, durationNights),
       routePoints: enforceRouteOrder(form.routePoints),
       price: parseFloat(form.price) || 0,
-      originalPrice: parseFloat(form.originalPrice) || 0,
+      originalPrice: 0,
+      discountPercent: 0,
       mainPlaces: typeof form.mainPlaces === 'string' ? form.mainPlaces.split(',').map(s => s.trim()).filter(Boolean) : (form.mainPlaces || []),
       included: toList(form.included),
-      sightseeing: Array.isArray(form.sightseeing) ? form.sightseeing.filter(s => s && (s.name || s.image || (Array.isArray(s.images) && s.images.length))) : [],
+      sightseeing: cleanSightseeing,
+      placeImages: cleanSightseeing,
       highlights: Array.isArray(form.highlights) ? form.highlights.filter(h => h && (h.title || h.image || (Array.isArray(h.images) && h.images.length))) : []
     });
   };
@@ -610,6 +1455,137 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange }) {
             )}
           </div>
 
+          {/* ─── ⚡ AI DESTINATION SMART-FILL & AUTO-COMPLETE HERO BOX ─── */}
+          <div style={{
+            gridColumn: '1 / -1',
+            background: 'linear-gradient(135deg, rgba(212,175,55,0.14), rgba(16,185,129,0.08), rgba(9,20,38,0.7))',
+            border: '1.5px solid var(--gold-primary)',
+            borderRadius: '14px',
+            padding: '1rem 1.1rem',
+            boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
+            marginBottom: '0.4rem'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ fontSize: '1.2rem' }}>⚡</span>
+                <div>
+                  <h5 style={{ margin: 0, fontSize: '0.92rem', fontWeight: 800, color: '#fef08a' }}>
+                    Instant AI Destination Auto-Fill
+                  </h5>
+                  <p style={{ margin: '0.15rem 0 0', fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                    Enter <strong style={{ color: '#6ee7b7' }}>"Nepal"</strong> (or any destination) to automatically populate Title, Slogans, 6-Day Duration, Pricing, 8+ Sightseeing Spots with Real Photos, Highlights &amp; Route Map in 1 click!
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Search & Auto-Fill input row */}
+            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
+              <div style={{ position: 'relative', flex: 1, minWidth: '220px' }}>
+                <input
+                  type="text"
+                  value={smartFillInput}
+                  onChange={(e) => setSmartFillInput(e.target.value)}
+                  placeholder="Type destination name e.g. Nepal, Kashmir, Munnar, Ooty, Wayanad, Kashi..."
+                  style={{
+                    width: '100%',
+                    background: 'rgba(2,6,23,0.9)',
+                    border: '1.5px solid rgba(245,158,11,0.5)',
+                    borderRadius: '10px',
+                    color: '#ffffff',
+                    padding: '0.55rem 0.9rem',
+                    fontSize: '0.85rem',
+                    fontWeight: 700,
+                    outline: 'none',
+                    boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.5)'
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleApplySmartAutofill(smartFillInput);
+                    }
+                  }}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => handleApplySmartAutofill(smartFillInput)}
+                style={{
+                  background: 'linear-gradient(135deg, #d4af37, #f59e0b)',
+                  color: '#000000',
+                  border: 'none',
+                  borderRadius: '10px',
+                  padding: '0.55rem 1.2rem',
+                  fontSize: '0.82rem',
+                  fontWeight: 900,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  boxShadow: '0 4px 15px rgba(212,175,55,0.4)',
+                  transition: 'transform 0.15s ease'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+              >
+                <Sparkles size={15} color="#000" /> ✨ Auto-Fill {smartFillInput || 'Destination'} Details
+              </button>
+            </div>
+
+            {/* Quick Destination Pills */}
+            <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.72rem', color: '#fef08a', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+                ⚡ 1-Click Presets:
+              </span>
+              {[
+                { label: '🇳🇵 Nepal (Kathmandu & Pokhara)', key: 'Nepal' },
+                { label: '🏔️ Kashmir & Dal Lake', key: 'Kashmir' },
+                { label: '☕ Munnar Tea Highlands', key: 'Munnar' },
+                { label: '🚂 Ooty Nilgiri Toy Train', key: 'Ooty' },
+                { label: '🌲 Wayanad Heart Lake', key: 'Wayanad' },
+                { label: '🛕 Kashi Vishwanath', key: 'Kashi' },
+                { label: '🌸 Kodaikanal Pine Forest', key: 'Kodaikanal' },
+                { label: '🦚 Athirappilly Falls', key: 'Athirappilly' },
+                { label: '🐅 Parambikulam Safari', key: 'Parambikulam' },
+                { label: '🌊 Kollam Ashtamudi', key: 'Kollam' },
+                { label: '🕉️ Ayodhya Ram Mandir', key: 'Ayodhya' }
+              ].map(preset => (
+                <button
+                  key={preset.key}
+                  type="button"
+                  onClick={() => {
+                    setSmartFillInput(preset.key);
+                    handleApplySmartAutofill(preset.key);
+                  }}
+                  style={{
+                    background: (smartFillInput.toLowerCase() === preset.key.toLowerCase()) 
+                      ? 'rgba(212,175,55,0.3)' 
+                      : 'rgba(255,255,255,0.06)',
+                    border: (smartFillInput.toLowerCase() === preset.key.toLowerCase())
+                      ? '1.5px solid var(--gold-primary)'
+                      : '1px solid rgba(255,255,255,0.15)',
+                    color: (smartFillInput.toLowerCase() === preset.key.toLowerCase()) ? '#fef08a' : '#e2e8f0',
+                    borderRadius: '20px',
+                    padding: '0.22rem 0.65rem',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease'
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--gold-primary)'; e.currentTarget.style.background = 'rgba(245,158,11,0.2)'; }}
+                  onMouseLeave={(e) => { 
+                    if (smartFillInput.toLowerCase() !== preset.key.toLowerCase()) {
+                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; 
+                      e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
+                    }
+                  }}
+                >
+                  {preset.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* TOUR TITLE WITH AI TITLE & SLOGAN SUGGESTER */}
           <div style={{ gridColumn: '1 / -1' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem', flexWrap: 'wrap', gap: '0.4rem' }}>
@@ -631,7 +1607,7 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange }) {
                   gap: '0.35rem'
                 }}
               >
-                <Sparkles size={13} color="var(--gold-primary)" /> ✨ AI Suggest Slogans &amp; Titles ({activeStudioLocation})
+                <Sparkles size={13} color="var(--gold-primary)" /> ✨ Slogans &amp; Titles ({resolveLocationKeyword(form.title, form.subtitle, form.destinationId, aiLocationInput)})
               </button>
             </div>
             <input 
@@ -639,8 +1615,50 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange }) {
               value={form.title} 
               onChange={set('title')} 
               required 
-              placeholder="e.g. Queen of Nilgiris: Ooty Heritage Toy Train & Tea Highlands Yatra" 
+              placeholder="e.g. Himalayan Marvels: Nepal Kathmandu Valley, Pokhara Lakes & Annapurna Sunrise Yatra" 
             />
+
+            {/* Quick Slogan Suggestions Bar based on Current Typed Location */}
+            {(() => {
+              const currentLoc = resolveLocationKeyword(form.title, form.subtitle, form.destinationId, aiLocationInput);
+              const slogans = getLocationSlogans(currentLoc);
+              if (slogans.length === 0) return null;
+              return (
+                <div style={{ marginTop: '0.45rem', padding: '0.6rem 0.8rem', background: 'rgba(212,175,55,0.06)', borderRadius: '8px', border: '1px solid rgba(212,175,55,0.25)' }}>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--gold-light)', fontWeight: 800, marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <Sparkles size={12} color="var(--gold-primary)" /> ⚡ Slogans based on "{currentLoc}": (Click any to apply as slogan)
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                    {slogans.map((slog, sIdx) => {
+                      const isApplied = form.subtitle === slog;
+                      return (
+                        <button
+                          key={sIdx}
+                          type="button"
+                          onClick={() => handleApplySloganOnly(slog)}
+                          style={{
+                            background: isApplied ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.06)',
+                            border: isApplied ? '1px solid #10b981' : '1px solid rgba(255,255,255,0.15)',
+                            color: isApplied ? '#6ee7b7' : '#fef08a',
+                            borderRadius: '12px',
+                            padding: '0.25rem 0.6rem',
+                            fontSize: '0.72rem',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            textAlign: 'left',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.3rem'
+                          }}
+                        >
+                          {isApplied ? '✓' : '📢'} "{slog}"
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* AI Slogan & Title Suggester Modal / Dropdown */}
             {showTitleSuggester && (
@@ -649,7 +1667,7 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange }) {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                     <Sparkles size={16} color="var(--gold-primary)" />
                     <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--gold-light)' }}>
-                      AI Slogans &amp; Title Suggestions for <strong style={{ color: '#fef08a' }}>{activeStudioLocation}</strong>
+                      AI Slogans &amp; Title Suggestions for <strong style={{ color: '#fef08a' }}>{resolveLocationKeyword(form.title, form.subtitle, form.destinationId, aiLocationInput)}</strong>
                     </span>
                   </div>
                   <button
@@ -671,7 +1689,7 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange }) {
                       type="text"
                       value={customSloganQuery}
                       onChange={(e) => setCustomSloganQuery(e.target.value)}
-                      placeholder={`e.g. Honeymoon luxury escape in ${activeStudioLocation}, Family pilgrimage...`}
+                      placeholder={`e.g. Luxury tour in ${resolveLocationKeyword(form.title, form.subtitle, form.destinationId, aiLocationInput)}...`}
                       style={{ flex: 1, background: '#02060e', border: '1px solid rgba(139,92,246,0.4)', borderRadius: '8px', color: '#fff', padding: '0.4rem 0.7rem', fontSize: '0.78rem', outline: 'none' }}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
@@ -722,7 +1740,7 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange }) {
 
                 {/* Curated Package Title & Slogan Presets */}
                 <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--gold-light)', marginBottom: '0.4rem' }}>
-                  Curated Titles &amp; Slogans for {activeStudioLocation}:
+                  Curated Titles &amp; Slogans for {resolveLocationKeyword(form.title, form.subtitle, form.destinationId, aiLocationInput)}:
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', maxHeight: '220px', overflowY: 'auto' }}>
                   {suggestedTitles.map((item, idx) => (
@@ -861,12 +1879,8 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange }) {
 
           {/* PRICING & BADGES */}
           <div>
-            <label style={labelStyle}>Selling Price (₹) *</label>
-            <input style={fieldStyle} type="number" min="0" value={form.price} onChange={set('price')} placeholder="e.g. 14999" required />
-          </div>
-          <div>
-            <label style={labelStyle}>Original Price (₹)</label>
-            <input style={fieldStyle} type="number" min="0" value={form.originalPrice} onChange={set('originalPrice')} placeholder="e.g. 17999" />
+            <label style={labelStyle}>Tour Price (₹) *</label>
+            <input style={fieldStyle} type="number" min="0" value={form.price} onChange={set('price')} placeholder="e.g. 29000" required />
           </div>
           <div>
             <label style={labelStyle}>Badge Tag *</label>
@@ -878,267 +1892,907 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange }) {
               ))}
             </select>
           </div>
-          <div>
-            <label style={labelStyle}>Upcoming Departure Date *</label>
-            <input
-              type="date"
-              style={fieldStyle}
-              value={form.departureDate || new Date().toISOString().split('T')[0]}
-              onChange={set('departureDate')}
-              required
-            />
+
+          {/* ─── START DATE & END DATE ─── */}
+          <div style={{ gridColumn: '1 / -1', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-gold)', borderRadius: '12px', padding: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+              <label style={{ ...labelStyle, marginBottom: 0, color: 'var(--gold-light)', fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <Calendar size={16} color="var(--gold-primary)" /> Tour Dates (Start Date &amp; End Date)
+              </label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+                {form.departureDate && (() => {
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+                  const tourDate = new Date(`${form.departureDate}T00:00:00`);
+                  const isActive = !isNaN(tourDate.getTime()) && tourDate >= today;
+                  return isActive ? (
+                    <span style={{ background: 'rgba(16,185,129,0.2)', border: '1px solid #10b981', color: '#6ee7b7', padding: '0.2rem 0.6rem', borderRadius: '8px', fontSize: '0.74rem', fontWeight: 800 }}>
+                      🟢 Active (Upcoming)
+                    </span>
+                  ) : (
+                    <span style={{ background: 'rgba(239,68,68,0.2)', border: '1px solid #ef4444', color: '#fca5a5', padding: '0.2rem 0.6rem', borderRadius: '8px', fontSize: '0.74rem', fontWeight: 800 }}>
+                      🔴 Inactive (Start Date Passed)
+                    </span>
+                  );
+                })()}
+
+                {(form.departureDate && form.returnDate) && (
+                  <div style={{ background: 'rgba(16,185,129,0.15)', border: '1px solid #10b981', color: '#6ee7b7', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 800 }}>
+                    📅 {form.departureDate} ➔ {form.returnDate} ({durationDays} Days)
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div>
+                <label style={labelStyle}>Start Date (Departure Date) *</label>
+                <input
+                  type="date"
+                  style={fieldStyle}
+                  value={form.departureDate || ''}
+                  onChange={(e) => handleStartDateChange(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div>
+                <label style={labelStyle}>End Date (Return Date) *</label>
+                <input
+                  type="date"
+                  style={fieldStyle}
+                  value={form.returnDate || ''}
+                  onChange={(e) => handleEndDateChange(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+            <p style={{ margin: '0.5rem 0 0', fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+              💡 Changing dates automatically syncs the total tour days, or setting duration days auto-calculates the return date.
+            </p>
           </div>
         </div>
       )}
 
-      {/* ══════════════ STEP 2 · TOURIST PLACES & IMAGES ══════════════ */}
+      {/* ══════════════ STEP 2 · TOURIST PLACES, IMAGES & INCLUSIONS ══════════════ */}
       {activeStep === 1 && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-          <div style={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.6rem', marginBottom: '0.1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <ImageIcon size={18} color="var(--gold-primary)" />
-              <h4 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--gold-light)', margin: 0, fontFamily: 'var(--font-heading)' }}>
-                Step 2 of 3 — Select Tourist Places &amp; Images
-              </h4>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
+          
+          {/* 1. Main Cover Photo */}
+          <div className="glass-card" style={{ padding: '1.2rem', background: 'rgba(9,20,38,0.6)', border: '1px solid var(--border-gold)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.8rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <ImageIcon size={18} color="var(--gold-primary)" />
+                <h4 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--gold-light)', margin: 0 }}>
+                  1. Main Tour Cover Photo
+                </h4>
+              </div>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Shown on website cards and header banner</span>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '140px 1fr', gap: '1.2rem', alignItems: 'center' }}>
+              <div style={{ width: '140px', height: '100px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border-gold)', background: '#000', position: 'relative' }}>
+                <img src={form.image || './ooty-toy-train-real.jpg'} alt="Cover preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                {(generatingCoverAi || uploadingCoverFile) && (
+                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--gold-light)' }}>
+                    <Loader2 size={22} className="spinner" />
+                  </div>
+                )}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                <label style={labelStyle}>Cover Photo URL / Direct File Upload / AI Generate *</label>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                  <input
+                    style={{ ...fieldStyle, flex: 1, minWidth: '220px' }}
+                    value={form.image}
+                    onChange={set('image')}
+                    placeholder="Enter image URL or use buttons 👉"
+                    required
+                  />
+                  
+                  {/* Hidden File Input for Cover */}
+                  <input
+                    type="file"
+                    id="tour-cover-file-input"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleUploadCoverPhotoFile(file);
+                    }}
+                  />
+                  
+                  {/* Direct File Upload Button */}
+                  <label
+                    htmlFor="tour-cover-file-input"
+                    className="btn-glass"
+                    style={{
+                      padding: '0.45rem 0.9rem',
+                      fontSize: '0.8rem',
+                      fontWeight: 700,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.35rem',
+                      cursor: 'pointer',
+                      margin: 0
+                    }}
+                  >
+                    <Upload size={14} color="var(--gold-primary)" />
+                    {uploadingCoverFile ? 'Uploading...' : '📁 Upload Photo'}
+                  </label>
+
+                  {/* AI Generate Cover Button */}
+                  <button
+                    type="button"
+                    onClick={handleGenerateCoverAiPhoto}
+                    disabled={generatingCoverAi}
+                    className="btn-gold"
+                    style={{
+                      padding: '0.45rem 0.95rem',
+                      fontSize: '0.8rem',
+                      fontWeight: 800,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.35rem',
+                      opacity: generatingCoverAi ? 0.7 : 1
+                    }}
+                  >
+                    {generatingCoverAi ? (
+                      <>
+                        <Loader2 size={14} className="spinner" /> Generating AI...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles size={14} /> ✨ AI Suggest Image
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Admin AI Place Image & Multi-Location Explorer Studio */}
-          <div style={{ gridColumn: '1 / -1' }}>
-            <AiPlaceImageSelector
-              locationName={form.mainPlaces || resolveLocationKeyword(form.title, form.subtitle, form.destinationId, aiLocationInput) || 'Kollam and Munnar'}
-              sightseeingList={form.sightseeing}
-              highlightsList={form.highlights}
-              coverImageUrl={form.image}
-              mixedBackgroundUrls={form.bgMixImages}
-              onSelectCoverImage={(url) => setForm(f => ({ ...f, image: url }))}
-              onSelectMixImages={(list) => setForm(f => ({ ...f, bgMixImages: list }))}
-              onToggleSightseeing={(place) => {
-                setForm(prev => {
-                  const exists = (prev.sightseeing || []).some(s => (s.name || '').toLowerCase() === place.placeName.toLowerCase());
-                  if (exists) {
-                    return {
-                      ...prev,
-                      sightseeing: prev.sightseeing.filter(s => (s.name || '').toLowerCase() !== place.placeName.toLowerCase())
-                    };
-                  } else {
-                    const newItem = {
-                      name: place.placeName,
-                      image: place.url,
-                      images: place.url ? [place.url] : [],
-                      text: place.description || `Visit ${place.placeName} (${place.location || place.category || 'Sightseeing'}). Guided tour with OASIS India Thrissur.`,
-                      video: '',
-                      location: place.location || ''
-                    };
-                    const updatedMainPlaces = prev.mainPlaces
-                      ? (prev.mainPlaces.toLowerCase().includes((place.location || place.placeName).toLowerCase()) ? prev.mainPlaces : `${prev.mainPlaces}, ${place.location || place.placeName}`)
-                      : (place.location || place.placeName);
-                    return {
-                      ...prev,
-                      sightseeing: [...(prev.sightseeing || []), newItem],
-                      mainPlaces: updatedMainPlaces
-                    };
-                  }
-                });
-              }}
-              onToggleHighlight={(place) => {
-                setForm(prev => {
-                  const exists = (prev.highlights || []).some(h => (h.title || '').toLowerCase() === place.placeName.toLowerCase());
-                  if (exists) {
-                    return {
-                      ...prev,
-                      highlights: prev.highlights.filter(h => (h.title || '').toLowerCase() !== place.placeName.toLowerCase())
-                    };
-                  } else {
-                    const newItem = {
-                      title: place.placeName,
-                      image: place.url,
-                      images: place.url ? [place.url] : [],
-                      location: place.location || ''
-                    };
-                    return {
-                      ...prev,
-                      highlights: [...(prev.highlights || []), newItem]
-                    };
-                  }
-                });
-              }}
-              onBatchAddSightseeing={(places) => {
-                setForm(prev => {
-                  const existingNames = new Set((prev.sightseeing || []).map(s => (s.name || '').toLowerCase()));
-                  const newItems = places.filter(p => !existingNames.has(p.placeName.toLowerCase())).map(p => ({
-                    name: p.placeName,
-                    image: p.url,
-                    images: p.url ? [p.url] : [],
-                    text: `Explore ${p.placeName} (${p.location || 'Sightseeing'}) with dedicated transfer and experienced OASIS tour manager.`,
-                    video: '',
-                    location: p.location || ''
-                  }));
-                  const locSet = new Set((prev.mainPlaces ? prev.mainPlaces.split(',').map(s => s.trim()) : []));
-                  places.forEach(p => { if (p.location) locSet.add(p.location); });
-                  return {
-                    ...prev,
-                    sightseeing: [...(prev.sightseeing || []), ...newItems],
-                    mainPlaces: Array.from(locSet).join(', ')
-                  };
-                });
-              }}
-              onBatchAddHighlights={(places) => {
-                setForm(prev => {
-                  const existingTitles = new Set((prev.highlights || []).map(h => (h.title || '').toLowerCase()));
-                  const newItems = places.filter(p => !existingTitles.has(p.placeName.toLowerCase())).map(p => ({
-                    title: p.placeName,
-                    image: p.url,
-                    images: p.url ? [p.url] : [],
-                    location: p.location || ''
-                  }));
-                  return {
-                    ...prev,
-                    highlights: [...(prev.highlights || []), ...newItems]
-                  };
-                });
-              }}
-            />
+          {/* 2. Background Mixing & Multi-Image Slider */}
+          <div className="glass-card" style={{ padding: '1.2rem', background: 'rgba(9,20,38,0.6)', border: '1px solid var(--border-gold)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.8rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Layers size={18} color="var(--gold-primary)" />
+                <div>
+                  <h4 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--gold-light)', margin: 0 }}>
+                    2. Background Mixing &amp; Multi-Image Slider
+                  </h4>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '0.15rem 0 0' }}>
+                    Mix multiple tourist place photos together for homepage banner and slider with live blend effects
+                  </p>
+                </div>
+              </div>
+
+              {/* Blend Style Selector */}
+              <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--gold-light)', fontWeight: 700 }}>Mix Style:</span>
+                {[
+                  { id: 'collage-blend', label: '🎨 Collage Blend' },
+                  { id: 'fade-slide', label: '🎬 Crossfade Slider' },
+                  { id: 'split-grid', label: '🔲 2x2 Split Quad' },
+                  { id: 'layered-soft', label: '🌟 Layered Soft' }
+                ].map(st => (
+                  <button
+                    key={st.id}
+                    type="button"
+                    onClick={() => setForm(f => ({ ...f, bgMixStyle: st.id }))}
+                    style={{
+                      padding: '0.3rem 0.65rem',
+                      borderRadius: '8px',
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      background: (form.bgMixStyle || 'collage-blend') === st.id ? 'rgba(212,175,55,0.25)' : 'rgba(255,255,255,0.05)',
+                      border: (form.bgMixStyle || 'collage-blend') === st.id ? '1px solid var(--gold-primary)' : '1px solid rgba(255,255,255,0.1)',
+                      color: (form.bgMixStyle || 'collage-blend') === st.id ? '#fef08a' : 'var(--text-muted)'
+                    }}
+                  >
+                    {st.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Live Background Mix Preview Stage */}
+            <div style={{ position: 'relative', width: '100%', height: '180px', borderRadius: '10px', overflow: 'hidden', border: '1px solid var(--border-gold)', marginBottom: '1rem', background: '#040810' }}>
+              <MixedBackground
+                images={(form.bgMixImages && form.bgMixImages.length > 0) ? form.bgMixImages : [form.image || './ooty-toy-train-real.jpg']}
+                fallbackImage={form.image || './ooty-toy-train-real.jpg'}
+                style={form.bgMixStyle || 'collage-blend'}
+                height="100%"
+                overlayOpacity={0.28}
+              />
+              <div style={{ position: 'absolute', bottom: '12px', left: '16px', zIndex: 10, pointerEvents: 'none' }}>
+                <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '0.2rem 0.55rem', borderRadius: '6px', background: 'rgba(0,0,0,0.75)', color: 'var(--gold-light)', border: '1px solid var(--border-gold)' }}>
+                  Live Preview: {form.bgMixStyle || 'collage-blend'} ({((form.bgMixImages || []).length || 1)} photos mixed)
+                </span>
+                <div style={{ color: '#fff', fontSize: '1.05rem', fontWeight: 800, marginTop: '4px', textShadow: '0 2px 8px rgba(0,0,0,0.9)' }}>
+                  {form.title || 'Tour Destination Title'}
+                </div>
+              </div>
+            </div>
+
+            {/* Current Mixed Images Ribbon */}
+            <div style={{ marginBottom: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+                <span style={{ fontSize: '0.78rem', color: 'var(--gold-light)', fontWeight: 700 }}>
+                  Photos currently in Background Mix ({((form.bgMixImages || []).length)}):
+                </span>
+                {(form.sightseeing || []).length > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleSyncSightseeingToMix}
+                    className="btn-glass"
+                    style={{ padding: '0.25rem 0.65rem', fontSize: '0.72rem', fontWeight: 700, color: '#6ee7b7', border: '1px solid rgba(16,185,129,0.4)' }}
+                  >
+                    ⚡ Sync All Sightseeing Spots to Mix
+                  </button>
+                )}
+              </div>
+
+              {((form.bgMixImages || []).length === 0) ? (
+                <div style={{ padding: '0.8rem', textAlign: 'center', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px dashed rgba(255,255,255,0.15)', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                  Only 1 cover photo is currently used. Add AI-generated scenic images or upload photos below to create a multi-image background mix!
+                </div>
+              ) : (
+                <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                  {(form.bgMixImages || []).map((imgUrl, mIdx) => (
+                    <div key={mIdx} style={{ position: 'relative', width: '90px', height: '65px', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--border-gold)', background: '#000' }}>
+                      <img src={imgUrl} alt={`Mix photo ${mIdx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImageFromMix(mIdx)}
+                        style={{
+                          position: 'absolute',
+                          top: '3px',
+                          right: '3px',
+                          width: '18px',
+                          height: '18px',
+                          borderRadius: '50%',
+                          background: 'rgba(239,68,68,0.9)',
+                          color: '#fff',
+                          border: 'none',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '11px',
+                          fontWeight: 800,
+                          padding: 0
+                        }}
+                      >
+                        ✕
+                      </button>
+                      <span style={{ position: 'absolute', bottom: '2px', left: '3px', background: 'rgba(0,0,0,0.7)', color: '#fff', fontSize: '9px', padding: '1px 3px', borderRadius: '3px' }}>
+                        #{mIdx + 1}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Add to Background Mix Controls: AI Suggest + File Upload */}
+            <div style={{ padding: '0.8rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(212,175,55,0.2)', display: 'grid', gap: '0.6rem' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--gold-light)', fontWeight: 700 }}>
+                ➕ Add Photos to Background Mix:
+              </div>
+
+              {/* AI Image Input & Generate for Mix */}
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                <input
+                  style={{ ...fieldStyle, flex: 1, minWidth: '220px' }}
+                  value={mixAiPrompt}
+                  onChange={(e) => setMixAiPrompt(e.target.value)}
+                  placeholder="Type place name for AI image (e.g. Pokhara Phewa Lake, Muktinath, Munnar Tea)..."
+                />
+
+                {/* AI Generate Button */}
+                <button
+                  type="button"
+                  onClick={() => handleGenerateMixAiPhoto(mixAiPrompt)}
+                  disabled={generatingMixAi}
+                  className="btn-gold"
+                  style={{
+                    padding: '0.45rem 0.9rem',
+                    fontSize: '0.78rem',
+                    fontWeight: 800,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    opacity: generatingMixAi ? 0.7 : 1
+                  }}
+                >
+                  {generatingMixAi ? (
+                    <>
+                      <Loader2 size={13} className="spinner" /> Generating AI...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles size={13} /> ✨ AI Suggest &amp; Add to Mix
+                    </>
+                  )}
+                </button>
+
+                {/* Hidden File Input for Mix */}
+                <input
+                  type="file"
+                  id="tour-mix-file-input"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleUploadMixPhotoFile(file);
+                  }}
+                />
+
+                {/* Direct Upload Button for Mix */}
+                <label
+                  htmlFor="tour-mix-file-input"
+                  className="btn-glass"
+                  style={{
+                    padding: '0.45rem 0.85rem',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    cursor: 'pointer',
+                    margin: 0
+                  }}
+                >
+                  <Upload size={13} color="var(--gold-primary)" />
+                  {uploadingMixFile ? 'Uploading...' : '📁 Upload Photo to Mix'}
+                </label>
+              </div>
+
+              {/* Quick 1-Click Preset Place Chips to Mix */}
+              <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', alignItems: 'center', marginTop: '0.2rem' }}>
+                <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Quick Presets:</span>
+                {Object.entries(PLACE_PHOTO_LIBRARY).map(([key, item]) => {
+                  const alreadyInMix = (form.bgMixImages || []).includes(item.url);
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => handleAddImageToMix(item.url)}
+                      style={{
+                        background: alreadyInMix ? 'rgba(16,185,129,0.15)' : 'rgba(255,255,255,0.05)',
+                        border: alreadyInMix ? '1px solid #10b981' : '1px solid rgba(255,255,255,0.12)',
+                        color: alreadyInMix ? '#6ee7b7' : '#fff',
+                        borderRadius: '12px',
+                        padding: '0.2rem 0.55rem',
+                        fontSize: '0.7rem',
+                        fontWeight: 600,
+                        cursor: alreadyInMix ? 'default' : 'pointer'
+                      }}
+                    >
+                      {alreadyInMix ? '✓' : '+'} {item.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
-          {/* Image Uploader & Background Mixer */}
-          <div style={{ gridColumn: '1 / -1' }}>
-            <ImageUploader
-              value={form.image}
-              onChange={(val) => setForm(f => ({ ...f, image: val }))}
-              multiValues={form.bgMixImages}
-              onMultiChange={(list) => setForm(f => ({ ...f, bgMixImages: list }))}
-              blendStyle={form.bgMixStyle}
-              onBlendStyleChange={(st) => setForm(f => ({ ...f, bgMixStyle: st }))}
-              enableMixMode={true}
-            />
-          </div>
-          <div style={{ gridColumn: '1 / -1' }}>
-            <label style={labelStyle}>Main Places (comma separated)</label>
-            <input style={fieldStyle} value={form.mainPlaces} onChange={set('mainPlaces')} placeholder="Kollam, Munnar, Kochi, Ooty" />
-          </div>
-          <div style={{ gridColumn: '1 / -1' }}>
-            <label style={labelStyle}>Included Highlights (one per line)</label>
-            <textarea style={{ ...fieldStyle, resize: 'vertical', minHeight: '90px' }} value={form.included} onChange={set('included')} />
-          </div>
-
-          {/* Sightseeing Items (image + text + video) */}
-          <div style={{ gridColumn: '1 / -1', marginTop: '0.6rem' }}>
+          {/* 3. Sightseeing Places (Sightseen) */}
+          <div className="glass-card" style={{ padding: '1.2rem', background: 'rgba(9,20,38,0.6)', border: '1px solid var(--border-gold)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem', flexWrap: 'wrap', gap: '0.5rem' }}>
               <div>
-                <label style={{ ...labelStyle, marginBottom: '0.2rem' }}>Sightseeing Details (Image, Description &amp; Video)</label>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                  Upload image or generate with Gemini AI directly in each spot.
-                </div>
+                <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--gold-light)', margin: 0, display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                  🏛️ 3. Sightseeing Places (Sightseen) — {((form.sightseeing || []).length)} Spots Added
+                </h4>
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '0.2rem 0 0' }}>
+                  Add as many spots as you need (e.g. <b>5 Spots</b> for Nepal or Kerala). Use 1-click batch presets or customize below!
+                </p>
               </div>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <button type="button" className="btn-gold" style={{ padding: '0.45rem 1rem', fontSize: '0.85rem' }} onClick={() => addListItem('sightseeing', { name: '', image: '', text: '', video: '' })}>
-                  + Add Sightseeing
+
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  className="btn-gold"
+                  style={{ padding: '0.45rem 1rem', fontSize: '0.82rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+                  onClick={() => addListItem('sightseeing', { name: '', title: '', image: '', text: '', description: '', timing: '', ticketInfo: '', category: 'Sightseeing' })}
+                >
+                  <Plus size={14} /> Add Single Spot
                 </button>
               </div>
             </div>
-            {(form.sightseeing || []).length === 0 && (
-              <div style={{ padding: '1.2rem', textAlign: 'center', background: 'rgba(255,255,255,0.02)', borderRadius: '10px', border: '1px dashed rgba(255,255,255,0.15)', marginBottom: '0.8rem' }}>
-                <p style={{ margin: '0 0 0.6rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>No sightseeing entries yet.</p>
-                <button type="button" className="btn-gold" style={{ padding: '0.4rem 0.9rem', fontSize: '0.8rem' }} onClick={handleGenerateSightseeingOnly}>
-                  <Sparkles size={13} style={{ verticalAlign: '-2px', marginRight: '4px' }} /> Auto-Generate from AI Guide
+
+            {/* 1-Click Multi-Spot (5 Spots) Batch Add Buttons */}
+            <div style={{ marginBottom: '0.8rem', padding: '0.75rem', background: 'rgba(212,175,55,0.06)', borderRadius: '10px', border: '1px solid rgba(212,175,55,0.25)' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--gold-light)', fontWeight: 800, marginBottom: '0.45rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <Sparkles size={14} color="var(--gold-primary)" /> ⚡ 1-Click Add 5 Popular Tour Spots:
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={() => handleBatchAdd5Spots('nepal')}
+                  className="btn-glass"
+                  style={{ padding: '0.35rem 0.75rem', fontSize: '0.74rem', fontWeight: 700, color: '#fef08a', border: '1px solid var(--border-gold)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                >
+                  🇳🇵 + Add 5 Nepal Highlights (Kathmandu, Pokhara, Muktinath, Sarangkot, Lumbini)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleBatchAdd5Spots('kerala')}
+                  className="btn-glass"
+                  style={{ padding: '0.35rem 0.75rem', fontSize: '0.74rem', fontWeight: 700, color: '#6ee7b7', border: '1px solid rgba(16,185,129,0.4)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                >
+                  🌴 + Add 5 Kerala Spots (Munnar, Athirappilly, Wayanad, Kovalam, Alleppey)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleBatchAdd5Spots('pilgrimage')}
+                  className="btn-glass"
+                  style={{ padding: '0.35rem 0.75rem', fontSize: '0.74rem', fontWeight: 700, color: '#fbcfe8', border: '1px solid rgba(244,114,182,0.4)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                >
+                  🛕 + Add 5 Sacred Pilgrimage Spots (Kashi, Ayodhya, Kathmandu, Muktinath, Lumbini)
+                </button>
+              </div>
+            </div>
+
+            {/* Quick 1-Click Single Place Chips */}
+            <div style={{ marginBottom: '1rem', padding: '0.65rem 0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', border: '1px dashed rgba(212,175,55,0.3)' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '0.35rem' }}>
+                Quick 1-Click Single Spot Presets:
+              </div>
+              <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                {Object.entries(PLACE_PHOTO_LIBRARY).map(([key, item]) => {
+                  const alreadyAdded = (form.sightseeing || []).some(s => (s.name || '').toLowerCase().includes(item.name.toLowerCase()));
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => {
+                        if (!alreadyAdded) {
+                          addListItem('sightseeing', {
+                            name: item.name,
+                            title: item.title,
+                            image: item.url,
+                            text: item.description,
+                            description: item.description,
+                            timing: 'Morning / Afternoon',
+                            ticketInfo: 'Entry Passes Handled by OASIS',
+                            category: 'Sightseeing'
+                          });
+                        }
+                      }}
+                      style={{
+                        background: alreadyAdded ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.06)',
+                        border: alreadyAdded ? '1px solid #10b981' : '1px solid rgba(255,255,255,0.15)',
+                        color: alreadyAdded ? '#6ee7b7' : '#fff',
+                        borderRadius: '16px',
+                        padding: '0.25rem 0.6rem',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        cursor: alreadyAdded ? 'default' : 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.25rem'
+                      }}
+                    >
+                      {alreadyAdded ? '✓' : '+'} {item.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Sightseeing Items Cards */}
+            {(form.sightseeing || []).length === 0 ? (
+              <div style={{ padding: '1.5rem', textAlign: 'center', background: 'rgba(255,255,255,0.02)', borderRadius: '10px', border: '1px dashed rgba(255,255,255,0.15)' }}>
+                <p style={{ margin: '0 0 0.8rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                  No sightseeing spots added yet. Click one of the 5-Spot buttons above or click "+ Add Single Spot".
+                </p>
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.1rem' }}>
+                {(form.sightseeing || []).map((s, idx) => {
+                  const matchingPresets = getMatchingPlacePhotos(s.name || '');
+                  return (
+                    <div key={idx} style={{ border: '1px solid var(--border-gold)', borderRadius: '12px', padding: '1.1rem', background: 'rgba(6,12,23,0.9)', display: 'grid', gap: '0.8rem', boxShadow: '0 4px 16px rgba(0,0,0,0.35)' }}>
+                      
+                      {/* Spot Card Header with Reorder, Duplicate & Remove Controls */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '0.5rem', flexWrap: 'wrap', gap: '0.4rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                          <span style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--gold-light)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                            📍 Spot #{idx + 1} {s.name ? `— ${s.name}` : ''}
+                          </span>
+                          {s.category && (
+                            <span style={{ fontSize: '0.68rem', padding: '0.15rem 0.5rem', borderRadius: '10px', background: 'rgba(212,175,55,0.15)', color: '#fef08a', border: '1px solid rgba(212,175,55,0.3)', fontWeight: 700 }}>
+                              {s.category}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Action Buttons Toolbar */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                          {idx > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => handleMoveSpot(idx, -1)}
+                              title="Move Spot Up"
+                              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#fff', padding: '0.25rem 0.5rem', borderRadius: '6px', fontSize: '0.72rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}
+                            >
+                              <ChevronUp size={13} /> Up
+                            </button>
+                          )}
+                          {idx < ((form.sightseeing || []).length - 1) && (
+                            <button
+                              type="button"
+                              onClick={() => handleMoveSpot(idx, 1)}
+                              title="Move Spot Down"
+                              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#fff', padding: '0.25rem 0.5rem', borderRadius: '6px', fontSize: '0.72rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}
+                            >
+                              <ChevronDown size={13} /> Down
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => handleDuplicateSpot(idx)}
+                            title="Duplicate this Spot"
+                            style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#fef08a', padding: '0.25rem 0.5rem', borderRadius: '6px', fontSize: '0.72rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}
+                          >
+                            <Copy size={12} /> Duplicate
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeListItem('sightseeing', idx)}
+                            style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', color: '#ef4444', padding: '0.25rem 0.55rem', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}
+                          >
+                            <Trash2 size={12} /> Remove
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Experience / Category Tag Chips */}
+                      <div>
+                        <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '0.3rem', fontWeight: 600 }}>
+                          Experience Category:
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
+                          {[
+                            '🛕 Temple Darshan',
+                            '⛵ Boating / Lake',
+                            '🌄 Sunrise / Viewpoint',
+                            '🌊 Waterfall',
+                            '🌲 Nature / Trek',
+                            '🏛️ UNESCO Heritage',
+                            '🛍️ Local Market / Culture'
+                          ].map((cat, cIdx) => (
+                            <button
+                              key={cIdx}
+                              type="button"
+                              onClick={() => updateListItem('sightseeing', idx, { category: cat })}
+                              style={{
+                                padding: '0.2rem 0.5rem',
+                                borderRadius: '12px',
+                                fontSize: '0.7rem',
+                                fontWeight: 700,
+                                cursor: 'pointer',
+                                background: (s.category === cat) ? 'rgba(212,175,55,0.25)' : 'rgba(255,255,255,0.05)',
+                                border: (s.category === cat) ? '1px solid var(--gold-primary)' : '1px solid rgba(255,255,255,0.1)',
+                                color: (s.category === cat) ? '#fef08a' : 'var(--text-muted)'
+                              }}
+                            >
+                              {cat}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Place Name & Attraction Title */}
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: '0.8rem' }}>
+                        <div>
+                          <label style={labelStyle}>Place Name * (e.g. Pokhara, Muktinath, Munnar)</label>
+                          <input
+                            style={fieldStyle}
+                            value={s.name || ''}
+                            onChange={(e) => {
+                              const newName = e.target.value;
+                              const match = getMatchingPlacePhotos(newName)[0];
+                              if (match && (!s.image || s.image.includes('placeholder') || !s.text)) {
+                                updateListItem('sightseeing', idx, {
+                                  name: newName,
+                                  title: s.title || match.title,
+                                  image: s.image || match.url,
+                                  text: s.text || match.description,
+                                  description: s.description || match.description
+                                });
+                              } else {
+                                updateListItem('sightseeing', idx, { name: newName });
+                              }
+                            }}
+                            placeholder="e.g. Pokhara"
+                            required
+                          />
+                        </div>
+
+                        <div>
+                          <label style={labelStyle}>Attraction Title *</label>
+                          <input
+                            style={fieldStyle}
+                            value={s.title || s.name || ''}
+                            onChange={(e) => updateListItem('sightseeing', idx, { title: e.target.value })}
+                            placeholder="e.g. Pokhara Phewa Lake & Mountain Views"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      {/* Instant Photo Suggestions Ribbon (if matching presets exist) */}
+                      {matchingPresets.length > 0 && (
+                        <div style={{ padding: '0.6rem 0.8rem', background: 'rgba(212,175,55,0.08)', borderRadius: '8px', border: '1px solid rgba(212,175,55,0.25)' }}>
+                          <div style={{ fontSize: '0.72rem', color: 'var(--gold-light)', fontWeight: 700, marginBottom: '0.4rem' }}>
+                            ✨ Suggested Photos for "{s.name}": (Click any photo to select & auto-fill)
+                          </div>
+                          <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+                            {matchingPresets.map((match, mIdx) => (
+                              <div
+                                key={mIdx}
+                                onClick={() => {
+                                  updateListItem('sightseeing', idx, {
+                                    image: match.url,
+                                    title: match.title,
+                                    text: match.description,
+                                    description: match.description
+                                  });
+                                }}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '0.4rem',
+                                  padding: '0.3rem 0.6rem',
+                                  borderRadius: '8px',
+                                  background: (s.image === match.url) ? 'rgba(212,175,55,0.25)' : 'rgba(255,255,255,0.05)',
+                                  border: (s.image === match.url) ? '1px solid var(--gold-primary)' : '1px solid rgba(255,255,255,0.1)',
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                <img src={match.url} alt={match.name} style={{ width: '40px', height: '28px', objectFit: 'cover', borderRadius: '4px' }} />
+                                <span style={{ fontSize: '0.72rem', color: '#fff', fontWeight: 600 }}>{match.name}</span>
+                                {s.image === match.url && <span style={{ color: 'var(--gold-light)', fontSize: '0.75rem' }}>✓</span>}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Photo Preview & Custom URL / Direct Upload / AI Generate */}
+                      <div style={{ display: 'grid', gridTemplateColumns: '95px 1fr', gap: '0.9rem', alignItems: 'center' }}>
+                        <div style={{ width: '95px', height: '70px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border-gold)', background: '#000', position: 'relative' }}>
+                          <img src={s.image || './ooty-toy-train-real.jpg'} alt="Spot preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          {(generatingSpotAiIdx === idx || uploadingSpotIdx === idx) && (
+                            <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--gold-light)' }}>
+                              <Loader2 size={18} className="spinner" />
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                          <label style={labelStyle}>Spot Photo URL / Direct Upload / AI Generate *</label>
+                          <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                            <input
+                              style={{ ...fieldStyle, flex: 1, minWidth: '180px' }}
+                              value={s.image || ''}
+                              onChange={(e) => updateListItem('sightseeing', idx, { image: e.target.value })}
+                              placeholder="Paste photo URL or use buttons 👉"
+                              required
+                            />
+                            
+                            {/* Hidden File Input */}
+                            <input
+                              type="file"
+                              id={`spot-file-${idx}`}
+                              accept="image/*"
+                              style={{ display: 'none' }}
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleUploadSpotPhotoFile(idx, file);
+                              }}
+                            />
+                            
+                            {/* Direct Upload Button */}
+                            <label
+                              htmlFor={`spot-file-${idx}`}
+                              className="btn-glass"
+                              style={{
+                                padding: '0.45rem 0.85rem',
+                                fontSize: '0.78rem',
+                                fontWeight: 700,
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.35rem',
+                                cursor: 'pointer',
+                                margin: 0
+                              }}
+                            >
+                              <Upload size={13} color="var(--gold-primary)" />
+                              {uploadingSpotIdx === idx ? 'Uploading...' : '📁 Upload Photo'}
+                            </label>
+
+                            {/* AI Image Generation Button */}
+                            <button
+                              type="button"
+                              onClick={() => handleGenerateSpotAiPhoto(idx)}
+                              disabled={generatingSpotAiIdx === idx}
+                              className="btn-gold"
+                              style={{
+                                padding: '0.45rem 0.85rem',
+                                fontSize: '0.78rem',
+                                fontWeight: 800,
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.35rem',
+                                opacity: generatingSpotAiIdx === idx ? 0.7 : 1
+                              }}
+                            >
+                              {generatingSpotAiIdx === idx ? (
+                                <>
+                                  <Loader2 size={13} className="spinner" /> Generating AI...
+                                </>
+                              ) : (
+                                <>
+                                  <Sparkles size={13} /> ✨ AI Suggest Image
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Timing & Inclusions Badge Row (More Options) */}
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '0.8rem' }}>
+                        <div>
+                          <label style={labelStyle}>Best Timing (e.g. 🌅 Sunrise 5:30 AM / 🌆 Evening 6:30 PM)</label>
+                          <input
+                            style={fieldStyle}
+                            value={s.timing || ''}
+                            onChange={(e) => updateListItem('sightseeing', idx, { timing: e.target.value })}
+                            placeholder="e.g. Morning 5:30 AM Sunrise / Full Day"
+                          />
+                        </div>
+
+                        <div>
+                          <label style={labelStyle}>Ticket &amp; Inclusions Info</label>
+                          <input
+                            style={fieldStyle}
+                            value={s.ticketInfo || ''}
+                            onChange={(e) => updateListItem('sightseeing', idx, { ticketInfo: e.target.value })}
+                            placeholder="e.g. VIP Darshan Included / Boating Charges Paid"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Short Description */}
+                      <div>
+                        <label style={labelStyle}>Place Description (Shown on click in details page) *</label>
+                        <textarea
+                          style={{ ...fieldStyle, resize: 'vertical', minHeight: '60px' }}
+                          value={s.text || s.description || ''}
+                          onChange={(e) => updateListItem('sightseeing', idx, { text: e.target.value, description: e.target.value })}
+                          placeholder="e.g. Tranquil lakeside paradise reflecting snow-capped Mount Machapuchare with boating to Tal Barahi Island Temple..."
+                          required
+                        />
+                      </div>
+
+                      {/* Expandable Extra Options: Video URL, Transfer Mode, Traveler Tips */}
+                      <details style={{ background: 'rgba(255,255,255,0.02)', padding: '0.6rem 0.8rem', borderRadius: '8px', border: '1px dashed rgba(212,175,55,0.2)' }}>
+                        <summary style={{ fontSize: '0.75rem', color: 'var(--gold-light)', fontWeight: 700, cursor: 'pointer', outline: 'none' }}>
+                          ⚙️ + Add More Options (Video Link, Transfer Mode, Traveler Tips)
+                        </summary>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.7rem', marginTop: '0.6rem' }}>
+                          <div>
+                            <label style={labelStyle}>🎥 Video Tour URL (YouTube / Reel)</label>
+                            <input
+                              style={fieldStyle}
+                              value={s.video || ''}
+                              onChange={(e) => updateListItem('sightseeing', idx, { video: e.target.value })}
+                              placeholder="https://youtu.be/..."
+                            />
+                          </div>
+
+                          <div>
+                            <label style={labelStyle}>🚗 Transfer Mode</label>
+                            <input
+                              style={fieldStyle}
+                              value={s.travelMode || ''}
+                              onChange={(e) => updateListItem('sightseeing', idx, { travelMode: e.target.value })}
+                              placeholder="e.g. Private AC Coach / Boating / Ropeway"
+                            />
+                          </div>
+
+                          <div style={{ gridColumn: '1 / -1' }}>
+                            <label style={labelStyle}>💡 Traveler Tip / Dress Code Guide</label>
+                            <input
+                              style={fieldStyle}
+                              value={s.travelerTip || ''}
+                              onChange={(e) => updateListItem('sightseeing', idx, { travelerTip: e.target.value })}
+                              placeholder="e.g. Traditional dress required for temple entry. Golden hour 5 PM best for photos."
+                            />
+                          </div>
+                        </div>
+                      </details>
+
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Bottom Add Spot Button */}
+            {(form.sightseeing || []).length > 0 && (
+              <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
+                <button
+                  type="button"
+                  onClick={() => addListItem('sightseeing', { name: '', title: '', image: '', text: '', description: '', timing: '', ticketInfo: '', category: 'Sightseeing' })}
+                  className="btn-gold"
+                  style={{ padding: '0.55rem 1.4rem', fontSize: '0.85rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '0.4rem', borderRadius: '20px' }}
+                >
+                  <Plus size={16} /> + Add Another Sightseeing Spot (Spot #{((form.sightseeing || []).length + 1)})
                 </button>
               </div>
             )}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
-              {(form.sightseeing || []).map((s, idx) => (
-                <div key={idx} style={{ border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '1rem', background: 'rgba(9,20,38,0.6)', display: 'grid', gap: '0.7rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <label style={{ ...labelStyle, margin: 0 }}>Sightseeing #{idx + 1}</label>
-                      <button
-                        type="button"
-                        onClick={() => handleAiSuggestSightseeingDesc(idx)}
-                        style={{ background: 'rgba(245,158,11,0.15)', border: '1px solid var(--gold-primary)', color: '#fef08a', borderRadius: '6px', padding: '0.15rem 0.5rem', fontSize: '0.7rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
-                      >
-                        <Sparkles size={11} color="var(--gold-primary)" /> ✨ AI Suggest Details
-                      </button>
-                    </div>
-                    <button type="button" className="btn-glass" style={{ padding: '0.3rem 0.8rem', fontSize: '0.8rem', color: '#f87171' }} onClick={() => removeListItem('sightseeing', idx)}>Remove</button>
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.7rem' }}>
-                    <div>
-                      <label style={labelStyle}>Place Name *</label>
-                      <input style={fieldStyle} value={s.name} onChange={(e) => updateListItem('sightseeing', idx, { name: e.target.value })} placeholder="Kashi Vishwanath Temple Darshan" />
-                    </div>
-                    <div>
-                      <label style={labelStyle}>Video URL (YouTube)</label>
-                      <input style={fieldStyle} value={s.video} onChange={(e) => updateListItem('sightseeing', idx, { video: e.target.value })} placeholder="https://youtu.be/..." />
-                    </div>
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.7rem' }}>
-                    <div>
-                      <label style={labelStyle}>Images (Upload File / Gemini AI Generate / Preset Pool) — {((s.images || []).length > 0 ? s.images.length : s.image ? 1 : 0)} selected</label>
-                      <ItemImagePicker
-                        value={s.image}
-                        onChange={(url) => updateListItem('sightseeing', idx, { image: url })}
-                        hint={`e.g. ${s.name || activeStudioLocation || 'Sightseeing spot'}`}
-                        multiple
-                        images={s.images || []}
-                        onImagesChange={(list) => updateListItem('sightseeing', idx, { images: list, image: list[0] || '' })}
-                      />
-                    </div>
-                    <div>
-                      <label style={labelStyle}>Description</label>
-                      <textarea style={{ ...fieldStyle, resize: 'vertical', minHeight: '60px' }} value={s.text} onChange={(e) => updateListItem('sightseeing', idx, { text: e.target.value })} placeholder="Morning Ganga aarti at the ghats, spiritual darshan..." />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+
           </div>
 
-          {/* Highlights Items (title + image) */}
-          <div style={{ gridColumn: '1 / -1', marginTop: '0.6rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
-              <label style={labelStyle}>Tour Highlights Gallery (Title &amp; Image)</label>
-              <button type="button" className="btn-gold" style={{ padding: '0.45rem 1rem', fontSize: '0.85rem' }} onClick={() => addListItem('highlights', { title: '', image: '' })}>
-                + Add Highlight
-              </button>
-            </div>
-            {(form.highlights || []).length === 0 && (
-              <p style={{ margin: '0 0 0.8rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>No highlight cards yet — add a striking image with a short title shown on the package details page.</p>
-            )}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-              {(form.highlights || []).map((h, idx) => (
-                <div key={idx} style={{ border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '1rem', background: 'rgba(9,20,38,0.6)', display: 'grid', gap: '0.7rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      <label style={{ ...labelStyle, margin: 0 }}>Highlight #{idx + 1}</label>
-                      <button
-                        type="button"
-                        onClick={() => handleAiSuggestHighlightTitle(idx)}
-                        style={{ background: 'rgba(245,158,11,0.15)', border: '1px solid var(--gold-primary)', color: '#fef08a', borderRadius: '6px', padding: '0.15rem 0.5rem', fontSize: '0.7rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
-                      >
-                        <Sparkles size={11} color="var(--gold-primary)" /> ✨ Suggest Title
-                      </button>
-                    </div>
-                    <button type="button" className="btn-glass" style={{ padding: '0.3rem 0.8rem', fontSize: '0.8rem', color: '#f87171' }} onClick={() => removeListItem('highlights', idx)}>Remove</button>
-                  </div>
-                  <div>
-                    <label style={labelStyle}>Title *</label>
-                    <input style={fieldStyle} value={h.title} onChange={(e) => updateListItem('highlights', idx, { title: e.target.value })} placeholder="Ganga Aarti at Dashashwamedh Ghat" />
-                  </div>
-                  <div>
-                    <label style={labelStyle}>Images (Upload File / Gemini AI Generate / Preset Pool) — {((h.images || []).length > 0 ? h.images.length : h.image ? 1 : 0)} selected</label>
-                    <ItemImagePicker
-                      value={h.image}
-                      onChange={(url) => updateListItem('highlights', idx, { image: url })}
-                      hint={`e.g. ${h.title || activeStudioLocation || 'Tour highlight'}`}
-                      multiple
-                      images={h.images || []}
-                      onImagesChange={(list) => updateListItem('highlights', idx, { images: list, image: list[0] || '' })}
+          {/* 4. Inclusions (What's Included) */}
+          <div className="glass-card" style={{ padding: '1.2rem', background: 'rgba(9,20,38,0.6)', border: '1px solid var(--border-gold)' }}>
+            <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--gold-light)', margin: '0 0 0.4rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+              ✅ 3. Inclusions (What's Included in Package)
+            </h4>
+            <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '0 0 0.8rem' }}>
+              Check the boxes below or edit lines in the box to customize what is included for travelers:
+            </p>
+
+            {/* Common Checkbox Toggles */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '0.6rem', marginBottom: '1rem' }}>
+              {[
+                'Comfortable Hotel Stay across all destinations',
+                'Daily Delicious Breakfast & Dinner Buffet',
+                'Kerala – Destination Reserved 3rd AC Train / Flight Tickets',
+                'Private AC Coach for All Sightseeing Transfers',
+                'Experienced Malayali Tour Manager & Escort from Thrissur',
+                'All Entry Permits, Tolls, Parking & Driver Allowances',
+                'Sightseeing Boating / VIP Temple Darshan Entry'
+              ].map((inc, i) => {
+                const currentList = toList(form.included);
+                const isChecked = currentList.some(item => item.toLowerCase().includes(inc.slice(0, 15).toLowerCase()));
+                return (
+                  <label key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.04)', padding: '0.4rem 0.65rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.78rem', color: isChecked ? '#6ee7b7' : 'var(--text-muted)' }}>
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          const updated = [...currentList, inc];
+                          setForm(f => ({ ...f, included: updated.join('\n') }));
+                        } else {
+                          const updated = currentList.filter(item => !item.toLowerCase().includes(inc.slice(0, 15).toLowerCase()));
+                          setForm(f => ({ ...f, included: updated.join('\n') }));
+                        }
+                      }}
                     />
-                  </div>
-                </div>
-              ))}
+                    <span>{inc}</span>
+                  </label>
+                );
+              })}
             </div>
+
+            <label style={labelStyle}>Full Inclusions List (One item per line):</label>
+            <textarea
+              style={{ ...fieldStyle, resize: 'vertical', minHeight: '100px' }}
+              value={form.included}
+              onChange={set('included')}
+              placeholder="Comfortable hotel accommodation&#10;Daily breakfast & dinner&#10;Private AC transfers..."
+            />
           </div>
+
         </div>
       )}
 
@@ -1183,6 +2837,35 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange }) {
             style={{ flex: 1, justifyContent: 'center', padding: '0.8rem' }}
           >
             ← Back to {TOUR_FORM_STEPS[activeStep - 1].icon} {TOUR_FORM_STEPS[activeStep - 1].label}
+          </button>
+        )}
+
+        {initial?.id && onDelete && (
+          <button
+            type="button"
+            onClick={() => {
+              if (window.confirm(`Are you sure you want to permanently delete "${initial.title || 'this tour'}"?\n\nThis will remove it immediately from the website and Firebase database.`)) {
+                onDelete(initial.id);
+              }
+            }}
+            style={{
+              padding: '0.8rem 1.2rem',
+              background: 'rgba(239,68,68,0.18)',
+              border: '1px solid rgba(239,68,68,0.5)',
+              color: '#fca5a5',
+              borderRadius: '10px',
+              cursor: 'pointer',
+              fontWeight: 800,
+              fontSize: '0.85rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.4rem',
+              transition: 'all 0.2s ease'
+            }}
+            title="Delete this tour package permanently"
+          >
+            <Trash2 size={16} /> Delete Package
           </button>
         )}
 
@@ -1534,7 +3217,7 @@ const DEST_FORM_STEPS = [
   { key: 'images',     label: 'Images',            icon: '🖼️', hint: 'Hero & gallery photos' }
 ];
 
-export function DestinationForm({ initial, onSave, onCancel, onDirtyChange }) {
+export function DestinationForm({ initial, onSave, onCancel, onDirtyChange, onDelete }) {
   const [form, setForm] = useState({
     name:           initial?.name           || '',
     tagline:        initial?.tagline        || '',
@@ -1930,6 +3613,34 @@ export function DestinationForm({ initial, onSave, onCancel, onDirtyChange }) {
           <button type="button" onClick={() => setActiveStep(s => s - 1)}
             style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.6rem 1.2rem', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)', color: '#fff', borderRadius: '10px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}>
             ← Back
+          </button>
+        )}
+        {initial?.id && onDelete && (
+          <button
+            type="button"
+            onClick={() => {
+              if (window.confirm(`Are you sure you want to permanently delete "${initial.name || 'this destination'}"?\n\nThis will remove it immediately from the website and Firebase database.`)) {
+                onDelete(initial.id);
+              }
+            }}
+            style={{
+              padding: '0.6rem 1.2rem',
+              background: 'rgba(239,68,68,0.18)',
+              border: '1px solid rgba(239,68,68,0.5)',
+              color: '#fca5a5',
+              borderRadius: '10px',
+              cursor: 'pointer',
+              fontWeight: 800,
+              fontSize: '0.85rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.4rem',
+              transition: 'all 0.2s ease'
+            }}
+            title="Delete this destination permanently"
+          >
+            <Trash2 size={16} /> Delete Destination
           </button>
         )}
         {activeStep < DEST_FORM_STEPS.length - 1 ? (

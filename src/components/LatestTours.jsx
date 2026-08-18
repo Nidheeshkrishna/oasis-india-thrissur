@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Star, Clock, CheckCircle2, ChevronLeft, ChevronRight, Sparkles, MapPin, Eye, MessageCircle } from 'lucide-react';
-import { catalogService } from '../services/catalog';
+import { catalogService, sortToursUpcomingFirst } from '../services/catalog';
 import { getWhatsAppNumber, buildQuickEnquiryMessage } from '../services/whatsapp';
 import { useCatalog } from '../hooks/useCatalog';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -12,12 +12,23 @@ export default function LatestTours({ onBookTour, onSelectDestination, onViewDet
   const trackRef = useRef(null);
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(true);
+  const isTourActive = (departureDate) => {
+    if (!departureDate) return true;
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tourDate = new Date(`${departureDate}T00:00:00`);
+      if (isNaN(tourDate.getTime())) return true;
+      return tourDate >= today;
+    } catch {
+      return true;
+    }
+  };
+
   const rawTours = useCatalog(catalogService.getTours) || [];
-  const tours = [...rawTours].sort((a, b) => {
-    const dateA = new Date(a.departureDate || a.addedDate || '2026-08-01').getTime();
-    const dateB = new Date(b.departureDate || b.addedDate || '2026-08-01').getTime();
-    return dateB - dateA;
-  });
+  // Strictly hide inactive / departed tours from public Curated Tour Packages
+  const activeTours = rawTours.filter(pkg => isTourActive(pkg.departureDate));
+  const tours = sortToursUpcomingFirst(activeTours);
 
   const CARD_STEP = 400;
 
@@ -197,7 +208,7 @@ export default function LatestTours({ onBookTour, onSelectDestination, onViewDet
                 <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between' }}>
                   
                   <div>
-                    {/* Badge & Discount Row */}
+                    {/* Badge Row */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
                       <span style={{
                         background: 'linear-gradient(135deg, rgba(212,175,55,0.2), rgba(212,175,55,0.05))',
@@ -210,18 +221,7 @@ export default function LatestTours({ onBookTour, onSelectDestination, onViewDet
                       }}>
                         {pkg.badge}
                       </span>
-                      {pkg.validOriginalPrice > 0 && pkg.discountPercent > 0 && (
-                        <span style={{
-                          background: '#10b981',
-                          color: '#000',
-                          fontWeight: 800,
-                          fontSize: '0.75rem',
-                          padding: '0.3rem 0.7rem',
-                          borderRadius: '12px'
-                        }}>
-                          {t('tours.off')} {pkg.discountPercent}%
-                        </span>
-                      )}                    </div>
+                    </div>
 
                     {/* Rating & Duration */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
@@ -312,12 +312,7 @@ export default function LatestTours({ onBookTour, onSelectDestination, onViewDet
                         {t('tours.startingFrom')}
                       </div>
                       <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#f59e0b' }}>
-                        ₹{pkg.price.toLocaleString('en-IN')}{' '}
-                        {pkg.validOriginalPrice > 0 && (
-                          <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', textDecoration: 'line-through' }}>
-                            ₹{pkg.validOriginalPrice.toLocaleString('en-IN')}
-                          </span>
-                        )}
+                        ₹{pkg.price.toLocaleString('en-IN')}
                       </div>
                     </div>
 
@@ -348,14 +343,44 @@ export default function LatestTours({ onBookTour, onSelectDestination, onViewDet
                         <MessageCircle size={18} />
                       </a>
 
-                      <button 
-                        className="btn-gold" 
-                        onClick={(e) => { e.stopPropagation(); onBookTour(pkg); }}
-                        style={{ padding: '0.6rem 1.2rem', fontSize: '0.82rem' }}
-                      >
-                        <Sparkles size={15} />
-                        <span>{t('tours.bookNow')}</span>
-                      </button>
+                      {/* Book Now Button ONLY for Upcoming Tours (departureDate >= today) */}
+                      {(() => {
+                        const isUpcoming = (() => {
+                          if (!pkg.departureDate) return true;
+                          try {
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            const tourDate = new Date(`${pkg.departureDate}T00:00:00`);
+                            if (isNaN(tourDate.getTime())) return true;
+                            return tourDate >= today;
+                          } catch {
+                            return true;
+                          }
+                        })();
+
+                        return isUpcoming ? (
+                          <button 
+                            className="btn-gold" 
+                            onClick={(e) => { e.stopPropagation(); onBookTour(pkg); }}
+                            style={{ padding: '0.6rem 1.2rem', fontSize: '0.82rem' }}
+                          >
+                            <Sparkles size={15} />
+                            <span>{t('tours.bookNow')}</span>
+                          </button>
+                        ) : (
+                          <span style={{
+                            fontSize: '0.74rem',
+                            fontWeight: 700,
+                            color: '#94a3b8',
+                            background: 'rgba(255,255,255,0.06)',
+                            border: '1px solid rgba(255,255,255,0.12)',
+                            padding: '0.4rem 0.75rem',
+                            borderRadius: '8px'
+                          }}>
+                            Departed ({pkg.departureDate})
+                          </span>
+                        );
+                      })()}
                     </div>
                   </div>
 

@@ -142,11 +142,23 @@ const LOCATION_PLACE_IMAGES = {
     { id: 'hn-1', placeName: 'Annapoorneshwari Temple Golden Shrine', category: 'Heritage & Culture', url: './horanadu-annapoorneshwari-real.jpg', isDefaultCover: true, location: 'Horanadu' },
     { id: 'hn-2', placeName: 'Chikmagalur Western Ghats Green Tea Slopes', category: 'Gardens & Tea', url: './munnar-tea-plantations-real.jpg', location: 'Chikmagalur' },
     { id: 'hn-3', placeName: 'Kalasa Kalaseshwara Ancient Shiva Temple', category: 'Heritage & Culture', url: 'https://upload.wikimedia.org/wikipedia/commons/3/31/Kalaseshwara_Temple%2C_Kalasa.jpg', location: 'Kalasa' }
+  ],
+  'nepal': [
+    { id: 'nep-1', placeName: 'Pashupatinath Sacred Shiva Temple & Bagmati Ghats', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1582650625119-3a31f8418b7d?auto=format&fit=crop&w=1200&q=80', isDefaultCover: true, location: 'Kathmandu' },
+    { id: 'nep-2', placeName: 'Phewa Lake & Tal Barahi Island Temple Pokhara', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80', location: 'Pokhara' },
+    { id: 'nep-3', placeName: 'Sarangkot Annapurna & Fishtail Himalayan Sunrise', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80', location: 'Pokhara' },
+    { id: 'nep-4', placeName: 'Swayambhunath Monkey Temple Ancient Stupa', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1582650625119-3a31f8418b7d?auto=format&fit=crop&w=1200&q=80', location: 'Kathmandu' },
+    { id: 'nep-5', placeName: 'Boudhanath Stupa Tibetan Mandala & Prayer Wheels', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1200&q=80', location: 'Kathmandu' },
+    { id: 'nep-6', placeName: 'Chitwan National Park Tiger & Rhino Safari', category: 'Wildlife & Safari', url: 'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1200&q=80', location: 'Chitwan' },
+    { id: 'nep-7', placeName: 'Bhaktapur Durbar Square Medieval Palace', category: 'Heritage & Culture', url: 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=1200&q=80', location: 'Bhaktapur' },
+    { id: 'nep-8', placeName: 'Nagarkot Himalayan Mount Everest Panoramic Ridge', category: 'Peaks & Views', url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80', location: 'Nagarkot' },
+    { id: 'nep-9', placeName: 'Davis Underground Waterfall & Gupteshwor Cave', category: 'Lakes & Water', url: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1200&q=80', location: 'Pokhara' }
   ]
 };
 
 // Multi-Location & Combo Presets
 const MULTI_LOCATION_COMBO_PRESETS = [
+  { label: '🇳🇵 Kathmandu + Pokhara (10 Spots)', query: 'Kathmandu and Pokhara' },
   { label: '🌊 Kollam + Munnar (20 Spots)', query: 'Kollam and Munnar' },
   { label: '🌿 Ooty + Kodaikanal (23 Spots)', query: 'Ooty and Kodaikanal' },
   { label: '🌴 Kochi + Kollam (20 Spots)', query: 'Kochi and Kollam' },
@@ -157,6 +169,7 @@ const MULTI_LOCATION_COMBO_PRESETS = [
 ];
 
 const SINGLE_LOCATION_PRESETS = [
+  { label: '🇳🇵 Nepal (9 Places)', query: 'Nepal' },
   { label: '🚣 Kollam (12 Places)', query: 'Kollam' },
   { label: '⛰️ Munnar (8 Places)', query: 'Munnar' },
   { label: '🌴 Kochi (8 Places)', query: 'Kochi' },
@@ -177,6 +190,14 @@ const SINGLE_LOCATION_PRESETS = [
 
 // Common short names / alternate spellings → canonical location keyword
 const LOCATION_TOKEN_ALIASES = {
+  'nepal': 'Nepal',
+  'kathmandu': 'Nepal',
+  'pokhara': 'Nepal',
+  'chitwan': 'Nepal',
+  'bhaktapur': 'Nepal',
+  'nagarkot': 'Nepal',
+  'everest': 'Nepal',
+  'pashupatinath': 'Nepal',
   'varanasi': 'Kashi',
   'prayagraj': 'Kashi',
   'cochin': 'Kochi',
@@ -208,7 +229,7 @@ export const extractLocationTokens = (inputStr = '') => {
     .filter(t => t.length >= 2);
 
   const KNOWN_DESTS = [
-    'kollam', 'munnar', 'ooty', 'kodaikanal', 'kochi', 'cochin', 'wayanad',
+    'nepal', 'kathmandu', 'pokhara', 'chitwan', 'kollam', 'munnar', 'ooty', 'kodaikanal', 'kochi', 'cochin', 'wayanad',
     'athirappilly', 'silent valley', 'kashmir', 'kashi', 'ayodhya', 'puri',
     'parambikulam', 'tiruchendur', 'thenkasi', 'gundlupet', 'horanadu', 'amritsar'
   ];
@@ -237,6 +258,7 @@ export const extractLocationTokens = (inputStr = '') => {
   normalized.forEach(r => {
     if (!finalResults.some(x => x.toLowerCase() === r.toLowerCase())) finalResults.push(r);
   });
+
 
   return finalResults.length ? finalResults.slice(0, 4) : ['Kollam', 'Munnar'];
 };

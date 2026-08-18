@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
-import { Upload, Image as ImageIcon, Plus, Trash2, Layers, Check, Sparkles } from 'lucide-react';
+import { Upload, Image as ImageIcon, Plus, Trash2, Layers, Check, Sparkles, CloudUpload, Loader2 } from 'lucide-react';
 import MixedBackground from '../MixedBackground';
+import { storageService } from '../../services/firebase';
+
 
 // Pre-configured high resolution local assets and presets
 export const PRESET_IMAGES = [
@@ -151,26 +153,41 @@ export default function ImageUploader({
     }, 400);
   };
 
-  // File Upload Handler (Base64)
-  const handleFileUpload = (files) => {
+  const [isUploadingCloud, setIsUploadingCloud] = useState(false);
+  const [uploadProgressText, setUploadProgressText] = useState('');
+
+  // File Upload Handler (Firebase Cloud Storage & Base64 Fallback)
+  const handleFileUpload = async (files) => {
     if (!files || files.length === 0) return;
+    const fileList = Array.from(files).filter(f => f.type.startsWith('image/'));
+    if (fileList.length === 0) return;
 
-    Array.from(files).forEach(file => {
-      if (!file.type.startsWith('image/')) return;
+    setIsUploadingCloud(true);
+    setUploadProgressText(`Uploading ${fileList.length} image(s) to Firebase Storage...`);
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const base64Url = e.target.result;
-        if (enableMixMode && onMultiChange) {
-          const current = Array.isArray(multiValues) ? multiValues : [];
-          onMultiChange([...current, base64Url]);
+    try {
+      const newUrls = [];
+      for (const file of fileList) {
+        const res = await storageService.uploadFile(file, 'tour-images');
+        if (res && res.url) {
+          newUrls.push(res.url);
         }
-        if (onChange && (!value || multiValues.length === 0)) {
-          onChange(base64Url);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
+      }
+
+      if (enableMixMode && onMultiChange && newUrls.length > 0) {
+        const current = Array.isArray(multiValues) ? multiValues : [];
+        onMultiChange([...current, ...newUrls]);
+      }
+      if (onChange && newUrls.length > 0 && (!value || multiValues.length === 0)) {
+        onChange(newUrls[0]);
+      }
+      setAiStatus(`✓ ${newUrls.length} image(s) successfully uploaded & linked.`);
+    } catch (err) {
+      console.warn('Firebase Storage upload error:', err);
+    } finally {
+      setIsUploadingCloud(false);
+      setUploadProgressText('');
+    }
   };
 
   const handleDrop = (e) => {
@@ -180,6 +197,7 @@ export default function ImageUploader({
       handleFileUpload(e.dataTransfer.files);
     }
   };
+
 
   const handleRemoveMixImage = (index) => {
     if (!onMultiChange) return;

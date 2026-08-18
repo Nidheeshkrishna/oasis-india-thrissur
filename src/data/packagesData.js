@@ -1,39 +1,83 @@
 // Handcrafted Tour Packages curated by OASIS India Thrissur
 export const PACKAGES = [
   {
-    id: 'wayanad-heart-lake-trail',
-    title: 'Wayanad Rainforest & Heart Lake Trail',
-    subtitle: 'Thrissur Direct Pickup Hill Station & Treehouse Retreat',
-    destinationId: 'wayanad-misty-hills',
-    duration: '3 Days / 2 Nights',
-    price: 16999,
-    originalPrice: 19999,
-    discountPercent: 15,
-    rating: 4.94,
-    reviews: 245,
-    badge: 'New AI Curated Hill Tour',
-    image: './wayanad_chembra_heart_lake_ai.png',
+    id: 'nepal-yathra-spiritual-scenic',
+    title: 'Nepal Yathra: Lumbini, Pokhara, Muktinath & Kathmandu',
+    subtitle: '7 Nights Spiritual & Scenic Journey • Kerala – Gorakhpur 3rd AC Train Included • Malayali Tour Manager',
+    destinationId: 'nepal-himalayan-kingdom',
+    duration: '13 Days / 12 Nights (7 Nights Nepal Stay)',
+    departureDate: '2026-10-28',
+    returnDate: '2026-11-09',
+    price: 29000,
+    originalPrice: 34999,
+    discountPercent: 17,
+    rating: 4.99,
+    reviews: 320,
+    badge: '⚡ Upcoming Departure • Oct 28 - Nov 9',
+    image: './nepal_muktinath_temple.png',
     bgMixImages: [
-      './wayanad_chembra_heart_lake_ai.png',
-      './wayanad_banasura_lake_ai.png'
+      './nepal_muktinath_temple.png',
+      './nepal_pokhara_phewa_lake.png',
+      './nepal_lumbini_sacred_garden.png',
+      './nepal_kathmandu_pashupatinath.png'
     ],
     bgMixStyle: 'collage-blend',
-    mainPlaces: ['Wayanad', 'Chembra Peak', 'Banasura Lake'],
+    mainPlaces: ['Muktinath (3,710 M)', 'Pokhara', 'Lumbini', 'Kathmandu'],
     placeImages: [
-      { name: 'Chembra Heart Lake 4K AI', url: './wayanad_chembra_heart_lake_ai.png', group: 'Wayanad' },
-      { name: 'Banasura Sagar Dam Lake 4K AI', url: './wayanad_banasura_lake_ai.png', group: 'Lake' }
+      {
+        name: 'Muktinath (3,710 M)',
+        title: 'Muktinath Holy Temple (3,710 M Altitude)',
+        url: './nepal_muktinath_temple.png',
+        group: 'Muktinath',
+        description: 'The world-famous sacred Vishnu & Buddhist shrine perched at 3,710m altitude in the Mustang Himalayas. Pilgrims take a holy purification bath under the 108 stone water spouts (Mukti Dhara) and visit the eternal flame shrine of Jwala Mai.'
+      },
+      {
+        name: 'Pokhara',
+        title: 'Pokhara Phewa Lake & Annapurna Reflections',
+        url: './nepal_pokhara_phewa_lake.png',
+        group: 'Pokhara',
+        description: 'Tranquil lakeside paradise reflecting the snow-capped peak of Mount Machapuchare (Fishtail). Includes private boat ride to Tal Barahi island temple, roaring Davis Falls, sacred Gupteshwor Mahadev cave, and breathtaking sunrise at Sarangkot.'
+      },
+      {
+        name: 'Lumbini',
+        title: 'Lumbini Sacred Garden & Maya Devi Temple',
+        url: './nepal_lumbini_sacred_garden.png',
+        group: 'Lumbini',
+        description: 'UNESCO World Heritage site and the sacred birthplace of Lord Gautama Buddha. Visit the ancient Maya Devi Temple, the 3rd-century BC Emperor Ashoka Pillar, the sacred Pushkarini bathing pool, and serene World Peace Pagoda.'
+      },
+      {
+        name: 'Kathmandu',
+        title: 'Sacred Pashupatinath & Boudhanath Stupa',
+        url: './nepal_kathmandu_pashupatinath.png',
+        group: 'Kathmandu',
+        description: 'Revered spiritual capital of Nepal. Experience morning VIP darshan at the holy Pashupatinath Temple on the banks of Bagmati river, circumambulate the massive Boudhanath UNESCO Buddhist stupa, and explore Swayambhunath Monkey Temple.'
+      }
     ],
     included: [
-      'Private Luxury AC Vehicle from Thrissur Swaraj Round',
-      '4-Star / Treehouse Eco Resort Stay with Breakfast & Dinner',
-      'Trek Permits for Chembra Peak Heart Lake & Edakkal Caves',
-      'Speedboat Boating Tickets on Banasura Sagar Dam Lake',
-      'Malayalam speaking senior-citizen friendly tour manager'
+      '7 Nights comfortable hotel stay across Nepal',
+      'Daily delicious breakfast & dinner (South Indian & North Indian buffet)',
+      'Kerala – Gorakhpur – Kerala 3rd AC Train Tickets included',
+      'Gorakhpur – Nepal – Gorakhpur private vehicle transportation',
+      'Experienced Malayali Tour Manager & escort from Thrissur throughout',
+      'Muktinath Temple (3,710 M) Holy Bath & Darshan permits included',
+      'Phewa Lake boating in Pokhara, Davis Falls & Gupteshwor Cave',
+      'Lumbini Maya Devi Temple & Sacred Garden guided tour',
+      'Sacred Pashupatinath Temple & Boudhanath UNESCO Stupa Darshan'
     ],
     itinerary: [
-      { day: 1, title: 'Thrissur Departure → Lakkidi Viewpoint → Treehouse Check-in', desc: 'Scenic drive up Thamarassery Ghat pass. Stop at Lakkidi viewpoint. Resort check-in and evening tea plantation walk.' },
-      { day: 2, title: 'Chembra Heart Lake Trek & Banasura Sagar Boating', desc: 'Early morning trek to Chembra Peak natural heart-shaped lake. Afternoon speedboat ride on Banasura Sagar Dam.' },
-      { day: 3, title: 'Edakkal Prehistoric Caves & Return to Thrissur', desc: 'Explore ancient petroglyph carvings at Edakkal Caves. Spice shopping and return drive to Thrissur.' }
+      { day: 1, title: 'Oct 28: Departure from Kerala (Thrissur) by 3rd AC Express Train', desc: 'Board the reserved 3rd AC train from Thrissur / Kerala with OASIS Malayali Tour Manager. Warm welcome, luggage assistance, and relaxed overnight journey across India.' },
+      { day: 2, title: 'Oct 29: Scenic Train Journey to North India', desc: 'Enjoy scenic landscapes through Andhra Pradesh, Maharashtra & Uttar Pradesh in comfortable air-conditioned 3rd AC coaches. Tour briefing and group introductions.' },
+      { day: 3, title: 'Oct 30: Gorakhpur Arrival → Sunauli Border → Lumbini (Birthplace of Buddha)', desc: 'Morning arrival at Gorakhpur Junction. Board dedicated private vehicle to Indo-Nepal border (Sunauli). Seamless border clearance and check-in to Lumbini hotel. Evening visit to Maya Devi Temple (exact birthplace of Gautama Buddha), Ashokan Pillar, and Sacred Puskarni Pond. Dinner & overnight stay in Lumbini.' },
+      { day: 4, title: 'Oct 31: Lumbini → Scenic Mountain Drive to Pokhara Lakeside', desc: 'Morning walk at World Peace Pagoda. Embark on a spectacular mountain drive through the rolling hills of Siddhartha Highway to Pokhara. Check-in to lakeside hotel. Evening tranquil boat cruise on Phewa Lake with Tal Barahi Island Temple darshan and sunset reflection of Mount Machapuchare (Fishtail). Dinner & overnight in Pokhara.' },
+      { day: 5, title: 'Nov 01: Pokhara → Jomsom Valley → Sacred Muktinath (3,710 M Altitude)', desc: 'Early morning scenic journey towards the holy Mustang region. Reach the high-altitude pilgrimage center of Muktinath (3,710 meters). Sacred holy bath in the legendary 108 stone water spouts (Mukti Dhara), darshan of Lord Muktinath (Vishnu), and visit to the eternal natural flame shrine of Jwala Mai. Dinner & overnight stay in Muktinath / Jomsom.' },
+      { day: 6, title: 'Nov 02: Muktinath Himalayan Sunrise → Return to Pokhara Sightseeing', desc: 'Witness glowing Himalayan sunrise over Dhaulagiri and Nilgiri massifs. Scenic drive back to Pokhara. Afternoon sightseeing covering the roaring Davis Falls (Patale Chhango), sacred Gupteshwor Mahadev cave temple, and Tibetan handicraft village. Evening leisure stroll around Pokhara Lakeside market. Dinner & overnight in Pokhara.' },
+      { day: 7, title: 'Nov 03: Sarangkot Annapurna Sunrise → Picturesque Drive to Kathmandu', desc: '5:00 AM excursion to Sarangkot hilltop for an awe-inspiring golden sunrise over Annapurna I, Machapuchare, and Dhaulagiri peaks. Return for breakfast, then travel through the picturesque Trishuli river valley to capital Kathmandu. Hotel check-in, dinner & overnight in Kathmandu.' },
+      { day: 8, title: 'Nov 04: Kathmandu Sacred Darshan: Pashupatinath & Boudhanath Stupa', desc: 'Morning VIP Darshan at the revered Pashupatinath Temple on holy Bagmati river. Visit Guhyeshwari Shaktipeeth. Afternoon circumambulation of Boudhanath Stupa (largest Buddhist stupa in Nepal with spinning prayer wheels) and Swayambhunath (Monkey Temple) with 360-degree valley vistas. Evening Bagmati Ganga Aarti. Dinner & overnight in Kathmandu.' },
+      { day: 9, title: 'Nov 05: Kathmandu Heritage Durbar Square & Thamel Shopping', desc: 'Explore historic Kathmandu Durbar Square, Hanuman Dhoka Royal Palace, and temple of the Living Goddess (Kumari Ghar). Free afternoon for shopping in Thamel market (Pashmina shawls, Himalayan tea, Rudraksha & brass handicrafts). Special farewell dinner & overnight in Kathmandu.' },
+      { day: 10, title: 'Nov 06: Kathmandu → Scenic Drive to Indo-Nepal Border & Gorakhpur', desc: 'Morning departure from Kathmandu in private vehicle. Descend the lush Himalayan foothills towards the Indo-Nepal border at Sunauli. Border assistance and transfer to hotel in Gorakhpur. Dinner & overnight stay in Gorakhpur.' },
+      { day: 11, title: 'Nov 07: Gorakhnath Temple Visit → Board Return 3rd AC Train to Kerala', desc: 'Morning visit to the historic Gorakhnath Temple in Gorakhpur. Transfer to Gorakhpur Railway Station and board the return 3rd AC express train to Kerala with our Malayali Tour Manager.' },
+      { day: 12, title: 'Nov 08: Comfortable 3rd AC Train Journey towards Kerala', desc: 'Relaxing daytime and overnight 3rd AC train journey sharing Himalayan stories, photos, and joyful fellowship with travel companions.' },
+      { day: 13, title: 'Nov 09: Safe Arrival in Kerala (Thrissur)', desc: 'Arrive safely at Thrissur / Kerala railway station with the profound divine blessings of Lord Pashupatinath & Muktinath, unforgettable Himalayan memories, and enduring friendships with OASIS India Thrissur.' }
     ]
   },
   {
@@ -72,46 +116,6 @@ export const PACKAGES = [
     ],
     itinerary: [
       { day: 1, title: 'Thrissur Departure → Thumboormuzhi → Athirappilly Base → Vazhachal', desc: '8:00 AM departure from Thrissur Swaraj Round. Visit Thumboormuzhi Dam & Butterfly Park. Proceed to Athirappilly base trek, lunch at riverfront resort, and afternoon visit to Vazhachal & Charpa falls. Return to Thrissur by 7:00 PM.' }
-    ]
-  },
-  {
-    id: 'silent-valley-expedition',
-    title: 'Silent Valley Rainforest & Wilderness Expedition',
-    subtitle: 'Thrissur Direct Pickup Ecotourism & Rainforest Trail',
-    destinationId: 'silent-valley-national-park',
-    duration: '3 Days / 2 Nights',
-    price: 18999,
-    originalPrice: 22999,
-    discountPercent: 17,
-    rating: 4.96,
-    reviews: 168,
-    badge: 'New AI Curated Tour',
-    image: './silent_valley_rainforest_ai.png',
-    bgMixImages: [
-      './silent_valley_rainforest_ai.png',
-      './silent_valley_kunthi_river_ai.png',
-      './silent_valley_wildlife_ai.png',
-      './silent_valley_watchtower_ai.png'
-    ],
-    bgMixStyle: 'collage-blend',
-    mainPlaces: ['Silent Valley', 'Kunthi River', 'Sairandhri'],
-    placeImages: [
-      { name: 'Rainforest Canopy 4K AI', url: './silent_valley_rainforest_ai.png', group: 'Silent Valley' },
-      { name: 'Kunthi River Stream 4K AI', url: './silent_valley_kunthi_river_ai.png', group: 'Kunthi River' },
-      { name: 'Lion-Tailed Macaque Wildlife 4K AI', url: './silent_valley_wildlife_ai.png', group: 'Wildlife' },
-      { name: 'Sairandhri Watchtower View 4K AI', url: './silent_valley_watchtower_ai.png', group: 'Viewpoint' }
-    ],
-    included: [
-      'Luxury AC vehicle transfer departing from Thrissur Swaraj Round',
-      'Forest Department Entry Passes & Official Escort Guide',
-      '4-Star Eco Lodge Stay with authentic Kerala vegetarian Sadya',
-      'Trek to Kunthi River Suspension Bridge & Sairandhri Tower',
-      'Malayalam speaking senior-citizen friendly tour escort'
-    ],
-    itinerary: [
-      { day: 1, title: 'Thrissur to Mukkali Base Camp & Jungle Check-in', desc: 'Scenic 2.5 hr drive from Thrissur via Mannarkkad to Mukkali base camp. Resort check-in and evening jungle orientation.' },
-      { day: 2, title: 'Deep Rainforest Trek, Sairandhri Tower & Kunthi River', desc: 'Forest safari vehicle to Sairandhri watchtower. Guided trek through pristine canopy down to the roaring Kunthi River.' },
-      { day: 3, title: 'Wildlife Spotting & Return to Thrissur', desc: 'Early morning bird watching walk. Visit Kanjirapuzha Dam gardens on the return drive to Thrissur.' }
     ]
   },
   {
@@ -332,5 +336,54 @@ export const PACKAGES = [
       { day: 6, title: 'Srinagar → Delhi → Amritsar Golden Temple', desc: 'Morning flight to Amritsar. Golden Temple darshan, evening Palki Sahib & sarovar parikrama. Special Amritsari dinner.' },
       { day: 7, title: 'Wagah Border Ceremony & Return Journey', desc: 'Sunrise Golden Temple darshan, Jallianwala Bagh visit, then reserved seats at the iconic Wagah Border beating retreat before return to Thrissur.' }
     ]
+  },
+  {
+    id: 'nepal-himalayan-marvels-tour',
+    title: 'Himalayan Marvels: Nepal Kathmandu Valley, Pokhara Lakes & Annapurna Sunrise Yatra',
+    subtitle: 'Thrissur / Cochin Departure Special • Sacred Pashupatinath Darshan, Phewa Lake Boating & Sarangkot Himalayan Sunrise',
+    destinationId: 'nepal-himalayan-kingdom',
+    duration: '6 Days / 5 Nights',
+    price: 38999,
+    originalPrice: 45999,
+    discountPercent: 15,
+    rating: 4.98,
+    reviews: 215,
+    badge: '✨ International Bestseller',
+    image: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1920&q=85',
+    bgMixImages: [
+      'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1582650625119-3a31f8418b7d?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1200&q=80'
+    ],
+    bgMixStyle: 'collage-blend',
+    mainPlaces: ['Kathmandu', 'Pokhara', 'Chitwan', 'Nagarkot', 'Bhaktapur'],
+    placeImages: [
+      { name: 'Phewa Lake & Machapuchare Peak', url: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80', group: 'Pokhara' },
+      { name: 'Swayambhunath Monkey Temple', url: 'https://images.unsplash.com/photo-1582650625119-3a31f8418b7d?auto=format&fit=crop&w=1200&q=80', group: 'Kathmandu' },
+      { name: 'Sarangkot Annapurna Sunrise', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80', group: 'Sarangkot' },
+      { name: 'Chitwan Safari Rhino', url: 'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1200&q=80', group: 'Chitwan' }
+    ],
+    included: [
+      'Return Flight Assistance from Cochin / Thrissur to Kathmandu',
+      '5 Nights Luxury 4-Star Hotel Accommodation (Twin / Double Sharing)',
+      'Daily Buffet Breakfast & Chef-Curated Multi-Cuisine Dinners',
+      'Dedicated AC Tourist Coach with Experienced Mountain Driver & Escort',
+      'VIP Darshan Passes for Pashupatinath & Guhyeshwari Temple',
+      'Sarangkot Sunrise Excursion with Annapurna Himalayan Views',
+      'Scenic Phewa Lake Boating & Tal Barahi Island Temple Visit',
+      'Chitwan National Park Jungle Safari & Tharu Cultural Folk Dance',
+      'All Nepal Tourist Entry Permits, TIMS Cards & Heritage Site Fees',
+      'Dedicated Malayalam & English speaking OASIS Tour Manager throughout'
+    ],
+    itinerary: [
+      { day: 1, title: 'Cochin / Thrissur → Kathmandu Arrival & Pashupatinath Evening Aarti', desc: 'Direct flight assistance from Cochin International Airport to Kathmandu Tribhuvan Airport. Welcome greeting, 4-star hotel check-in, and evening sacred Bagmati Ganga-style Maha Aarti at Pashupatinath Temple.' },
+      { day: 2, title: 'Kathmandu Heritage: Pashupatinath, Boudhanath & Swayambhunath', desc: 'Morning VIP darshan at Pashupatinath temple. Visit UNESCO Boudhanath Tibetan Stupa, circumambulate with prayer wheels, and afternoon exploration of Swayambhunath (Monkey Temple) panoramic valley viewpoint.' },
+      { day: 3, title: 'Scenic Drive / Flight to Pokhara & Phewa Lake Sunset Boating', desc: 'Scenic mountain journey to the lakeside city of Pokhara. Check-in to lakeside resort. Evening private boat cruise on Phewa Lake with visit to Tal Barahi island shrine and reflection of Mt. Machapuchare.' },
+      { day: 4, title: 'Sarangkot Himalayan Sunrise, Davis Falls & Gupteshwor Cave', desc: 'Early morning 5:00 AM excursion to Sarangkot for breathtaking golden sunrise over Annapurna I, Machapuchare & Dhaulagiri. Return for breakfast, followed by Davis underground waterfalls and Gupteshwor Mahadev cave.' },
+      { day: 5, title: 'Chitwan National Park Jungle Jeep Safari & Tharu Folk Dance', desc: 'Transfer to subtropical Chitwan National Park. Embark on afternoon Jeep Jungle Safari to spot endangered One-Horned Rhinoceros, deer herds, and exotic bird species. Evening traditional Tharu stick dance performance.' },
+      { day: 6, title: 'Nagarkot Everest Sunrise Vista & Departure Return', desc: 'Drive to high-altitude Nagarkot ridge for sunrise horizon view of Mount Everest peaks. Visit historic Bhaktapur Durbar Square and transfer to Kathmandu Airport for return flight to Cochin/Thrissur.' }
+    ]
   }
 ];
+

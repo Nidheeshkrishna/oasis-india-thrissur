@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapPin, Star, ArrowRight, ShieldCheck, Sparkles, Filter, Layers } from 'lucide-react';
+import { MapPin, Star, ArrowRight, ShieldCheck, Sparkles, Filter, Layers, Clock } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 import MixedBackground from './MixedBackground';
 
@@ -174,25 +174,19 @@ export default function PopularDestinations({ destinations, onSelectDestination,
                   </p>
                 </div>
 
-                {/* Bottom Pricing & Action */}
-                <div style={{ paddingTop: '0.8rem', marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div>
-                    <div style={{ fontSize: '0.72rem', color: '#fef08a', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                      {t('popular.fromThrissur')}
-                    </div>
-                    <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#f59e0b' }}>
-                      ₹{dest.startingPrice.toLocaleString('en-IN')}{' '}
-                      <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>{t('hero.perPerson')}</span>
-                    </div>
-                  </div>
-
+                {/* Bottom Action */}
+                <div style={{ paddingTop: '0.8rem', marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
                   <div style={{
-                    display: 'flex',
+                    display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '0.4rem',
+                    gap: '0.45rem',
                     color: 'var(--gold-primary)',
-                    fontWeight: 700,
+                    fontWeight: 800,
                     fontSize: '0.88rem',
+                    padding: '0.4rem 0.95rem',
+                    borderRadius: '20px',
+                    background: 'rgba(212,175,55,0.08)',
+                    border: '1px solid rgba(212,175,55,0.25)',
                     transition: 'all 0.3s ease'
                   }}>
                     <span className="text-aurora" style={{ fontWeight: 800 }}>{t('popular.explore')}</span>

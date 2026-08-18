@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Phone, Mail, MapPin, Clock, MessageSquare, Send, CheckCircle2, ShieldCheck, Sparkles, Loader2 } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, MessageSquare, Send, CheckCircle2, ShieldCheck, Sparkles, Loader2, Navigation, ExternalLink } from 'lucide-react';
 import { FacebookIcon, InstagramIcon } from './SocialIcons';
 import { useLanguage } from '../i18n/LanguageContext';
 import { firestoreService } from '../services/firebase';
@@ -42,13 +42,13 @@ export default function ContactSection({ contactData }) {
 
   const c = contactData || {
     phone: '+91 89211 24101',
-    phoneAlt: '+91 487 2333388',
+    phoneAlt: '+91 89213 94179',
     whatsapp: '+91 89211 24101',
-    email: 'sales@oasisindiatours.com',
-    emailAlt: 'support@oasisindiatours.com',
-    address: 'OASIS India Thrissur, Swaraj Round Main Branch & Airport Escort Desk, Thrissur, Kerala 680001',
+    email: 'Oasisindiaholidays@gmail.com',
+    emailAlt: 'Oasisindiaholidays@gmail.com',
+    address: 'Oasis India Holidays, 40/3924 ROHINI PLAZA, KOKKALAI, THRISSUR, Thrissur, Kerala, India',
     workingHours: 'Mon - Sat: 9:00 AM - 8:00 PM | Sun: 10:00 AM - 5:00 PM',
-    escortDesk: 'Cochin International Airport (COK) & Thrissur Railway Station Pickup Desk'
+    escortDesk: 'Kokkalai Main Office & Thrissur Railway Station / Cochin Airport Escort Desk'
   };
 
   return (
@@ -63,13 +63,13 @@ export default function ContactSection({ contactData }) {
         {/* Section Header */}
         <div style={{ textAlign: 'center', maxWidth: '750px', margin: '0 auto 3rem' }}>
           <span className="badge-gold" style={{ marginBottom: '0.8rem' }}>
-            <MapPin size={14} /> Swaraj Round Main Branch
+            <MapPin size={14} /> Kokkalai Branch Office
           </span>
           <h2 style={{ fontSize: '2.5rem', fontWeight: 800, fontFamily: 'var(--font-heading)', color: '#fff' }}>
-            Contact <span className="text-gold">OASIS India Thrissur</span>
+            Contact <span className="text-gold">Oasis India Holidays</span>
           </h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '1rem', marginTop: '0.6rem' }}>
-            Have questions about tour itineraries or custom pilgrimage arrangements? Reach out directly to our Thrissur team.
+            Have questions about tour itineraries or custom pilgrimage arrangements? Reach out directly to our Thrissur Kokkalai team.
           </p>
         </div>
 
@@ -85,16 +85,18 @@ export default function ContactSection({ contactData }) {
               </div>
               <div>
                 <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--gold-light)', marginBottom: '0.3rem' }}>
-                  24/7 Booking Helpline
+                  24/7 Booking Helplines
                 </h4>
-                <div style={{ fontSize: '0.9rem', color: '#fff', fontWeight: 600 }}>
-                  <a href={`tel:${c.phone}`} style={{ color: '#fff', textDecoration: 'none' }}>{c.phone}</a>
+                <div style={{ fontSize: '0.92rem', color: '#fff', fontWeight: 700, display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                  <a href={`tel:${c.phone}`} style={{ color: '#fff', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                    📞 {c.phone}
+                  </a>
+                  {c.phoneAlt && (
+                    <a href={`tel:${c.phoneAlt}`} style={{ color: 'var(--gold-light)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                      📞 {c.phoneAlt}
+                    </a>
+                  )}
                 </div>
-                {c.phoneAlt && (
-                  <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                    Landline: <a href={`tel:${c.phoneAlt}`} style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>{c.phoneAlt}</a>
-                  </div>
-                )}
               </div>
             </div>
 
@@ -107,9 +109,9 @@ export default function ContactSection({ contactData }) {
                 <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#10b981', marginBottom: '0.3rem' }}>
                   WhatsApp Priority Support
                 </h4>
-                <div style={{ fontSize: '0.9rem', color: '#fff', fontWeight: 600 }}>
+                <div style={{ fontSize: '0.9rem', color: '#fff', fontWeight: 600, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                   <a href={`https://wa.me/${c.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" style={{ color: '#10b981', textDecoration: 'none' }}>
-                    {c.whatsapp} (Chat Now)
+                    💬 {c.whatsapp} (Chat on WhatsApp)
                   </a>
                 </div>
               </div>
@@ -122,9 +124,9 @@ export default function ContactSection({ contactData }) {
               </div>
               <div>
                 <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--gold-light)', marginBottom: '0.3rem' }}>
-                  Email & Documentation
+                  Email & Official Inquiries
                 </h4>
-                <div style={{ fontSize: '0.88rem', color: '#fff' }}>
+                <div style={{ fontSize: '0.9rem', color: '#fff', fontWeight: 600 }}>
                   <a href={`mailto:${c.email}`} style={{ color: '#fff', textDecoration: 'none' }}>{c.email}</a>
                 </div>
               </div>
@@ -137,9 +139,9 @@ export default function ContactSection({ contactData }) {
               </div>
               <div>
                 <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--gold-light)', marginBottom: '0.3rem' }}>
-                  Branch Office & Working Hours
+                  Kokkalai Head Office & Hours
                 </h4>
-                <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.85)', lineHeight: 1.5, marginBottom: '0.5rem' }}>
+                <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.95)', lineHeight: 1.5, marginBottom: '0.5rem', fontWeight: 600 }}>
                   {c.address}
                 </p>
                 <div style={{ fontSize: '0.78rem', color: 'var(--gold-light)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
@@ -198,19 +200,26 @@ export default function ContactSection({ contactData }) {
                 <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.85)' }}>
                   Thank you! Our Thrissur team will call you at <strong style={{ color: '#fff' }}>{form.phone}</strong> shortly.
                 </p>
+                <button 
+                  onClick={() => { setSubmitted(false); setForm({ name: '', phone: '', email: '', destination: destinations[0]?.name || '', message: '' }); }}
+                  className="btn-gold" 
+                  style={{ marginTop: '1rem', padding: '0.5rem 1.2rem', fontSize: '0.85rem' }}
+                >
+                  Send Another Inquiry
+                </button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--gold-light)', fontWeight: 600, marginBottom: '0.3rem' }}>
-                    Your Name *
+                  <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--gold-light)', fontWeight: 700, marginBottom: '0.3rem' }}>
+                    Your Full Name *
                   </label>
                   <input
                     type="text"
                     required
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    placeholder="e.g. Ramesh Kumar"
+                    placeholder="e.g. Ramesh Menon"
                     style={{
                       width: '100%',
                       background: 'rgba(0,0,0,0.4)',
@@ -224,39 +233,63 @@ export default function ContactSection({ contactData }) {
                   />
                 </div>
 
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--gold-light)', fontWeight: 600, marginBottom: '0.3rem' }}>
-                    Phone Number (WhatsApp) *
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    placeholder="+91 98765 43210"
-                    style={{
-                      width: '100%',
-                      background: 'rgba(0,0,0,0.4)',
-                      border: '1px solid var(--border-gold)',
-                      borderRadius: '8px',
-                      color: '#fff',
-                      padding: '0.65rem 0.9rem',
-                      fontSize: '0.85rem',
-                      outline: 'none'
-                    }}
-                  />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--gold-light)', fontWeight: 700, marginBottom: '0.3rem' }}>
+                      Phone / WhatsApp *
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={form.phone}
+                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                      placeholder="e.g. 89211 24101"
+                      style={{
+                        width: '100%',
+                        background: 'rgba(0,0,0,0.4)',
+                        border: '1px solid var(--border-gold)',
+                        borderRadius: '8px',
+                        color: '#fff',
+                        padding: '0.65rem 0.9rem',
+                        fontSize: '0.85rem',
+                        outline: 'none'
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--gold-light)', fontWeight: 700, marginBottom: '0.3rem' }}>
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      value={form.email}
+                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      placeholder="e.g. you@example.com"
+                      style={{
+                        width: '100%',
+                        background: 'rgba(0,0,0,0.4)',
+                        border: '1px solid var(--border-gold)',
+                        borderRadius: '8px',
+                        color: '#fff',
+                        padding: '0.65rem 0.9rem',
+                        fontSize: '0.85rem',
+                        outline: 'none'
+                      }}
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--gold-light)', fontWeight: 600, marginBottom: '0.3rem' }}>
-                    Interested Tour Package
+                  <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--gold-light)', fontWeight: 700, marginBottom: '0.3rem' }}>
+                    Interested Tour Destination
                   </label>
                   <select
                     value={form.destination}
                     onChange={(e) => setForm({ ...form, destination: e.target.value })}
                     style={{
                       width: '100%',
-                      background: 'rgba(6,12,23,0.9)',
+                      background: '#091322',
                       border: '1px solid var(--border-gold)',
                       borderRadius: '8px',
                       color: '#fff',
@@ -265,17 +298,17 @@ export default function ContactSection({ contactData }) {
                       outline: 'none'
                     }}
                   >
-                    {destinations.map((d) => (
-                      <option key={d.id} value={d.name} style={{ background: '#091426', color: '#fef08a' }}>
-                        {d.name} ({d.category})
+                    {destinations.map(d => (
+                      <option key={d.id} value={d.name} style={{ background: '#091322', color: '#fff' }}>
+                        {d.name} ({d.category || 'Tour'})
                       </option>
                     ))}
                   </select>
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--gold-light)', fontWeight: 600, marginBottom: '0.3rem' }}>
-                    Special Requirements or Questions
+                  <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--gold-light)', fontWeight: 700, marginBottom: '0.3rem' }}>
+                    Your Travel Requirements / Message
                   </label>
                   <textarea
                     rows={3}
@@ -310,6 +343,44 @@ export default function ContactSection({ contactData }) {
           </div>
 
         </div>
+
+        {/* Interactive Google Map of Office Location */}
+        <div className="glass-card" style={{ padding: '1.5rem', marginTop: '2.5rem', border: '1px solid var(--border-gold)', borderRadius: '18px', overflow: 'hidden' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem', flexWrap: 'wrap', gap: '1rem' }}>
+            <div>
+              <h4 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--gold-light)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'var(--font-heading)' }}>
+                <MapPin size={22} color="var(--gold-primary)" /> Oasis India Holidays • Office Map Location
+              </h4>
+              <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.85)', marginTop: '0.25rem' }}>
+                📍 40/3924 ROHINI PLAZA, KOKKALAI, THRISSUR, Thrissur, Kerala, India
+              </p>
+            </div>
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=40%2F3924+Rohini+Plaza+Kokkalai+Thrissur+Kerala"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-gold"
+              style={{ padding: '0.55rem 1.2rem', fontSize: '0.85rem', fontWeight: 800, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
+            >
+              <Navigation size={16} />
+              <span>Get Directions on Google Maps</span>
+              <ExternalLink size={14} />
+            </a>
+          </div>
+          <div style={{ position: 'relative', width: '100%', height: '340px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(212,175,55,0.3)', boxShadow: '0 8px 30px rgba(0,0,0,0.5)' }}>
+            <iframe
+              title="Oasis India Holidays Rohini Plaza Kokkalai Thrissur Map"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              loading="lazy"
+              allowFullScreen
+              referrerPolicy="no-referrer-when-downgrade"
+              src="https://maps.google.com/maps?q=40%2F3924+Rohini+Plaza%2C+Kokkalai%2C+Thrissur%2C+Kerala&t=&z=16&ie=UTF8&iwloc=&output=embed"
+            />
+          </div>
+        </div>
+
       </div>
     </section>
   );

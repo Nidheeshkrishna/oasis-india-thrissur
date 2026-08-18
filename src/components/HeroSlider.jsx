@@ -316,8 +316,8 @@ function PosterDesignCarousel({ posters, onBookTour, compact }) {
             display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)',
             transition: 'all 0.3s ease', transform: 'rotate(0deg)'
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.12)'; e.currentTarget.style.background = 'rgba(212,175,55,0.25)'; }}
-          onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.12)'; e.currentTarget.style.background = 'rgba(212,175,55,0.25)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
           >
             <ChevronLeft size={22} />
           </button>
@@ -340,8 +340,8 @@ function PosterDesignCarousel({ posters, onBookTour, compact }) {
             display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)',
             transition: 'all 0.3s ease', transform: 'rotate(0deg)'
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.12)'; e.currentTarget.style.background = 'rgba(212,175,55,0.25)'; }}
-          onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.12)'; e.currentTarget.style.background = 'rgba(212,175,55,0.25)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; }}
           >
             <ChevronRight size={22} />
           </button>
@@ -352,42 +352,46 @@ function PosterDesignCarousel({ posters, onBookTour, compact }) {
   );
 }
 
-export default function HeroSlider({ destinations, onSelectDestination, onBookTour }) {
+export default function HeroSlider({ destinations, onSelectDestination, onViewPackage, onBookTour }) {
   const { t } = useLanguage();
   const catalogSlides = useCatalog(catalogService.getSlides) || [];
   const catalogTours = useCatalog(catalogService.getTours) || [];
 
-  // Convert ALL tour packages into featured Hero Slides.
-  // A tour is "upcoming" when its departure date is today or in the future;
-  // otherwise it's a "completed" tour (image + title + subtitle + Explore only).
+  // Convert ACTIVE tour packages into featured Hero Slides.
+  // Inactive / departed tours are hidden from the homepage hero slider.
   const todayMidnight = new Date();
   todayMidnight.setHours(0, 0, 0, 0);
-  const upcomingTourSlides = catalogTours.map((t) => {
-    const dest = destinations.find(d => d.id === t.destinationId);
-    const departure = t.departureDate || new Date().toISOString().slice(0, 10);
-    const isUpcoming = new Date(`${departure}T00:00:00`) >= todayMidnight;
-    return {
-      id: t.id,
-      name: t.title,
-      tagline: t.subtitle,
-      description: Array.isArray(t.included) ? t.included.slice(0, 3).join(' • ') : (t.included || ''),
-      heroImage: t.image,
-      bgMixImages: t.bgMixImages || [t.image],
-      bgMixStyle: t.bgMixStyle || 'collage-blend',
-      location: (t.mainPlaces || []).join(', ') || dest?.location || 'Thrissur Departure',
-      duration: t.duration || '3 Days / 2 Nights',
-      startingPrice: t.price,
-      originalPrice: t.originalPrice,
-      rating: t.rating || 4.95,
-      reviewsCount: t.reviews || 180,
-      badge: t.badge || (isUpcoming ? '⚡ Upcoming Departure' : '✅ Completed Tour'),
-      departureDate: t.departureDate || '2026-08-25',
-      destinationId: t.destinationId,
-      fullTour: t,
-      isUpcomingTour: isUpcoming,
-      isCompletedTour: !isUpcoming
-    };
-  });
+
+  const upcomingTourSlides = catalogTours
+    .filter(t => {
+      const departure = t.departureDate || '';
+      const tourDate = departure ? new Date(`${departure}T00:00:00`) : null;
+      return tourDate && !isNaN(tourDate.getTime()) ? tourDate >= todayMidnight : true;
+    })
+    .map((t) => {
+      const dest = destinations.find(d => d.id === t.destinationId);
+      return {
+        id: t.id,
+        name: t.title,
+        tagline: t.subtitle,
+        description: Array.isArray(t.included) ? t.included.slice(0, 3).join(' • ') : (t.included || ''),
+        heroImage: t.image,
+        bgMixImages: t.bgMixImages || [t.image],
+        bgMixStyle: t.bgMixStyle || 'collage-blend',
+        location: (t.mainPlaces || []).join(', ') || dest?.location || 'Thrissur Departure',
+        duration: t.duration || '3 Days / 2 Nights',
+        startingPrice: t.price,
+        originalPrice: t.originalPrice,
+        rating: t.rating || 4.95,
+        reviewsCount: t.reviews || 180,
+        badge: t.badge || '⚡ Upcoming Departure',
+        departureDate: t.departureDate || '',
+        destinationId: t.destinationId,
+        fullTour: t,
+        isUpcomingTour: true,
+        isCompletedTour: false
+      };
+    });
 
   // Enrich each admin slide with the full destination record
   const enrichedSlides = catalogSlides.map((s) => {
@@ -423,8 +427,8 @@ export default function HeroSlider({ destinations, onSelectDestination, onBookTo
   });
   const uniqueSlides = Array.from(uniqueSlidesMap.values());
 
-  // Strict sorting: upcoming tour slides FIRST, then featured/destination slides,
-  // and completed tours LAST (most recent completed first within each group).
+  // Strict sorting: UPCOMING tours ALWAYS FIRST (nearest departure date first),
+  // followed by featured slides, and completed/departed tours LAST.
   const allSlides = uniqueSlides.sort((a, b) => {
     const rank = (s) => {
       if (s.isUpcomingTour) return 2;
@@ -434,6 +438,13 @@ export default function HeroSlider({ destinations, onSelectDestination, onBookTo
     const rankA = rank(a), rankB = rank(b);
     if (rankA !== rankB) return rankB - rankA;
 
+    // If both are upcoming tours: sort chronologically (nearest departure date FIRST)
+    if (a.isUpcomingTour && b.isUpcomingTour) {
+      const timeA = a.departureDate ? new Date(`${a.departureDate}T00:00:00`).getTime() : Infinity;
+      const timeB = b.departureDate ? new Date(`${b.departureDate}T00:00:00`).getTime() : Infinity;
+      return timeA - timeB;
+    }
+
     const timeA = typeof a.id === 'string' && a.id.startsWith('tour-')
       ? parseInt(a.id.replace('tour-', '')) || 0
       : (a.departureDate ? new Date(a.departureDate).getTime() : 0);
@@ -442,7 +453,7 @@ export default function HeroSlider({ destinations, onSelectDestination, onBookTo
       ? parseInt(b.id.replace('tour-', '')) || 0
       : (b.departureDate ? new Date(b.departureDate).getTime() : 0);
 
-    return timeB - timeA; // Latest added / newest departure date FIRST
+    return timeB - timeA;
   });
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -475,451 +486,336 @@ export default function HeroSlider({ destinations, onSelectDestination, onBookTo
 
   return (
     <>
-    <section 
-      style={{
-        position: 'relative',
-        width: '100%',
-        minHeight: '100vh',
-        overflow: 'hidden',
-        background: '#040810'
-      }}
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-    >
-      {/* Background Slides — with Ken Burns motion */}
-      {allSlides.map((item, idx) => (
+      <section
+        style={{
+          position: 'relative',
+          width: '100%',
+          minHeight: '100vh',
+          overflow: 'hidden',
+          background: '#040810'
+        }}
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
+        {/* Background Slides — with Ken Burns motion */}
+        {allSlides.map((item, idx) => (
+          <div
+            key={item.id}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              opacity: idx === currentIndex ? 1 : 0,
+              transition: 'opacity 1.4s cubic-bezier(0.22, 1, 0.36, 1)',
+              zIndex: 1,
+            }}
+          >
+            {/* Ken Burns wrapper */}
+            <div
+              className={idx === currentIndex ? 'ken-burns' : ''}
+              style={{ width: '100%', height: '100%' }}
+            >
+              <MixedBackground
+                images={item.bgMixImages}
+                fallbackImage={item.heroImage}
+                style={item.bgMixStyle || 'collage-blend'}
+                height="100%"
+                overlayOpacity={0.25}
+              />
+            </div>
+          </div>
+        ))}
+
+        {/* ── Volumetric light rays ──────────────────────────── */}
+        <div className="light-ray" style={{ left: '20%', opacity: 0.7 }} />
+        <div className="light-ray" style={{ left: '55%', opacity: 0.5 }} />
+        <div className="light-ray" style={{ left: '80%', opacity: 0.4 }} />
+
+        {/* ── Foreground atmospheric glow ───────────────────── */}
         <div
-          key={item.id}
+          className="hero-float"
           style={{
             position: 'absolute',
-            inset: 0,
-            opacity: idx === currentIndex ? 1 : 0,
-            transition: 'opacity 1.4s cubic-bezier(0.22, 1, 0.36, 1)',
-            zIndex: 1,
-          }}
-        >
-          {/* Ken Burns wrapper */}
-          <div
-            className={idx === currentIndex ? 'ken-burns' : ''}
-            style={{ width: '100%', height: '100%' }}
-          >
-          <MixedBackground
-            images={item.bgMixImages}
-            fallbackImage={item.heroImage}
-            style={item.bgMixStyle || 'collage-blend'}
-            height="100%"
-            overlayOpacity={0.25}
-          />
-          </div>
-        </div>
-      ))}
-
-      {/* ── Volumetric light rays ──────────────────────────── */}
-      <div className="light-ray" style={{ left: '20%', opacity: 0.7 }} />
-      <div className="light-ray" style={{ left: '55%', opacity: 0.5 }} />
-      <div className="light-ray" style={{ left: '80%', opacity: 0.4 }} />
-
-      {/* ── Foreground atmospheric glow ───────────────────── */}
-      <div
-        className="hero-float"
-        style={{
-          position: 'absolute',
-          bottom: '15%',
-          left: '5%',
-          width: '380px',
-          height: '380px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(245,158,11,0.07), transparent 70%)',
-          filter: 'blur(50px)',
-          pointerEvents: 'none',
-          zIndex: 3,
-        }}
-      />
-      <div
-        className="hero-float"
-        style={{
-          position: 'absolute',
-          top: '20%',
-          right: '8%',
-          width: '300px',
-          height: '300px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(139,92,246,0.06), transparent 70%)',
-          filter: 'blur(40px)',
-          pointerEvents: 'none',
-          zIndex: 3,
-          animationDelay: '-3.5s',
-        }}
-      />
-      {/* Auto-Slide Progress Bar */}
-      <div style={{
-        position: 'absolute',
-        top: '80px',
-        left: 0,
-        right: 0,
-        height: '3px',
-        background: 'rgba(255, 255, 255, 0.15)',
-        zIndex: 10
-      }}>
-        <div 
-          key={currentIndex}
-          style={{
-            height: '100%',
-            background: slide.isAIPoster 
-              ? 'linear-gradient(90deg, #a855f7, #d4af37)' 
-              : 'linear-gradient(90deg, #d4af37, #f59e0b, #f43f5e)',
-            animation: isPaused ? 'none' : 'slideProgress 5s linear infinite'
+            bottom: '15%',
+            left: '5%',
+            width: '380px',
+            height: '380px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(245,158,11,0.07), transparent 70%)',
+            filter: 'blur(50px)',
+            pointerEvents: 'none',
+            zIndex: 3,
           }}
         />
-      </div>
+        <div
+          className="hero-float"
+          style={{
+            position: 'absolute',
+            top: '20%',
+            right: '8%',
+            width: '300px',
+            height: '300px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(139,92,246,0.06), transparent 70%)',
+            filter: 'blur(40px)',
+            pointerEvents: 'none',
+            zIndex: 3,
+            animationDelay: '-3.5s',
+          }}
+        />
+        {/* Auto-Slide Progress Bar */}
+        <div style={{
+          position: 'absolute',
+          top: '80px',
+          left: 0,
+          right: 0,
+          height: '3px',
+          background: 'rgba(255, 255, 255, 0.15)',
+          zIndex: 10
+        }}>
+          <div
+            key={currentIndex}
+            style={{
+              height: '100%',
+              background: slide.isAIPoster
+                ? 'linear-gradient(90deg, #a855f7, #d4af37)'
+                : 'linear-gradient(90deg, #d4af37, #f59e0b, #f43f5e)',
+              animation: isPaused ? 'none' : 'slideProgress 5s linear infinite'
+            }}
+          />
+        </div>
 
-      <style>{`
+        <style>{`
         @keyframes slideProgress {
           from { width: 0%; }
           to { width: 100%; }
         }
       `}</style>
 
-      {/* Slide Content */}
-      <div
-        className="container"
-        style={{
-          position: 'relative',
-          zIndex: 10,
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          paddingTop: '110px',
-          paddingBottom: '130px',
-        }}
-      >
-        <div style={{ maxWidth: '780px' }}>
-          
-          {/* AI Poster Badge */}
-          {slide.isAIPoster && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1rem' }}>
-              <span style={{
-                background: 'linear-gradient(135deg, rgba(168,85,247,0.3), rgba(212,175,55,0.3))',
-                border: '1px solid rgba(168,85,247,0.5)',
-                color: '#c084fc',
-                padding: '0.35rem 0.85rem',
-                borderRadius: '30px',
-                fontSize: '0.75rem',
-                fontWeight: 700,
-                letterSpacing: '0.05em',
-                textTransform: 'uppercase',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.35rem'
-              }}>
-                <Wand2 size={14} /> AI Generated Poster
-              </span>
-            </div>
-          )}
+        {/* Slide Content - Clean, image-focused layout */}
+        <div
+          className="container"
+          style={{
+            position: 'relative',
+            zIndex: 10,
+            minHeight: '100vh',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            paddingTop: '110px',
+            paddingBottom: '130px',
+          }}
+        >
+          <div style={{ maxWidth: '820px' }}>
 
-          {/* Top Pills */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', flexWrap: 'wrap', marginBottom: '1.2rem' }}>
-            {slide.isCompletedTour && (
-              <span style={{
-                background: 'rgba(148, 163, 184, 0.25)',
-                border: '1px solid rgba(148, 163, 184, 0.5)',
-                color: '#cbd5e1',
-                padding: '0.4rem 0.85rem',
-                borderRadius: '30px',
-                fontSize: '0.75rem',
-                fontWeight: 700,
-                letterSpacing: '0.05em',
-                textTransform: 'uppercase',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.35rem'
-              }}>
-                <Check size={13} /> Completed Tour
-              </span>
-            )}
-            {!slide.isAIPoster && (
-              <span className="badge-gold">
-                <Shield size={14} /> {t('hero.authenticBadge')}
-              </span>
-            )}
-            <span className="badge-emerald" style={{ background: 'rgba(16, 185, 129, 0.2)' }}>
-              <MapPin size={14} /> {slide.location}
-            </span>
-            {!slide.isAIPoster && !slide.isCompletedTour && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', color: '#facc15', fontSize: '0.9rem', fontWeight: 700 }}>
-                <Star size={16} fill="#facc15" stroke="none" />
-                <span>{slide.rating} ({slide.reviewsCount} Authentic Reviews)</span>
-              </div>
-            )}
-          </div>
-
-          {/* Destination Name */}
-          <h1 style={{
-            fontSize: 'clamp(2.4rem, 5vw, 4.2rem)',
-            fontWeight: 800,
-            color: '#ffffff',
-            lineHeight: 1.15,
-            marginBottom: '1rem',
-            fontFamily: 'var(--font-heading)',
-            textShadow: '0 4px 25px rgba(0,0,0,0.95), 0 2px 8px rgba(0,0,0,0.9)'
-          }}>
-            {slide.name}
-          </h1>
-
-          <p style={{
-            fontSize: 'clamp(1.05rem, 1.6vw, 1.3rem)',
-            color: '#fde047',
-            fontWeight: 700,
-            marginBottom: '1.5rem',
-            fontStyle: 'italic',
-            textShadow: '0 2px 10px rgba(0,0,0,0.9)'
-          }}>
-            "{slide.tagline}"
-          </p>
-
-          <p style={{
-            fontSize: '1.05rem',
-            color: '#e2e8f0',
-            lineHeight: 1.6,
-            marginBottom: '2rem',
-            maxHeight: '80px',
-            overflow: 'hidden',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            textShadow: '0 2px 10px rgba(0,0,0,0.85)'
-          }}>
-            {slide.description}
-          </p>
-
-          {/* Info Bar - only for non-AI slides, and hidden for completed tours */}
-          {!slide.isAIPoster && !slide.isCompletedTour && (
-            <div className="glass-card" style={{
-              padding: '1.2rem 1.8rem',
+            {/* Starting Point Badge */}
+            <div style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '2rem',
-              marginBottom: '2.5rem',
-              flexWrap: 'wrap',
-              background: 'rgba(6, 12, 23, 0.65)',
-              border: '1px solid rgba(255, 255, 255, 0.18)',
-              backdropFilter: 'blur(12px)'
+              gap: '0.45rem',
+              background: 'rgba(6, 12, 23, 0.8)',
+              border: '1px solid rgba(212, 175, 55, 0.45)',
+              padding: '0.42rem 1.05rem',
+              borderRadius: '30px',
+              backdropFilter: 'blur(10px)',
+              marginBottom: '1.2rem',
+              boxShadow: '0 4px 15px rgba(0,0,0,0.4)'
             }}>
-              <div>
-                <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', fontWeight: 700 }}>
-                  {t('hero.duration')}
-                </div>
-                <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <Clock size={16} color="var(--gold-primary)" />
-                  {slide.duration}
-                </div>
-              </div>
+              <MapPin size={15} color="var(--gold-primary)" />
+              <span style={{ color: 'rgba(255, 255, 255, 0.75)', fontSize: '0.78rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
 
-              <div style={{ width: '1px', height: '35px', background: 'rgba(255,255,255,0.25)' }} />
-
-              <div>
-                <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', fontWeight: 700 }}>
-                  {t('hero.startingPrice')}
-                </div>
-                <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--gold-light)' }}>
-                  ₹{slide.startingPrice?.toLocaleString('en-IN') || '24,999'}{' '}
-                  <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', fontWeight: 500 }}>{t('hero.perPerson')}</span>
-                </div>
-              </div>
-
-              <div style={{ width: '1px', height: '35px', background: 'rgba(255,255,255,0.25)' }} />
-
-              <div>
-                <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', fontWeight: 700 }}>
-                  {t('hero.pickup')}
-                </div>
-                <div style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--emerald-accent)' }}>
-                  {t('hero.pickupValue')}
-                </div>
-              </div>
+              </span>
+              <span style={{ color: '#fef08a', fontSize: '0.85rem', fontWeight: 700 }}>
+                {slide.location || 'Thrissur Swaraj Round'}
+              </span>
             </div>
-          )}
 
-          {/* Action Buttons: upcoming tours → Book Now + Explore; completed tours → Explore only */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', flexWrap: 'wrap' }}>
-            {slide.isUpcomingTour && bookingsOpen && (
-              <button
-                className="btn-gold btn-cinematic"
-                data-ripple
-                data-magnetic
-                onClick={() => onBookTour(slide)}
-              >
-                <Sparkles size={18} />
-                <span>{t('bookNow')}</span>
-              </button>
-            )}
+            {/* Destination / Tour Title */}
+            <h1 style={{
+              fontSize: 'clamp(2.4rem, 5.2vw, 4.4rem)',
+              fontWeight: 800,
+              color: '#ffffff',
+              lineHeight: 1.15,
+              marginBottom: '2.2rem',
+              fontFamily: 'var(--font-heading)',
+              textShadow: '0 4px 25px rgba(0,0,0,0.95), 0 2px 8px rgba(0,0,0,0.9)'
+            }}>
+              {slide.name}
+            </h1>
 
-            {bookingsOpen && (
-              <a
-                className="btn-glass btn-cinematic"
-                data-ripple
-                href={`https://wa.me/${getWhatsAppNumber()}?text=${encodeURIComponent(buildQuickEnquiryMessage(slide))}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ textDecoration: 'none', border: '1px solid rgba(37,211,102,0.55)', color: '#4ade80' }}
-              >
-                <MessageCircle size={18} />
-                <span>WhatsApp</span>
-              </a>
-            )}
+            {/* Action Buttons: Book Now (upcoming tours) + Explore */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', flexWrap: 'wrap' }}>
+              {slide.isUpcomingTour && bookingsOpen && (
+                <button
+                  className="btn-gold btn-cinematic"
+                  data-ripple
+                  data-magnetic
+                  onClick={() => onBookTour(slide.fullTour || slide)}
+                >
+                  <Sparkles size={18} />
+                  <span>{t('bookNow')}</span>
+                </button>
+              )}
 
-            {!slide.isAIPoster && (
-              <button
-                className="btn-glass btn-cinematic"
-                data-ripple
-                onClick={() => onSelectDestination(slide)}
-              >
-                <span>{t('exploreGuide')}</span>
-                <ArrowRight size={18} />
-              </button>
-            )}
+              {!slide.isAIPoster && (
+                <button
+                  className={slide.isUpcomingTour ? "btn-glass btn-cinematic" : "btn-gold btn-cinematic"}
+                  data-ripple
+                  data-magnetic={!slide.isUpcomingTour ? "" : undefined}
+                  onClick={() => {
+                    const fullPkg = slide.fullTour || catalogTours.find(p => p.id === slide.id || p.destinationId === slide.destinationId || p.destinationId === slide.id);
+                    if (fullPkg && onViewPackage) {
+                      onViewPackage(fullPkg);
+                    } else {
+                      const targetDest = destinations?.find(d => d.id === slide.destinationId || d.id === slide.id) || slide;
+                      onSelectDestination(targetDest);
+                    }
+                  }}
+                >
+                  <span>{t('exploreGuide')}</span>
+                  <ArrowRight size={18} />
+                </button>
+              )}
+            </div>
+
           </div>
-
-        </div>
-      </div>
-
-      {/* Carousel Controls */}
-      <div 
-        className="container"
-        style={{
-          position: 'absolute',
-          bottom: '30px',
-          left: 0,
-          right: 0,
-          zIndex: 10,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}
-      >
-        {/* Slide Counter */}
-        <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.75)', fontWeight: 600 }}>
-          <span style={{ color: 'var(--gold-light)', fontSize: '1.3rem', fontWeight: 800 }}>
-            0{currentIndex + 1}
-          </span> / {allSlides.length < 10 ? '0' : ''}{allSlides.length}
-          {slide.isAIPoster ? ' — AI Generated Poster' : ` — ${t('hero.authenticShowcase').replace('— ', '')}`}
         </div>
 
-        {/* Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <button 
-            onClick={handlePrev}
-            style={{
-              width: '42px',
-              height: '42px',
-              borderRadius: '50%',
-              background: 'rgba(255,255,255,0.08)',
-              border: '1px solid var(--border-gold)',
-              color: '#fff',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backdropFilter: 'blur(8px)'
-            }}
-          >
-            <ChevronLeft size={22} />
-          </button>
-
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            {allSlides.map((s, idx) => (
-              <button
-                key={s.id}
-                onClick={() => setCurrentIndex(idx)}
-                style={{
-                  width: idx === currentIndex ? '32px' : '10px',
-                  height: '10px',
-                  borderRadius: '5px',
-                  background: idx === currentIndex 
-                    ? (s.isAIPoster ? '#a855f7' : 'var(--gold-primary)') 
-                    : 'rgba(255,255,255,0.3)',
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease'
-                }}
-                title={s.isAIPoster ? `AI Poster: ${s.name}` : s.name}
-              />
-            ))}
-          </div>
-
-          <button 
-            onClick={handleNext}
-            style={{
-              width: '42px',
-              height: '42px',
-              borderRadius: '50%',
-              background: 'rgba(255,255,255,0.08)',
-              border: '1px solid var(--border-gold)',
-              color: '#fff',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backdropFilter: 'blur(8px)'
-            }}
-          >
-            <ChevronRight size={22} />
-          </button>
-        </div>
-      </div>
-
-      {/* ── Cinematic scroll indicator ─────────────────────── */}
-      <div
-        className="scroll-indicator"
-        style={{
-          position: 'absolute',
-          bottom: '90px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 15,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '6px',
-          pointerEvents: 'none',
-        }}
-      >
+        {/* Carousel Controls */}
         <div
+          className="container"
           style={{
-            width: '24px',
-            height: '36px',
-            border: '1.5px solid rgba(245,158,11,0.5)',
-            borderRadius: '12px',
+            position: 'absolute',
+            bottom: '30px',
+            left: 0,
+            right: 0,
+            zIndex: 10,
             display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'center',
-            paddingTop: '5px',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}
+        >
+          {/* Slide Counter */}
+          <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.75)', fontWeight: 600 }}>
+            <span style={{ color: 'var(--gold-light)', fontSize: '1.3rem', fontWeight: 800 }}>
+              0{currentIndex + 1}
+            </span> / {allSlides.length < 10 ? '0' : ''}{allSlides.length}
+            {slide.isAIPoster ? ' — AI Generated Poster' : ` — ${t('hero.authenticShowcase').replace('— ', '')}`}
+          </div>
+
+          {/* Controls */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <button
+              onClick={handlePrev}
+              style={{
+                width: '42px',
+                height: '42px',
+                borderRadius: '50%',
+                background: 'rgba(255,255,255,0.08)',
+                border: '1px solid var(--border-gold)',
+                color: '#fff',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backdropFilter: 'blur(8px)'
+              }}
+            >
+              <ChevronLeft size={22} />
+            </button>
+
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              {allSlides.map((s, idx) => (
+                <button
+                  key={s.id}
+                  onClick={() => setCurrentIndex(idx)}
+                  style={{
+                    width: idx === currentIndex ? '32px' : '10px',
+                    height: '10px',
+                    borderRadius: '5px',
+                    background: idx === currentIndex
+                      ? (s.isAIPoster ? '#a855f7' : 'var(--gold-primary)')
+                      : 'rgba(255,255,255,0.3)',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                  title={s.isAIPoster ? `AI Poster: ${s.name}` : s.name}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={handleNext}
+              style={{
+                width: '42px',
+                height: '42px',
+                borderRadius: '50%',
+                background: 'rgba(255,255,255,0.08)',
+                border: '1px solid var(--border-gold)',
+                color: '#fff',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backdropFilter: 'blur(8px)'
+              }}
+            >
+              <ChevronRight size={22} />
+            </button>
+          </div>
+        </div>
+
+        {/* ── Cinematic scroll indicator ─────────────────────── */}
+        <div
+          className="scroll-indicator"
+          style={{
+            position: 'absolute',
+            bottom: '90px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 15,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '6px',
+            pointerEvents: 'none',
           }}
         >
           <div
-            className="scroll-indicator-dot"
             style={{
-              width: '4px',
-              height: '8px',
-              borderRadius: '2px',
-              background: 'rgba(245,158,11,0.8)',
-              boxShadow: '0 0 8px rgba(245,158,11,0.5)',
+              width: '24px',
+              height: '36px',
+              border: '1.5px solid rgba(245,158,11,0.5)',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'center',
+              paddingTop: '5px',
             }}
-          />
+          >
+            <div
+              className="scroll-indicator-dot"
+              style={{
+                width: '4px',
+                height: '8px',
+                borderRadius: '2px',
+                background: 'rgba(245,158,11,0.8)',
+                boxShadow: '0 0 8px rgba(245,158,11,0.5)',
+              }}
+            />
+          </div>
+          <p style={{
+            fontSize: '0.6rem',
+            letterSpacing: '0.2em',
+            textTransform: 'uppercase',
+            color: 'rgba(245,158,11,0.5)',
+            margin: 0,
+            fontFamily: 'var(--font-body)',
+          }}>
+            Scroll
+          </p>
         </div>
-        <p style={{
-          fontSize: '0.6rem',
-          letterSpacing: '0.2em',
-          textTransform: 'uppercase',
-          color: 'rgba(245,158,11,0.5)',
-          margin: 0,
-          fontFamily: 'var(--font-body)',
-        }}>
-          Scroll
-        </p>
-      </div>
-    </section>
+      </section>
     </>
   );
 }
