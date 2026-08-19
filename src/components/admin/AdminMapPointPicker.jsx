@@ -432,7 +432,7 @@ export default function AdminMapPointPicker({
         </div>
 
         {/* Start Point & End Destination Dropdowns */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem', marginBottom: '0.8rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.8rem', marginBottom: '0.8rem' }}>
           {/* Start Point Selector */}
           <div>
             <label style={{ display: 'block', fontSize: '0.74rem', fontWeight: 800, color: '#10b981', marginBottom: '0.25rem' }}>

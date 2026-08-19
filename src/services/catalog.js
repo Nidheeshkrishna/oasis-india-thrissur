@@ -40,6 +40,7 @@ async function processCloudImages(obj, folder = 'catalog') {
 
 // Default hero slides — derived from the featured real destination photography
 const DEFAULT_SLIDES = [
+  'thirupathi-padmavathi-kalahasthi',
   'ayodhya-ram-mandir',
   'kashi-varanasi',
   'ganga-aarti',
@@ -343,8 +344,15 @@ export const catalogService = {
         firestoreService.deleteCatalogItem('tours', s.id);
       } else {
         const def = PACKAGES.find(p => p.id === s.id);
-        if (def && s.placeImages?.some(img => img.url && img.url.includes('poster'))) {
-          validTours.push({ ...s, placeImages: def.placeImages, bgMixImages: def.bgMixImages, posterImage: undefined });
+        if (def) {
+          validTours.push({
+            ...def,
+            ...s,
+            departureDate: s.departureDate || def.departureDate,
+            returnDate: s.returnDate || def.returnDate,
+            placeImages: (s.placeImages?.some(img => img.url && img.url.includes('poster'))) ? def.placeImages : (s.placeImages || def.placeImages),
+            bgMixImages: s.bgMixImages || def.bgMixImages
+          });
         } else {
           validTours.push(s);
         }

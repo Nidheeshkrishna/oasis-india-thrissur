@@ -205,9 +205,6 @@ export default function DestinationModal({ destination, onClose, onBookTour }) {
                     }}>
                       {matchingPackage.badge}
                     </span>
-                    <div style={{ fontSize: '1.9rem', fontWeight: 800, color: 'var(--gold-deep)' }}>
-                      ₹{matchingPackage.price.toLocaleString('en-IN')}
-                    </div>
                     <div style={{ display: 'flex', gap: '1rem', marginTop: '0.4rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                       <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                         <Clock size={15} color="var(--gold-primary)" /> {matchingPackage.duration}
@@ -398,44 +395,12 @@ export default function DestinationModal({ destination, onClose, onBookTour }) {
               </div>
 
               <div style={{ marginTop: '1.8rem', display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                {(() => {
-                  const isUpcoming = (() => {
-                    if (!matchingPackage?.departureDate) return true;
-                    try {
-                      const today = new Date();
-                      today.setHours(0, 0, 0, 0);
-                      const tourDate = new Date(`${matchingPackage.departureDate}T00:00:00`);
-                      if (isNaN(tourDate.getTime())) return true;
-                      return tourDate >= today;
-                    } catch {
-                      return true;
-                    }
-                  })();
-
-                  return isUpcoming ? (
-                    <button className="btn-gold" style={{ padding: '0.7rem 1.5rem' }} onClick={() => { onClose(); onBookTour(matchingPackage); }}>
-                      <Sparkles size={18} /> {t('destination.bookThisPackage')}
-                    </button>
-                  ) : (
-                    <div style={{
-                      background: 'rgba(255,255,255,0.05)',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      borderRadius: '8px',
-                      padding: '0.55rem 1rem',
-                      fontSize: '0.8rem',
-                      color: '#fef08a',
-                      fontWeight: 700
-                    }}>
-                      🚩 Departed on {matchingPackage.departureDate}
-                    </div>
-                  );
-                })()}
                 <a
-                  className="btn-glass"
+                  className="btn-gold"
                   href={`https://wa.me/${getWhatsAppNumber()}?text=${encodeURIComponent(buildQuickEnquiryMessage(matchingPackage || destination))}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ padding: '0.7rem 1.5rem', textDecoration: 'none', border: '1px solid rgba(37,211,102,0.5)', color: '#4ade80' }}
+                  style={{ padding: '0.75rem 1.8rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.95rem', fontWeight: 800 }}
                 >
                   <MessageCircle size={18} /> WhatsApp Enquiry
                 </a>
@@ -518,17 +483,16 @@ export default function DestinationModal({ destination, onClose, onBookTour }) {
                   </div>
                 </div>
 
-                <button 
+                <a 
                   className="btn-gold" 
-                  style={{ width: '100%', justifyContent: 'center' }}
-                  onClick={() => {
-                    onClose();
-                    onBookTour(destination);
-                  }}
+                  href={`https://wa.me/${getWhatsAppNumber()}?text=${encodeURIComponent(buildQuickEnquiryMessage(destination))}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ width: '100%', justifyContent: 'center', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.45rem', padding: '0.75rem 1.2rem', fontSize: '0.92rem', fontWeight: 800, boxSizing: 'border-box' }}
                 >
-                  <Sparkles size={18} />
-                  <span>{t('destination.bookTourPackage')}</span>
-                </button>
+                  <MessageCircle size={18} />
+                  <span>Enquire on WhatsApp</span>
+                </a>
               </div>
             </div>
           )}

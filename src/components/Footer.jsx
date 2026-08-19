@@ -187,12 +187,12 @@ export default function Footer({ setActiveTab, onOpenAdmin, onSelectDestination 
               <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
                 <MapPin size={18} color="var(--gold-primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
                 <a
-                  href="https://www.google.com/maps/search/?api=1&query=40%2F3924+Rohini+Plaza+Kokkalai+Thrissur+Kerala"
+                  href="https://www.google.com/maps/search/?api=1&query=40%2F3924+Rohini+Plaza+Near+Railway+Station+Kokkalai+Thrissur+Kerala"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ color: 'inherit', textDecoration: 'none' }}
                 >
-                  40/3924 ROHINI PLAZA, KOKKALAI, THRISSUR, Thrissur, India, Kerala
+                  40/3924 Rohini Plaza, Near Railway Station, Kokkalai, Thrissur
                 </a>
               </div>
               <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>

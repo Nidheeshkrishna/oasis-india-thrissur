@@ -3,6 +3,112 @@
 
 export const DESTINATIONS = [
   {
+    id: 'thirupathi-padmavathi-kalahasthi',
+    name: 'Thirupathi • Padmavathi • Kalahasthi',
+    tagline: 'Sacred Hill of Lord Venkateswara, Padmavathi Temple & Srikalahasti Vayu Lingam',
+    category: 'Pilgrimage',
+    location: 'Tirupati & Srikalahasti, Andhra Pradesh',
+    coordinates: [13.6288, 79.4192],
+    heroImage: './thirupathi_yathra_poster.jpg',
+    bgMixImages: [
+      './thirupathi_yathra_poster.jpg',
+      './thirupathi_balaji_temple.png',
+      './thirupathi_padmavathi_temple.png',
+      './thirupathi_kalahasthi_temple.png'
+    ],
+    bgMixStyle: 'collage-blend',
+    galleryImages: [
+      './thirupathi_yathra_poster.jpg',
+      './thirupathi_balaji_temple.png',
+      './thirupathi_padmavathi_temple.png',
+      './thirupathi_kalahasthi_temple.png'
+    ],
+    rating: 4.99,
+    reviewsCount: 280,
+    startingPrice: 3900,
+    duration: '3 Days / 2 Nights',
+    bestTime: 'September to March',
+    weather: { temp: '26°C', condition: 'Pleasant & Divine', humidity: '60%', bestSeason: 'All Season Pilgrimage' },
+    description: 'Embark on a soul-enriching 3-Day pilgrimage with OASIS India Thrissur. Travel in comfort aboard our Luxury AC Air Bus with boarding at Thrissur, Wadakanchery, Kulappulli, Ottapalam, and Palakkad. Experience sacred VIP darshan of Lord Venkateswara (Tirumala Balaji), divine blessings of Goddess Sri Padmavathi Devi at Tiruchanur, and the ancient Vayu Lingam Rahu-Ketu Kshetra at Srikalahasti.',
+    highlights: [
+      'Special VIP Darshan at Sri Venkateswara Swamy Temple (Tirumala)',
+      'Sri Padmavathi Ammavari Temple Darshan (Tiruchanur)',
+      'Srikalahasteeswara Shiva Temple (Pancha Bhoota Vayu Lingam)',
+      'Luxury AC Air Bus with Wadakanchery, Kulappulli, Ottapalam & Palakkad pickup',
+      '1 Night AC Hotel Stay & Pure Vegetarian South Indian Meals Included'
+    ],
+    travelGuide: {
+      howToReach: 'Direct Luxury AC Air Bus pickup starting from Thrissur (9:00 AM) via Wadakanchery, Kulappulli, Ottapalam, and Palakkad.',
+      dressCode: 'Traditional Indian attire mandatory for Tirumala darshan (Dhoti/Kurta for Men, Saree/Churidar with Dupatta for Women).',
+      localCuisine: 'Authentic South Indian & Kerala Pure Vegetarian meals, Tirupati Sacred Laddu Prasadam, hot filter coffee.',
+      essentialTips: 'Valid Government Photo ID card (Aadhaar/Voter ID/Passport) is mandatory for Tirumala darshan entry verification.'
+    },
+    nearbyAttractions: [
+      { name: 'Tirumala Seven Hills & Ananda Nilayam', distance: '22 km', type: 'Sacred Hill' },
+      { name: 'Sri Padmavathi Temple Tiruchanur', distance: '5 km', type: 'Temple' },
+      { name: 'Srikalahasteeswara Temple', distance: '38 km', type: 'Pancha Bhoota Kshetra' },
+      { name: 'Kapila Theertham Waterfalls', distance: '4 km', type: 'Holy Theertham' }
+    ],
+    hotels: [
+      { name: 'Fortune Select Grand Ridge Tirupati', rating: '5 Star Deluxe', location: 'Tirupati Central' },
+      { name: 'Marasa Sarovar Premiere Tirupati', rating: '5 Star Luxury', location: 'Alipiri Road' }
+    ]
+  },
+  {
+    id: 'thanjavur-chidambaram-srirangam',
+    name: 'Thanjavur • Chidambaram • Srirangam',
+    tagline: 'Grand Chola Heritage, Brihadeeswara Temple, Nataraja Akasa Sthalam & Srirangam Yathra',
+    category: 'Pilgrimage',
+    location: 'Thanjavur, Chidambaram & Trichy, Tamil Nadu',
+    coordinates: [10.7828, 79.1318],
+    heroImage: './thanjavur_yathra_poster.png',
+    bgMixImages: [
+      './thanjavur_yathra_poster.png',
+      './thanjavur_brihadeeswara_temple.png',
+      './chidambaram_nataraja_temple.png',
+      './srirangam_ranganathaswamy_temple.png'
+    ],
+    bgMixStyle: 'collage-blend',
+    galleryImages: [
+      './thanjavur_yathra_poster.png',
+      './thanjavur_brihadeeswara_temple.png',
+      './chidambaram_nataraja_temple.png',
+      './srirangam_ranganathaswamy_temple.png'
+    ],
+    rating: 4.98,
+    reviewsCount: 340,
+    startingPrice: 4200,
+    duration: '4 Days / 3 Nights (1 Night Stay)',
+    bestTime: 'October to March',
+    weather: { temp: '25°C', condition: 'Pleasant & Spiritual', humidity: '58%', bestSeason: 'Winter Pilgrimage' },
+    description: 'Embark on a sacred 4-Day Chola pilgrimage departing directly from Thrissur with OASIS India Holidays. Experience the 1,000-year-old architectural grandeur of UNESCO World Heritage Thanjavur Brihadeeswara Temple (Big Temple), the cosmic dance hall of Chidambaram Thillai Nataraja Temple (Akasa Sthalam), the revered 156-acre Srirangam Sri Ranganathaswamy Maha Temple, Kumbakonam sacred shrines (Adi Kumbeswarar, Sarangapani, Chakrapani) and the holy healing temple of Vaitheeswaran Koil. Includes AC Bus, 1 Night hotel stay, and 6 delicious pure vegetarian meals.',
+    highlights: [
+      'Thanjavur Brihadeeswara Temple (UNESCO World Heritage Chola Big Temple)',
+      'Chidambaram Thillai Nataraja Kshethram (Akasa Lingam & Golden Roof)',
+      'Srirangam Sri Ranganathaswamy Temple (Trichy 108 Divya Desam)',
+      'Kumbakonam Sacred Temples: Adi Kumbeswarar, Sarangapani & Chakrapani',
+      'Vaitheeswaran Koil (Lord Vaidyanatha & Angaraka Mars Temple)',
+      'Direct AC Bus transfer from Thrissur with 1 Night Hotel Stay & 6 Meals Included'
+    ],
+    travelGuide: {
+      howToReach: 'Direct AC Bus departing from Thrissur Swaraj Round / Rohini Plaza near Railway Station at 9:00 PM on October 9.',
+      dressCode: 'Traditional Indian temple attire mandatory (Dhoti/Kurta for Men, Saree/Salwar for Women).',
+      localCuisine: 'Authentic pure vegetarian Tamil Brahmin and Kerala style meals (6 meals included during the tour).',
+      essentialTips: 'Carry valid Government Photo ID. Comfortable slip-on footwear recommended for temple courtyards.'
+    },
+    nearbyAttractions: [
+      { name: 'Thanjavur Brihadeeswara Temple', distance: '1 km', type: 'UNESCO World Heritage' },
+      { name: 'Chidambaram Nataraja Temple', distance: '65 km', type: 'Pancha Bhoota Kshetra' },
+      { name: 'Srirangam Ranganathaswamy Temple', distance: '55 km', type: 'Divya Desam' },
+      { name: 'Vaitheeswaran Koil', distance: '48 km', type: 'Navagraha Temple' },
+      { name: 'Kumbakonam Mahamaham Tank', distance: '38 km', type: 'Holy Tank' }
+    ],
+    hotels: [
+      { name: 'Hotel Gnanam Thanjavur', rating: 'Deluxe Temple View', location: 'Thanjavur Central' },
+      { name: 'Sarayu Residency Kumbakonam', rating: 'Deluxe AC', location: 'Near Temple' }
+    ]
+  },
+  {
     id: 'ooty-nilgiri-hills',
     name: 'Ooty Nilgiri Hills & Heritage Toy Train',
     tagline: 'Queen of Hill Stations, Emerald Tea Gardens & Steam Rail',

@@ -46,9 +46,9 @@ export default function ContactSection({ contactData }) {
     whatsapp: '+91 89211 24101',
     email: 'Oasisindiaholidays@gmail.com',
     emailAlt: 'Oasisindiaholidays@gmail.com',
-    address: 'Oasis India Holidays, 40/3924 ROHINI PLAZA, KOKKALAI, THRISSUR, Thrissur, Kerala, India',
+    address: '40/3924 Rohini Plaza, Near Railway Station, Kokkalai, Thrissur',
     workingHours: 'Mon - Sat: 9:00 AM - 8:00 PM | Sun: 10:00 AM - 5:00 PM',
-    escortDesk: 'Kokkalai Main Office & Thrissur Railway Station / Cochin Airport Escort Desk'
+    escortDesk: '40/3924 Rohini Plaza, Near Railway Station, Kokkalai, Thrissur'
   };
 
   return (
@@ -63,13 +63,13 @@ export default function ContactSection({ contactData }) {
         {/* Section Header */}
         <div style={{ textAlign: 'center', maxWidth: '750px', margin: '0 auto 3rem' }}>
           <span className="badge-gold" style={{ marginBottom: '0.8rem' }}>
-            <MapPin size={14} /> Kokkalai Branch Office
+            <MapPin size={14} /> 40/3924 Rohini Plaza, Kokkalai, Thrissur
           </span>
           <h2 style={{ fontSize: '2.5rem', fontWeight: 800, fontFamily: 'var(--font-heading)', color: '#fff' }}>
             Contact <span className="text-gold">Oasis India Holidays</span>
           </h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '1rem', marginTop: '0.6rem' }}>
-            Have questions about tour itineraries or custom pilgrimage arrangements? Reach out directly to our Thrissur Kokkalai team.
+            Have questions about tour itineraries or custom pilgrimage arrangements? Reach out directly to our team at 40/3924 Rohini Plaza, Near Railway Station, Kokkalai, Thrissur.
           </p>
         </div>
 
@@ -88,32 +88,36 @@ export default function ContactSection({ contactData }) {
                   24/7 Booking Helplines
                 </h4>
                 <div style={{ fontSize: '0.92rem', color: '#fff', fontWeight: 700, display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                  <a href={`tel:${c.phone}`} style={{ color: '#fff', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
-                    📞 {c.phone}
+                  <a href="tel:+918921124101" style={{ color: '#fff', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                    📞 +91 89211 24101
                   </a>
-                  {c.phoneAlt && (
-                    <a href={`tel:${c.phoneAlt}`} style={{ color: 'var(--gold-light)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
-                      📞 {c.phoneAlt}
-                    </a>
-                  )}
+                  <a href="tel:+918921394179" style={{ color: 'var(--gold-light)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                    📞 +91 89213 94179
+                  </a>
                 </div>
               </div>
             </div>
 
             {/* WhatsApp Direct */}
-            <div className="glass-card" style={{ padding: '1.4rem', display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
-              <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.4)', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div className="glass-card" style={{ padding: '1.4rem', display: 'flex', alignItems: 'flex-start', gap: '1rem', background: 'linear-gradient(135deg, rgba(37,211,102,0.1), rgba(18,140,126,0.06))', border: '1px solid rgba(37,211,102,0.35)' }}>
+              <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: 'rgba(37,211,102,0.2)', border: '1px solid rgba(37,211,102,0.5)', color: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <MessageSquare size={22} />
               </div>
               <div>
-                <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#10b981', marginBottom: '0.3rem' }}>
-                  WhatsApp Priority Support
+                <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#4ade80', marginBottom: '0.2rem' }}>
+                  WhatsApp — Book Instantly
                 </h4>
-                <div style={{ fontSize: '0.9rem', color: '#fff', fontWeight: 600, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                  <a href={`https://wa.me/${c.whatsapp.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" style={{ color: '#10b981', textDecoration: 'none' }}>
-                    💬 {c.whatsapp} (Chat on WhatsApp)
-                  </a>
+                <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.55)', marginBottom: '0.4rem' }}>
+                  All bookings &amp; enquiries go to this number
                 </div>
+                <a
+                  href="https://wa.me/918921124101?text=Hello%20OASIS%20India%20Holidays%20Thrissur%2C%20I%20would%20like%20to%20make%20a%20tour%20enquiry."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: '#25D366', textDecoration: 'none', fontWeight: 800, fontSize: '1rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+                >
+                  💬 +91 89211 24101
+                </a>
               </div>
             </div>
 
@@ -139,7 +143,7 @@ export default function ContactSection({ contactData }) {
               </div>
               <div>
                 <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--gold-light)', marginBottom: '0.3rem' }}>
-                  Kokkalai Head Office & Hours
+                  40/3924 Rohini Plaza, Near Railway Station, Kokkalai, Thrissur
                 </h4>
                 <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.95)', lineHeight: 1.5, marginBottom: '0.5rem', fontWeight: 600 }}>
                   {c.address}
@@ -352,11 +356,11 @@ export default function ContactSection({ contactData }) {
                 <MapPin size={22} color="var(--gold-primary)" /> Oasis India Holidays • Office Map Location
               </h4>
               <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.85)', marginTop: '0.25rem' }}>
-                📍 40/3924 ROHINI PLAZA, KOKKALAI, THRISSUR, Thrissur, Kerala, India
+                📍 40/3924 Rohini Plaza, Near Railway Station, Kokkalai, Thrissur
               </p>
             </div>
             <a
-              href="https://www.google.com/maps/search/?api=1&query=40%2F3924+Rohini+Plaza+Kokkalai+Thrissur+Kerala"
+              href="https://www.google.com/maps/search/?api=1&query=40%2F3924+Rohini+Plaza+Near+Railway+Station+Kokkalai+Thrissur+Kerala"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-gold"
@@ -369,14 +373,14 @@ export default function ContactSection({ contactData }) {
           </div>
           <div style={{ position: 'relative', width: '100%', height: '340px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(212,175,55,0.3)', boxShadow: '0 8px 30px rgba(0,0,0,0.5)' }}>
             <iframe
-              title="Oasis India Holidays Rohini Plaza Kokkalai Thrissur Map"
+              title="Oasis India Holidays - 40/3924 Rohini Plaza Near Railway Station Kokkalai Thrissur Map"
               width="100%"
               height="100%"
               style={{ border: 0 }}
               loading="lazy"
               allowFullScreen
               referrerPolicy="no-referrer-when-downgrade"
-              src="https://maps.google.com/maps?q=40%2F3924+Rohini+Plaza%2C+Kokkalai%2C+Thrissur%2C+Kerala&t=&z=16&ie=UTF8&iwloc=&output=embed"
+              src="https://maps.google.com/maps?q=40%2F3924+Rohini+Plaza%2C+Near+Railway+Station%2C+Kokkalai%2C+Thrissur%2C+Kerala&t=&z=16&ie=UTF8&iwloc=&output=embed"
             />
           </div>
         </div>

@@ -1,37 +1,18 @@
 // Review Service for OASIS India Thrissur
-// Stores traveler reviews in localStorage (reactive demo state, same pattern as firebase.js)
+// Manages traveler reviews, ratings, and photos.
+// Automatically synchronizes with Firebase Firestore and Firebase Cloud Storage with instantaneous local caching.
+
+import { firestoreService, storageService, isFirebaseConnected, INITIAL_REVIEWS } from './firebase';
 
 const REVIEWS_KEY = 'oasis_db_reviews';
 
-const INITIAL_REVIEWS = [
-  {
-    id: 'rev-1',
-    name: 'Ramesh Menon',
-    email: 'ramesh.menon@gmail.com',
-    rating: 5,
-    review: 'Kashi Yatra from Thrissur was perfectly arranged. VIP darshan, Ganga Aarti boat seats and the Malayalam escort made our senior parents feel completely at home. Highly recommended!',
-    trip: 'Sacred North Yatra: Kashi, Ayodhya & Prayagraj',
-    createdAt: '2026-07-28'
-  },
-  {
-    id: 'rev-2',
-    name: 'Lakshmi Nair',
-    email: 'lakshmi.nair@yahoo.com',
-    rating: 5,
-    review: 'The Kashmir package was magical — Dal Lake houseboat, Gulmarg gondola and the Golden Temple. OASIS handled everything from Cochin airport to Wagah Border with zero hassle.',
-    trip: 'Kashmir Paradise & Punjab Golden Trail',
-    createdAt: '2026-07-30'
-  },
-  {
-    id: 'rev-3',
-    name: 'Dr. Suresh Kumar',
-    email: 'dr.suresh@kims.in',
-    rating: 4,
-    review: 'Parambikulam jungle safari and Kannimara teak were wonderful. Eco lodge stay inside the reserve was a unique experience. Smooth transfers from Thrissur.',
-    trip: 'Emerald Escapes: Munnar, Ooty & Parambikulam',
-    createdAt: '2026-07-31'
-  }
-];
+const listeners = new Set();
+
+const notifyListeners = (reviews) => {
+  listeners.forEach(fn => {
+    try { fn(reviews); } catch (e) { console.error("Review listener error:", e); }
+  });
+};
 
 const getStorageItem = (key, defaultData) => {
   try {
@@ -51,25 +32,89 @@ const setStorageItem = (key, data) => {
 };
 
 export const reviewStorage = {
+  /**
+   * Returns current reviews from local storage cache for immediate, zero-latency rendering
+   */
   getReviews() {
     return getStorageItem(REVIEWS_KEY, INITIAL_REVIEWS);
   },
 
-  addReview(reviewData) {
-    const reviews = this.getReviews();
-    const newReview = {
-      id: `rev-${Date.now()}`,
-      createdAt: new Date().toISOString().split('T')[0],
-      ...reviewData
-    };
-    reviews.unshift(newReview);
-    setStorageItem(REVIEWS_KEY, reviews);
-    return reviews;
+  /**
+   * Subscribe to review updates (cloud sync or mutations)
+   */
+  subscribe(listener) {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
   },
 
-  deleteReview(id) {
-    const reviews = this.getReviews().filter(r => r.id !== id);
-    setStorageItem(REVIEWS_KEY, reviews);
-    return reviews;
+  /**
+   * Fetches latest reviews from Firebase Firestore in background and updates local cache
+   */
+  async fetchReviewsFromCloud() {
+    try {
+      const cloudReviews = await firestoreService.getReviews(INITIAL_REVIEWS);
+      if (cloudReviews && Array.isArray(cloudReviews)) {
+        setStorageItem(REVIEWS_KEY, cloudReviews);
+        notifyListeners(cloudReviews);
+        return cloudReviews;
+      }
+    } catch (err) {
+      console.warn("Error fetching reviews from Firestore:", err.message);
+    }
+    return this.getReviews();
+  },
+
+  /**
+   * Adds a new review, saves to Firestore and Firebase Storage, and updates local state
+   */
+  async addReview(reviewData) {
+    const currentReviews = this.getReviews();
+    
+    // Prepare local optimistic item
+    const newReview = {
+      id: reviewData.id || `rev-${Date.now()}`,
+      name: reviewData.name?.trim() || 'Traveler',
+      email: reviewData.email?.trim().toLowerCase() || '',
+      rating: Number(reviewData.rating) || 5,
+      trip: reviewData.trip?.trim() || '',
+      review: reviewData.review?.trim() || '',
+      image: reviewData.image || null,
+      createdAt: reviewData.createdAt || new Date().toISOString().split('T')[0]
+    };
+
+    const updated = [newReview, ...currentReviews.filter(r => r.id !== newReview.id)];
+    setStorageItem(REVIEWS_KEY, updated);
+    notifyListeners(updated);
+
+    // Save to Firebase Firestore in background / cloud
+    if (isFirebaseConnected()) {
+      try {
+        await firestoreService.createReview(newReview);
+      } catch (err) {
+        console.warn("Error saving review to Firestore:", err.message);
+      }
+    }
+
+    return updated;
+  },
+
+  /**
+   * Deletes a review by ID from local cache and Firebase Firestore
+   */
+  async deleteReview(id) {
+    const currentReviews = this.getReviews();
+    const updated = currentReviews.filter(r => r.id !== id);
+    setStorageItem(REVIEWS_KEY, updated);
+    notifyListeners(updated);
+
+    if (isFirebaseConnected()) {
+      try {
+        await firestoreService.deleteReview(id);
+      } catch (err) {
+        console.warn("Error deleting review from Firestore:", err.message);
+      }
+    }
+
+    return updated;
   }
 };

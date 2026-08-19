@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Package, Image as ImageIcon, BookOpen, Save, MonitorPlay, Sparkles, Compass, Eye, Check, Navigation, Clock, Wand2, RefreshCw, Upload, Loader2, Layers, Plus, Trash2, ChevronUp, ChevronDown, Copy, Tag, Video, Calendar } from 'lucide-react';
+import { X, Package, Image as ImageIcon, BookOpen, Save, MonitorPlay, Sparkles, Compass, Eye, Check, Navigation, Clock, Wand2, RefreshCw, Upload, Loader2, Layers, Plus, Trash2, ChevronUp, ChevronDown, Copy, Tag, Video, Calendar, ChevronLeft, ChevronRight, Search, Globe } from 'lucide-react';
 import { DESTINATIONS } from '../../data/destinationsData';
 import { catalogService } from '../../services/catalog';
 import { storageService } from '../../services/firebase';
 import MixedBackground from '../MixedBackground';
-import ImageUploader from './ImageUploader';
+import ImageUploader, { PRESET_IMAGES } from './ImageUploader';
 import AiPlaceImageSelector from './AiPlaceImageSelector';
 import ItemImagePicker from './ItemImagePicker';
 import AdminMapPointPicker from './AdminMapPointPicker';
@@ -144,6 +144,96 @@ export const PLACE_PHOTO_LIBRARY = {
     title: 'Alleppey Luxury Houseboat Cruise & Vembanad Lake',
     url: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=80',
     description: 'Tranquil palm-fringed backwaters, traditional Kettuvallam luxury houseboat cruise, and authentic Kerala village canals.'
+  },
+  kodaikanal: {
+    name: 'Kodaikanal',
+    title: 'Kodaikanal Star Lake & Pine Forest Walk',
+    url: 'https://images.unsplash.com/photo-1582650625119-3a31f8418b7d?auto=format&fit=crop&w=1200&q=80',
+    description: 'Princess of Hill Stations featuring misty pine forests, star-shaped lake, and Pillar Rocks.'
+  },
+  goa: {
+    name: 'Goa Beaches',
+    title: 'Goa Golden Coastline & Heritage Palaces',
+    url: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1200&q=80',
+    description: 'Scenic tropical palm beaches, vibrant coastline, and Portuguese architecture.'
+  },
+  tajmahal: {
+    name: 'Taj Mahal Agra',
+    title: 'Taj Mahal UNESCO World Wonder',
+    url: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1200&q=80',
+    description: 'Magnificent white marble mausoleum monument of eternal love on the Yamuna river.'
+  },
+  jaipur: {
+    name: 'Jaipur Pink City',
+    title: 'Hawa Mahal & Amer Fort Royal Trail',
+    url: 'https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1200&q=80',
+    description: 'Royal Rajasthani heritage, Hawa Mahal Palace of Winds, and Amer Fort.'
+  },
+  manali: {
+    name: 'Manali & Solang',
+    title: 'Manali Snow Valley & Rohtang Pass',
+    url: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80',
+    description: 'Snowy Himalayan mountain peaks, Beas river valley, and Solang adventure sports.'
+  },
+  ladakh: {
+    name: 'Ladakh & Pangong',
+    title: 'Pangong Tso Blue Himalayan Lake',
+    url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80',
+    description: 'Mesmerizing high-altitude sapphire lake, rugged mountain passes, and ancient monasteries.'
+  },
+  hampi: {
+    name: 'Hampi Heritage',
+    title: 'Hampi Vijayanagara Stone Chariot & Ruins',
+    url: 'https://images.unsplash.com/photo-1600100397608-f010f443a131?auto=format&fit=crop&w=1200&q=80',
+    description: 'UNESCO World Heritage architectural wonders and boulder-strewn Tungabhadra landscapes.'
+  },
+  rameshwaram: {
+    name: 'Rameshwaram',
+    title: 'Rameshwaram Temple & Pamban Sea Bridge',
+    url: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&w=1200&q=80',
+    description: 'Holy Jyotirlinga teertham, Ramanathaswamy corridor, and historic Pamban railway bridge.'
+  },
+  kedarnath: {
+    name: 'Kedarnath Yatra',
+    title: 'Holy Kedarnath Himalayan Temple',
+    url: 'https://images.unsplash.com/photo-1571536802807-30451e3955d8?auto=format&fit=crop&w=1200&q=80',
+    description: 'Revered ancient Shiva temple in the Garhwal Himalayas at 3,583m altitude.'
+  },
+  puri: {
+    name: 'Puri Jagannath',
+    title: 'Puri Shree Jagannath Mandir & Golden Beach',
+    url: './puri-jagannath-real.jpg',
+    description: 'Sacred Dham in Odisha with 56 Bhog Mahaprasad and Golden Beach promenade.'
+  },
+  parambikulam: {
+    name: 'Parambikulam Tiger Reserve',
+    title: 'Parambikulam Forest & Bamboo Rafting',
+    url: './parambikulam-forest-real.jpg',
+    description: 'Lush evergreen rainforest, Kannimara teak, and bamboo boating safari.'
+  },
+  thanjavur: {
+    name: 'Thanjavur Brihadeeswara Temple',
+    title: 'Brihadeeswara Big Temple (UNESCO World Heritage Chola Wonder)',
+    url: './thanjavur_brihadeeswara_temple.png',
+    description: 'World-famous 1,000-year-old granite wonder built by Emperor Raja Raja Chola I with 216-ft Vimana tower and monolithic Nandi.'
+  },
+  chidambaram: {
+    name: 'Chidambaram Thillai Nataraja',
+    title: 'Thillai Nataraja Kshethram (Akasa Sthalam)',
+    url: './chidambaram_nataraja_temple.png',
+    description: 'Sacred Akasa Pancha Bhoota Sthalam with golden roof Kanakasabha where Lord Shiva performs cosmic Ananda Tandavam.'
+  },
+  srirangam: {
+    name: 'Srirangam Sri Ranganathaswamy',
+    title: 'Sri Ranganathaswamy Maha Temple (Trichy)',
+    url: './srirangam_ranganathaswamy_temple.png',
+    description: 'Premier Divya Desam spanning 156 acres on Kaveri island with 21 magnificent gopurams and Lord Ranganatha in reclining posture.'
+  },
+  kumbakonam: {
+    name: 'Kumbakonam Temples & Vaitheeswaran Koil',
+    title: 'Adi Kumbeswarar, Sarangapani, Chakrapani & Vaitheeswaran Koil',
+    url: './thanjavur_yathra_poster.png',
+    description: 'Ancient temple city trinity temples with sacred Mahamaham tank and powerful healing shrine of Vaitheeswaran Koil.'
   }
 };
 
@@ -159,40 +249,206 @@ export function getMatchingPlacePhotos(query) {
   return results;
 }
 
+/**
+ * Live search for authentic original photography from Wikimedia Commons & public databases
+ */
+export const searchOriginalOnlinePhotos = async (query) => {
+  if (!query || typeof query !== 'string' || query.trim().length < 2) return [];
+  const q = query.trim();
+  try {
+    const wikiRes = await fetch(
+      `https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrsearch=${encodeURIComponent(q + ' tourism attraction')}&gsrlimit=14&prop=pageimages|extracts&piprop=original|thumbnail&pithumbsize=1200&exintro=1&explaintext=1`
+    );
+    if (!wikiRes.ok) return [];
+    const data = await wikiRes.json();
+    const pages = data.query?.pages ? Object.values(data.query.pages) : [];
+    const results = [];
+    const seenUrls = new Set();
+
+    for (const page of pages) {
+      const imgUrl = page.original?.source || page.thumbnail?.source;
+      if (imgUrl && !seenUrls.has(imgUrl) && !imgUrl.endsWith('.svg') && !imgUrl.includes('flag') && !imgUrl.includes('icon')) {
+        seenUrls.add(imgUrl);
+        results.push({
+          id: `wiki-${page.pageid || Math.random()}`,
+          name: page.title,
+          title: page.title,
+          url: imgUrl,
+          category: 'Original Landmark Photo',
+          type: 'original',
+          source: 'Wikimedia Commons',
+          description: page.extract ? page.extract.slice(0, 120) + '...' : `Original authentic photograph of ${page.title}.`
+        });
+      }
+    }
+    return results;
+  } catch (err) {
+    console.warn('Original photo search error:', err);
+    return [];
+  }
+};
+
+/**
+ * Aggregates and ranks matching AI & curated photo suggestions for Main Tour Cover Photo
+ */
+export function getCoverPhotoAiSuggestions(query, defaultLocation = '', sessionAiImages = [], liveOnlineImages = [], filterType = 'all') {
+  const q = (query || defaultLocation || '').toLowerCase().trim();
+  let results = [];
+  const seenUrls = new Set();
+
+  // 1. Live fetched original online photos from Wikimedia
+  (liveOnlineImages || []).forEach(img => {
+    if (img && img.url && !seenUrls.has(img.url)) {
+      if (!q || img.name?.toLowerCase().includes(q) || img.category?.toLowerCase().includes(q)) {
+        seenUrls.add(img.url);
+        results.push({
+          id: img.id || img.url,
+          name: img.name || 'Original Landmark Photo',
+          title: img.title || img.name,
+          url: img.url,
+          category: img.category || 'Original Photo',
+          type: 'original',
+          source: img.source || 'Wikimedia'
+        });
+      }
+    }
+  });
+
+  // 2. Session-generated AI images
+  (sessionAiImages || []).forEach(img => {
+    if (img && img.url && !seenUrls.has(img.url)) {
+      if (!q || img.name?.toLowerCase().includes(q) || img.category?.toLowerCase().includes(q)) {
+        seenUrls.add(img.url);
+        results.push({
+          id: img.id || img.url,
+          name: img.name || 'AI Generated Scene',
+          title: img.title || img.name,
+          url: img.url,
+          category: img.category || 'AI Visual',
+          type: 'ai'
+        });
+      }
+    }
+  });
+
+  // 3. Matching items from PLACE_PHOTO_LIBRARY
+  for (const [key, item] of Object.entries(PLACE_PHOTO_LIBRARY)) {
+    if (!seenUrls.has(item.url)) {
+      const match = !q || q.includes(key) || key.includes(q) || item.name.toLowerCase().includes(q) || item.title.toLowerCase().includes(q) || item.description?.toLowerCase().includes(q);
+      if (match) {
+        seenUrls.add(item.url);
+        const isAi = item.url.includes('_ai.') || item.url.includes('nepal_');
+        results.push({
+          id: key,
+          name: item.name,
+          title: item.title,
+          url: item.url,
+          category: item.name,
+          type: isAi ? 'ai' : 'original'
+        });
+      }
+    }
+  }
+
+  // 4. Matching items from PRESET_IMAGES
+  if (Array.isArray(PRESET_IMAGES)) {
+    PRESET_IMAGES.forEach(it => {
+      if (it && it.url && !seenUrls.has(it.url)) {
+        const match = !q || it.name.toLowerCase().includes(q) || it.category.toLowerCase().includes(q) || it.id.toLowerCase().includes(q);
+        if (match) {
+          seenUrls.add(it.url);
+          results.push({
+            id: it.id,
+            name: it.name,
+            title: it.name,
+            url: it.url,
+            category: it.category,
+            type: it.url.includes('_ai.') ? 'ai' : 'original'
+          });
+        }
+      }
+    });
+  }
+
+  // 5. If fewer than 5 items matched, append rest of library so the horizontal list is always rich
+  if (results.length < 5) {
+    for (const [key, item] of Object.entries(PLACE_PHOTO_LIBRARY)) {
+      if (!seenUrls.has(item.url)) {
+        seenUrls.add(item.url);
+        results.push({
+          id: key,
+          name: item.name,
+          title: item.title,
+          url: item.url,
+          category: item.name,
+          type: item.url.includes('_ai.') || item.url.includes('nepal_') ? 'ai' : 'original'
+        });
+      }
+    }
+  }
+
+  // Filter based on user-selected filterType tab ('all' | 'original' | 'ai')
+  if (filterType === 'original') {
+    results = results.filter(r => r.type === 'original' || r.type === 'real' || !r.type?.includes('ai'));
+  } else if (filterType === 'ai') {
+    results = results.filter(r => r.type === 'ai');
+  }
+
+  return results;
+}
+
 export function AdminFormModal({ title, icon: Icon, onClose, children, fullscreen = false, dirty = false }) {
   const requestClose = () => {
     if (dirty && !window.confirm('You have unsaved changes in this form. Discard them and close?')) return;
     onClose();
   };
   return (
-    <div className="modal-overlay" style={{ zIndex: 10002, padding: fullscreen ? '0' : undefined, alignItems: fullscreen ? 'stretch' : undefined }} onClick={requestClose}>
+    <div 
+      className="admin-form-modal-overlay" 
+      style={{ 
+        zIndex: 10002,
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(0,0,0,0.85)',
+        backdropFilter: 'blur(8px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '1rem'
+      }} 
+      onClick={requestClose}
+    >
       <div
-        className="glass-card"
-        style={{
-          maxWidth: fullscreen ? 'none' : '660px',
-          width: fullscreen ? '100vw' : '100%',
-          height: fullscreen ? '100vh' : undefined,
-          maxHeight: fullscreen ? 'none' : '88vh',
-          overflowY: 'auto',
-          padding: fullscreen ? '2rem 2.5rem' : '1.8rem',
-          background: '#081222',
-          border: fullscreen ? 'none' : '1px solid var(--border-gold)',
-          borderRadius: fullscreen ? '0' : undefined,
-          cursor: 'default'
-        }}
+        className={`admin-form-modal-card ${fullscreen ? 'fullscreen' : ''}`}
         onClick={(e) => e.stopPropagation()}
+        style={{
+          width: '100%',
+          maxWidth: fullscreen ? '1000px' : '960px',
+          maxHeight: '90vh',
+          overflowY: 'auto',
+          background: 'rgba(8, 14, 28, 0.98)',
+          border: '1px solid var(--border-gold)',
+          borderRadius: '16px',
+          padding: 'clamp(1rem, 3vw, 2rem)',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)'
+        }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.4rem' }}>
-          <h3 style={{ color: 'var(--gold-light)', fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'var(--font-heading)' }}>
-            <Icon size={20} color="var(--gold-primary)" /> {title}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem', paddingBottom: '0.6rem', borderBottom: '1px solid rgba(212,175,55,0.2)' }}>
+          <h3 style={{ color: 'var(--gold-light)', fontSize: 'clamp(0.95rem, 2.5vw, 1.25rem)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'var(--font-heading)', margin: 0, overflow: 'hidden' }}>
+            <Icon size={20} color="var(--gold-primary)" style={{ flexShrink: 0 }} /> 
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{title}</span>
           </h3>
           <button
             onClick={requestClose}
+            title="Close (Esc)"
             style={{
-              width: '36px', height: '36px', borderRadius: '50%',
+              width: '36px', height: '36px', borderRadius: '50%', flexShrink: 0,
               background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border-gold)',
-              color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
+              color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              transition: 'all 0.15s ease'
             }}
+            onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(239,68,68,0.2)'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
           >
             <X size={18} />
           </button>
@@ -205,11 +461,11 @@ export function AdminFormModal({ title, icon: Icon, onClose, children, fullscree
 
 function FormActions({ onCancel }) {
   return (
-    <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
-      <button type="button" className="btn-glass" onClick={onCancel} style={{ flex: 1, justifyContent: 'center' }}>
+    <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
+      <button type="button" className="btn-glass" onClick={onCancel} style={{ flex: '1 1 120px', justifyContent: 'center' }}>
         Cancel
       </button>
-      <button type="submit" className="btn-gold" style={{ flex: 2, justifyContent: 'center' }}>
+      <button type="submit" className="btn-gold" style={{ flex: '2 1 180px', justifyContent: 'center' }}>
         <Save size={16} /> Save Changes
       </button>
     </div>
@@ -309,11 +565,92 @@ const resolveDestinationIdFromKeyword = (key = '') => {
   if (k.includes('thenkasi')) return 'thenkasi-viswanathar';
   if (k.includes('gundlupet')) return 'gundlupet-sunflowers';
   if (k.includes('horanadu')) return 'annapoorneshwari-horanadu';
+  if (k.includes('thanjavur') || k.includes('chidambaram') || k.includes('srirangam') || k.includes('kumbakonam')) return 'thanjavur-chidambaram-srirangam';
   return DESTINATIONS[0]?.id || 'nepal-himalayan-kingdom';
 };
 
 // Comprehensive Complete Blueprints for Instant 1-Click Package Autofill
 export const AUTOFILL_DESTINATION_BLUEPRINTS = {
+  'thanjavur': {
+    keyword: 'Thanjavur',
+    displayName: 'Thanjavur • Chidambaram • Srirangam Yathra',
+    title: 'Thanjavur • Chidambaram • Srirangam Yathra',
+    subtitle: '4 Days Grand Chola Temple Pilgrimage • AC Bus Departure from Thrissur • 1 Night Stay & 6 Meals Included',
+    destinationId: 'thanjavur-chidambaram-srirangam',
+    durationDays: 4,
+    durationNights: 3,
+    price: 4200,
+    originalPrice: 5499,
+    badge: '⚡ October 9 – 12 Departure • Special Temple Yathra',
+    image: './thanjavur_yathra_poster.png',
+    bgMixImages: [
+      './thanjavur_yathra_poster.png',
+      './thanjavur_brihadeeswara_temple.png',
+      './chidambaram_nataraja_temple.png',
+      './srirangam_ranganathaswamy_temple.png'
+    ],
+    bgMixStyle: 'collage-blend',
+    mainPlaces: 'Thanjavur Brihadeeswara Temple, Chidambaram Thillai Nataraja Kshethram, Srirangam Sri Ranganathaswamy Temple, Kumbakonam & Vaitheeswaran Koil',
+    included: `Comfortable AC Bus transportation from Thrissur & return
+6 Delicious pure vegetarian meals included throughout the tour
+1 Night comfortable hotel accommodation in Kumbakonam / Thanjavur
+All temple entry passes & special darshan arrangements
+Brihadeeswara Temple UNESCO Big Temple guided visit
+Chidambaram Thillai Nataraja Kshethram Darshan
+Srirangam Sri Ranganathaswamy Temple VIP Darshan
+Kumbakonam Temples (Adi Kumbeswarar, Sarangapani, Chakrapani)
+Vaitheeswaran Koil Lord Vaidyanatha healing shrine visit
+Experienced Malayali Tour Escort & dedicated pilgrimage assistance from Thrissur`,
+    sightseeing: [
+      {
+        name: 'Thanjavur Brihadeeswara Temple (Big Temple)',
+        image: './thanjavur_brihadeeswara_temple.png',
+        images: ['./thanjavur_brihadeeswara_temple.png'],
+        text: 'World-famous 1,000-year-old UNESCO World Heritage granite marvel built by Raja Raja Chola I with 216-ft Vimana tower and monolithic Nandi.',
+        video: '',
+        location: 'Thanjavur'
+      },
+      {
+        name: 'Chidambaram Thillai Nataraja Kshethram',
+        image: './chidambaram_nataraja_temple.png',
+        images: ['./chidambaram_nataraja_temple.png'],
+        text: 'One of the Pancha Bhoota Sthalams (Akasa / Space Lingam). Sacred golden roof hall where Lord Shiva performs the cosmic Ananda Tandavam dance.',
+        video: '',
+        location: 'Chidambaram'
+      },
+      {
+        name: 'Srirangam Sri Ranganathaswamy Temple',
+        image: './srirangam_ranganathaswamy_temple.png',
+        images: ['./srirangam_ranganathaswamy_temple.png'],
+        text: 'First and premier of the 108 Divya Desams spanning 156 acres on the Kaveri river island with 21 magnificent gopurams and reclining Lord Ranganatha.',
+        video: '',
+        location: 'Trichy Srirangam'
+      },
+      {
+        name: 'Kumbakonam Temples & Vaitheeswaran Koil',
+        image: './thanjavur_yathra_poster.png',
+        images: ['./thanjavur_yathra_poster.png'],
+        text: 'Ancient temple city shrines including Adi Kumbeswarar, chariot-shaped Sarangapani, Chakrapani, and holy healing shrine of Vaitheeswaran Koil.',
+        video: '',
+        location: 'Kumbakonam'
+      }
+    ],
+    highlights: [
+      { title: 'Brihadeeswara UNESCO Big Temple', image: './thanjavur_brihadeeswara_temple.png', images: ['./thanjavur_brihadeeswara_temple.png'], location: 'Thanjavur' },
+      { title: 'Chidambaram Nataraja Akasa Sthalam', image: './chidambaram_nataraja_temple.png', images: ['./chidambaram_nataraja_temple.png'], location: 'Chidambaram' },
+      { title: 'Srirangam 108 Divya Desam', image: './srirangam_ranganathaswamy_temple.png', images: ['./srirangam_ranganathaswamy_temple.png'], location: 'Srirangam' },
+      { title: 'Kumbakonam & Vaitheeswaran Koil', image: './thanjavur_yathra_poster.png', images: ['./thanjavur_yathra_poster.png'], location: 'Kumbakonam' }
+    ],
+    routePoints: [
+      { name: 'Oasis India Holidays LLP, Rohini Plaza, Thrissur', type: 'start', address: 'Near Railway Station, Thrissur - 21', time: '09:00 PM', lat: 10.5276, lng: 76.2144 },
+      { name: 'Kumbakonam Temples', type: 'stop', address: 'Kumbakonam, Tamil Nadu', time: '06:30 AM', lat: 10.9602, lng: 79.3845 },
+      { name: 'Vaitheeswaran Koil', type: 'stop', address: 'Vaitheeswaran Koil, Tamil Nadu', time: '03:00 PM', lat: 11.2008, lng: 79.7128 },
+      { name: 'Thanjavur Brihadeeswara Temple', type: 'stop', address: 'Thanjavur, Tamil Nadu', time: '07:30 AM', lat: 10.7828, lng: 79.1318 },
+      { name: 'Chidambaram Nataraja Temple', type: 'stop', address: 'Chidambaram, Tamil Nadu', time: '12:00 PM', lat: 11.3992, lng: 79.6935 },
+      { name: 'Srirangam Ranganathaswamy Temple', type: 'stop', address: 'Srirangam, Trichy, Tamil Nadu', time: '04:30 PM', lat: 10.8624, lng: 78.6901 },
+      { name: 'Return to Thrissur', type: 'drop', address: 'Thrissur, Kerala', time: '05:00 AM', lat: 10.5276, lng: 76.2144 }
+    ]
+  },
   'nepal': {
     keyword: 'Nepal',
     displayName: 'Nepal (Kathmandu, Pokhara & Chitwan)',
@@ -780,11 +1117,17 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
 
   const [aiLocationInput, setAiLocationInput] = useState(defaultLoc);
   const [aiStatusMessage, setAiStatusMessage] = useState('');
-  const [smartFillInput, setSmartFillInput] = useState(defaultLoc || 'Nepal');
+  const [coverSearchName, setCoverSearchName] = useState(defaultLoc || '');
+  const [customAiCoverImages, setCustomAiCoverImages] = useState([]);
+  const [liveOnlineImages, setLiveOnlineImages] = useState([]);
+  const [searchingOriginalOnline, setSearchingOriginalOnline] = useState(false);
+  const [coverFilterType, setCoverFilterType] = useState('all');
+  const coverScrollRef = useRef(null);
+  const coverFileInputRef = useRef(null);
 
-  // Instant Smart Auto-Fill handler for any destination (e.g. Nepal, Kashmir, Munnar, etc.)
+  // Instant Smart Auto-Fill handler derived directly from package name (e.g. Nepal, Kashmir, Munnar, etc.)
   const handleApplySmartAutofill = (destName) => {
-    const targetKey = (destName || smartFillInput || form.title || 'Nepal').trim();
+    const targetKey = (destName || form.title || form.subtitle || 'Nepal').trim();
     const bp = getDestinationAutofillBlueprint(targetKey, allDestinations);
     if (bp) {
       const newDays = bp.durationDays || 3;
@@ -814,10 +1157,13 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
       }));
 
       setAiLocationInput(bp.keyword || targetKey);
-      setSmartFillInput(bp.keyword || targetKey);
+      setCoverSearchName(bp.keyword || targetKey);
       setAiStatusMessage(`✨ Auto-Filled all details for "${bp.displayName || bp.keyword}"! Title, pricing, 8+ sightseeing spots, photos & GPS route points applied.`);
       setTimeout(() => setAiStatusMessage(''), 5000);
       if (onDirtyChange) onDirtyChange(true);
+    } else {
+      setAiStatusMessage(`💡 Suggestions updated for "${targetKey}".`);
+      setTimeout(() => setAiStatusMessage(''), 3000);
     }
   };
 
@@ -1113,14 +1459,50 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
   const [generatingCoverAi, setGeneratingCoverAi] = useState(false);
   const [uploadingCoverFile, setUploadingCoverFile] = useState(false);
 
-  const handleGenerateCoverAiPhoto = async () => {
-    const loc = form.title || form.subtitle || 'Scenic Luxury Tour Destination';
+  const handleSearchOriginalPhotos = async (term) => {
+    const q = (term || coverSearchName || form.title || activeStudioLocation || 'Nepal').trim();
+    if (!q) return;
+    setSearchingOriginalOnline(true);
+    try {
+      const photos = await searchOriginalOnlinePhotos(q);
+      if (photos && photos.length > 0) {
+        setLiveOnlineImages(prev => {
+          const existingUrls = new Set(prev.map(p => p.url));
+          const fresh = photos.filter(p => !existingUrls.has(p.url));
+          return [...fresh, ...prev];
+        });
+        setAiStatusMessage(`📸 Found ${photos.length} original authentic photos for "${q}"!`);
+        setTimeout(() => setAiStatusMessage(''), 4000);
+      } else {
+        setAiStatusMessage(`ℹ️ No live photos found for "${q}". Showing curated library photos.`);
+        setTimeout(() => setAiStatusMessage(''), 4000);
+      }
+    } catch (err) {
+      console.warn('Original photo search error:', err);
+    } finally {
+      setSearchingOriginalOnline(false);
+    }
+  };
+
+  const handleGenerateCustomCoverAi = async (customPrompt) => {
+    const query = (customPrompt || coverSearchName || form.title || form.subtitle || 'Scenic Luxury Tour Destination').trim();
     setGeneratingCoverAi(true);
     try {
-      const prompt = `Photorealistic majestic travel photography of ${loc}. Ultra high resolution, golden hour lighting, cinematic travel agency cover photograph.`;
+      const prompt = `Photorealistic majestic travel photography of ${query}. Ultra high resolution, golden hour lighting, cinematic luxury travel agency cover photograph with vivid natural colors and authentic landmark details.`;
       const cloudUrl = await geminiService.generatePosterImage(prompt, 'photorealistic');
       if (cloudUrl) {
         setForm(f => ({ ...f, image: cloudUrl }));
+        const newEntry = {
+          id: `ai-cover-${Date.now()}`,
+          name: query.replace(/\b\w/g, c => c.toUpperCase()),
+          title: `${query} AI Generated Visual`,
+          url: cloudUrl,
+          category: 'AI Generated',
+          type: 'ai'
+        };
+        setCustomAiCoverImages(prev => [newEntry, ...prev]);
+        setAiStatusMessage(`✨ Generated new AI Cover Photo for "${query}"!`);
+        setTimeout(() => setAiStatusMessage(''), 4000);
       }
     } catch (err) {
       alert(`AI Image Generation notice: ${err.message || 'Could not generate image'}`);
@@ -1129,16 +1511,44 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
     }
   };
 
+  const handleGenerateCoverAiPhoto = () => handleGenerateCustomCoverAi(coverSearchName || form.title || form.subtitle);
+
   const handleUploadCoverPhotoFile = async (file) => {
     if (!file) return;
+    if (!file.type || !file.type.startsWith('image/')) {
+      alert('Please select a valid image file (JPG, PNG, WebP, etc.)');
+      return;
+    }
     setUploadingCoverFile(true);
     try {
+      // 1. Instant local read so preview updates immediately within 30ms
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const localUrl = e.target.result;
+        if (localUrl) {
+          setForm(f => ({ ...f, image: localUrl }));
+          setCustomAiCoverImages(prev => [{
+            id: `uploaded-${Date.now()}`,
+            name: file.name.replace(/\.[^/.]+$/, '').replace(/[-_]+/g, ' '),
+            title: file.name,
+            url: localUrl,
+            category: 'Uploaded Photo',
+            type: 'original',
+            source: 'Device Upload'
+          }, ...prev]);
+        }
+      };
+      reader.readAsDataURL(file);
+
+      // 2. Upload to storage in background
       const res = await storageService.uploadFile(file, 'tours-covers');
       if (res && res.url) {
         setForm(f => ({ ...f, image: res.url }));
+        setAiStatusMessage(`✓ Cover photo "${file.name}" uploaded successfully!`);
+        setTimeout(() => setAiStatusMessage(''), 4000);
       }
     } catch (err) {
-      alert(`Upload error: ${err.message || 'Could not upload file'}`);
+      console.warn('Cover photo upload notice:', err);
     } finally {
       setUploadingCoverFile(false);
     }
@@ -1198,12 +1608,18 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
     if (!file) return;
     setUploadingMixFile(true);
     try {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target.result) handleAddImageToMix(e.target.result);
+      };
+      reader.readAsDataURL(file);
+
       const res = await storageService.uploadFile(file, 'bg-mix');
       if (res && res.url) {
         handleAddImageToMix(res.url);
       }
     } catch (err) {
-      alert(`Upload error: ${err.message || 'Could not upload file'}`);
+      console.warn('Mix upload notice:', err);
     } finally {
       setUploadingMixFile(false);
     }
@@ -1231,12 +1647,18 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
     if (!file) return;
     setUploadingSpotIdx(idx);
     try {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target.result) updateListItem('sightseeing', idx, { image: e.target.result });
+      };
+      reader.readAsDataURL(file);
+
       const res = await storageService.uploadFile(file, 'sightseeing');
       if (res && res.url) {
         updateListItem('sightseeing', idx, { image: res.url });
       }
     } catch (err) {
-      alert(`Upload error: ${err.message || 'Could not upload file'}`);
+      console.warn('Spot upload notice:', err);
     } finally {
       setUploadingSpotIdx(null);
     }
@@ -1381,9 +1803,7 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
   return (
     <form onSubmit={handleSubmit} onKeyDown={handleFormKeyDown}>
       {/* ─── STEP WIZARD PROGRESS HEADER ─── */}
-      <div style={{
-        display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.2rem'
-      }}>
+      <div className="admin-wizard-tabs" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.2rem' }}>
         {TOUR_FORM_STEPS.map((step, idx) => {
           const isActive = activeStep === idx;
           const isDone = idx < activeStep || stepCompleteFlags[idx];
@@ -1393,43 +1813,45 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
               key={step.key}
               type="button"
               onClick={() => setActiveStep(idx)}
+              className="admin-wizard-tab-btn"
               style={{
-                flex: 1,
-                minWidth: '180px',
+                flex: '1 1 110px',
+                minWidth: 'clamp(100px, 25vw, 160px)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.55rem',
-                padding: '0.6rem 0.8rem',
+                padding: '0.55rem 0.75rem',
                 borderRadius: '12px',
                 cursor: 'pointer',
                 background: isActive
-                  ? 'linear-gradient(135deg, rgba(212,175,55,0.3), rgba(212,175,55,0.12))'
+                  ? 'rgba(212,175,55,0.15)'
                   : isDone
                     ? 'rgba(16,185,129,0.1)'
                     : 'rgba(255,255,255,0.04)',
                 border: isActive
-                  ? '1.5px solid var(--gold-primary)'
+                  ? '1px solid var(--gold-primary)'
                   : isDone
                     ? '1px solid rgba(16,185,129,0.4)'
                     : '1px solid rgba(255,255,255,0.12)',
                 color: isActive ? '#fef08a' : isDone ? '#10b981' : 'var(--text-muted)',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.2s ease',
+                boxSizing: 'border-box'
               }}
             >
               <span style={{
-                width: '30px', height: '30px', borderRadius: '50%', flexShrink: 0,
+                width: '28px', height: '28px', borderRadius: '50%', flexShrink: 0,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 background: isActive || isDone ? 'var(--gold-primary)' : 'rgba(255,255,255,0.08)',
-                color: '#000',
-                fontSize: '0.85rem', fontWeight: 900
+                color: isActive || isDone ? '#000' : 'var(--text-muted)',
+                fontSize: '0.82rem', fontWeight: 800
               }}>
-                {isDone ? <Check size={15} /> : IconMap[idx]}
+                {isDone ? <Check size={14} /> : IconMap[idx]}
               </span>
-              <span style={{ textAlign: 'left', lineHeight: 1.15 }}>
-                <span style={{ display: 'block', fontWeight: 800, fontSize: '0.78rem' }}>
+              <span style={{ textAlign: 'left', lineHeight: 1.15, overflow: 'hidden' }}>
+                <span style={{ display: 'block', fontWeight: 800, fontSize: 'clamp(0.72rem, 1.8vw, 0.78rem)', whiteSpace: 'nowrap' }}>
                   Step {idx + 1} · {step.label}
                 </span>
-                <span style={{ display: 'block', fontSize: '0.66rem', opacity: 0.75 }}>
+                <span style={{ display: 'block', fontSize: '0.64rem', opacity: 0.75, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {isDone ? '✓ Complete' : step.hint}
                 </span>
               </span>
@@ -1440,7 +1862,7 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
 
       {/* ══════════════ STEP 1 · PACKAGE BASICS ══════════════ */}
       {activeStep === 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
           <div style={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Sparkles size={18} color="var(--gold-primary)" />
@@ -1455,168 +1877,124 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
             )}
           </div>
 
-          {/* ─── ⚡ AI DESTINATION SMART-FILL & AUTO-COMPLETE HERO BOX ─── */}
-          <div style={{
-            gridColumn: '1 / -1',
-            background: 'linear-gradient(135deg, rgba(212,175,55,0.14), rgba(16,185,129,0.08), rgba(9,20,38,0.7))',
-            border: '1.5px solid var(--gold-primary)',
-            borderRadius: '14px',
-            padding: '1rem 1.1rem',
-            boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
-            marginBottom: '0.4rem'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span style={{ fontSize: '1.2rem' }}>⚡</span>
-                <div>
-                  <h5 style={{ margin: 0, fontSize: '0.92rem', fontWeight: 800, color: '#fef08a' }}>
-                    Instant AI Destination Auto-Fill
-                  </h5>
-                  <p style={{ margin: '0.15rem 0 0', fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-                    Enter <strong style={{ color: '#6ee7b7' }}>"Nepal"</strong> (or any destination) to automatically populate Title, Slogans, 6-Day Duration, Pricing, 8+ Sightseeing Spots with Real Photos, Highlights &amp; Route Map in 1 click!
-                  </p>
-                </div>
-              </div>
-            </div>
+          {/* TOUR TITLE WITH DIRECT AI AUTO-FILL & SLOGAN SUGGESTIONS */}
+          <div style={{ gridColumn: '1 / -1' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem', flexWrap: 'wrap', gap: '0.4rem' }}>
+              <label style={{ ...labelStyle, marginBottom: 0, fontSize: '0.85rem', color: 'var(--gold-light)', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                Tour Title (Package Name) *
+              </label>
 
-            {/* Search & Auto-Fill input row */}
-            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
-              <div style={{ position: 'relative', flex: 1, minWidth: '220px' }}>
-                <input
-                  type="text"
-                  value={smartFillInput}
-                  onChange={(e) => setSmartFillInput(e.target.value)}
-                  placeholder="Type destination name e.g. Nepal, Kashmir, Munnar, Ooty, Wayanad, Kashi..."
-                  style={{
-                    width: '100%',
-                    background: 'rgba(2,6,23,0.9)',
-                    border: '1.5px solid rgba(245,158,11,0.5)',
-                    borderRadius: '10px',
-                    color: '#ffffff',
-                    padding: '0.55rem 0.9rem',
-                    fontSize: '0.85rem',
-                    fontWeight: 700,
-                    outline: 'none',
-                    boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.5)'
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      handleApplySmartAutofill(smartFillInput);
-                    }
-                  }}
-                />
-              </div>
-              <button
-                type="button"
-                onClick={() => handleApplySmartAutofill(smartFillInput)}
-                style={{
-                  background: 'linear-gradient(135deg, #d4af37, #f59e0b)',
-                  color: '#000000',
-                  border: 'none',
-                  borderRadius: '10px',
-                  padding: '0.55rem 1.2rem',
-                  fontSize: '0.82rem',
-                  fontWeight: 900,
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.4rem',
-                  boxShadow: '0 4px 15px rgba(212,175,55,0.4)',
-                  transition: 'transform 0.15s ease'
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
-                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-              >
-                <Sparkles size={15} color="#000" /> ✨ Auto-Fill {smartFillInput || 'Destination'} Details
-              </button>
-            </div>
-
-            {/* Quick Destination Pills */}
-            <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.72rem', color: '#fef08a', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
-                ⚡ 1-Click Presets:
-              </span>
-              {[
-                { label: '🇳🇵 Nepal (Kathmandu & Pokhara)', key: 'Nepal' },
-                { label: '🏔️ Kashmir & Dal Lake', key: 'Kashmir' },
-                { label: '☕ Munnar Tea Highlands', key: 'Munnar' },
-                { label: '🚂 Ooty Nilgiri Toy Train', key: 'Ooty' },
-                { label: '🌲 Wayanad Heart Lake', key: 'Wayanad' },
-                { label: '🛕 Kashi Vishwanath', key: 'Kashi' },
-                { label: '🌸 Kodaikanal Pine Forest', key: 'Kodaikanal' },
-                { label: '🦚 Athirappilly Falls', key: 'Athirappilly' },
-                { label: '🐅 Parambikulam Safari', key: 'Parambikulam' },
-                { label: '🌊 Kollam Ashtamudi', key: 'Kollam' },
-                { label: '🕉️ Ayodhya Ram Mandir', key: 'Ayodhya' }
-              ].map(preset => (
+              <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                {/* 1. Instant Auto-Fill from typed Package Name */}
                 <button
-                  key={preset.key}
                   type="button"
-                  onClick={() => {
-                    setSmartFillInput(preset.key);
-                    handleApplySmartAutofill(preset.key);
-                  }}
+                  onClick={() => handleApplySmartAutofill(form.title)}
                   style={{
-                    background: (smartFillInput.toLowerCase() === preset.key.toLowerCase()) 
-                      ? 'rgba(212,175,55,0.3)' 
-                      : 'rgba(255,255,255,0.06)',
-                    border: (smartFillInput.toLowerCase() === preset.key.toLowerCase())
-                      ? '1.5px solid var(--gold-primary)'
-                      : '1px solid rgba(255,255,255,0.15)',
-                    color: (smartFillInput.toLowerCase() === preset.key.toLowerCase()) ? '#fef08a' : '#e2e8f0',
-                    borderRadius: '20px',
-                    padding: '0.22rem 0.65rem',
-                    fontSize: '0.72rem',
+                    background: 'rgba(212,175,55,0.15)',
+                    color: '#fef08a',
+                    border: '1px solid var(--gold-primary)',
+                    borderRadius: '6px',
+                    padding: '0.3rem 0.65rem',
+                    fontSize: '0.74rem',
                     fontWeight: 700,
                     cursor: 'pointer',
-                    transition: 'all 0.15s ease'
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem'
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--gold-primary)'; e.currentTarget.style.background = 'rgba(245,158,11,0.2)'; }}
-                  onMouseLeave={(e) => { 
-                    if (smartFillInput.toLowerCase() !== preset.key.toLowerCase()) {
-                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; 
-                      e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
-                    }
+                  title="Auto-fill details based on this package name"
+                >
+                  <Sparkles size={13} color="var(--gold-primary)" /> Auto-Fill Details
+                </button>
+
+                {/* 2. Slogans & Titles suggestions toggle */}
+                <button
+                  type="button"
+                  onClick={() => generateTitleSuggestions(form.title || aiLocationInput)}
+                  style={{
+                    background: showTitleSuggester ? 'var(--gold-primary)' : 'rgba(255,255,255,0.05)',
+                    border: showTitleSuggester ? '1px solid var(--gold-primary)' : '1px solid rgba(255,255,255,0.15)',
+                    color: showTitleSuggester ? '#000' : 'var(--text-muted)',
+                    borderRadius: '6px',
+                    padding: '0.3rem 0.65rem',
+                    fontSize: '0.74rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem'
                   }}
                 >
-                  {preset.label}
+                  <Wand2 size={13} color={showTitleSuggester ? '#000' : 'var(--text-muted)'} /> 
+                  {showTitleSuggester ? 'Close Suggestions' : 'AI Slogans'}
                 </button>
-              ))}
+              </div>
             </div>
-          </div>
 
-          {/* TOUR TITLE WITH AI TITLE & SLOGAN SUGGESTER */}
-          <div style={{ gridColumn: '1 / -1' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem', flexWrap: 'wrap', gap: '0.4rem' }}>
-              <label style={{ ...labelStyle, marginBottom: 0 }}>Tour Title (Package Name) *</label>
-              <button
-                type="button"
-                onClick={() => generateTitleSuggestions(form.title || aiLocationInput)}
+            <div style={{ position: 'relative' }}>
+              <input 
                 style={{
-                  background: 'rgba(245,158,11,0.15)',
-                  border: '1px solid var(--gold-primary)',
-                  color: '#fef08a',
-                  borderRadius: '8px',
-                  padding: '0.25rem 0.65rem',
-                  fontSize: '0.74rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.35rem'
-                }}
-              >
-                <Sparkles size={13} color="var(--gold-primary)" /> ✨ Slogans &amp; Titles ({resolveLocationKeyword(form.title, form.subtitle, form.destinationId, aiLocationInput)})
-              </button>
+                  ...fieldStyle,
+                  padding: '0.75rem 1rem',
+                  fontSize: '0.92rem',
+                  fontWeight: 700,
+                  background: 'rgba(2,6,23,0.85)',
+                  border: '1.5px solid rgba(212,175,55,0.45)',
+                  boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.5)'
+                }} 
+                value={form.title} 
+                onChange={set('title')} 
+                required 
+                placeholder="Type package name e.g. Nepal Kathmandu & Pokhara, Kashmir Dal Lake & Gulmarg, Munnar Tea Highlands..." 
+              />
             </div>
-            <input 
-              style={fieldStyle} 
-              value={form.title} 
-              onChange={set('title')} 
-              required 
-              placeholder="e.g. Himalayan Marvels: Nepal Kathmandu Valley, Pokhara Lakes & Annapurna Sunrise Yatra" 
-            />
+
+            {/* Quick 1-Click Destination Preset Pills */}
+            <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', alignItems: 'center', marginTop: '0.45rem' }}>
+              <span style={{ fontSize: '0.7rem', color: '#fef08a', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+                ⚡ Quick Presets:
+              </span>
+              {[
+                { label: 'Nepal', key: 'Nepal' },
+                { label: 'Kashmir', key: 'Kashmir' },
+                { label: 'Munnar', key: 'Munnar' },
+                { label: 'Ooty', key: 'Ooty' },
+                { label: 'Wayanad', key: 'Wayanad' },
+                { label: 'Kashi', key: 'Kashi' },
+                { label: 'Kodaikanal', key: 'Kodaikanal' },
+                { label: 'Athirappilly', key: 'Athirappilly' },
+                { label: 'Parambikulam', key: 'Parambikulam' },
+                { label: 'Kollam', key: 'Kollam' },
+                { label: 'Ayodhya', key: 'Ayodhya' },
+                { label: 'Goa', key: 'Goa' },
+                { label: 'Taj Mahal', key: 'Taj Mahal' }
+              ].map(preset => {
+                const isActive = form.title?.toLowerCase().includes(preset.key.toLowerCase());
+                return (
+                  <button
+                    key={preset.key}
+                    type="button"
+                    onClick={() => {
+                      setForm(f => ({ ...f, title: `${preset.key} Escorted Tour Package` }));
+                      handleApplySmartAutofill(preset.key);
+                    }}
+                    style={{
+                      background: isActive ? 'rgba(212,175,55,0.3)' : 'rgba(255,255,255,0.06)',
+                      border: isActive ? '1px solid var(--gold-primary)' : '1px solid rgba(255,255,255,0.12)',
+                      color: isActive ? '#fef08a' : '#e2e8f0',
+                      borderRadius: '14px',
+                      padding: '0.15rem 0.55rem',
+                      fontSize: '0.7rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    {preset.label}
+                  </button>
+                );
+              })}
+            </div>
 
             {/* Quick Slogan Suggestions Bar based on Current Typed Location */}
             {(() => {
@@ -1624,11 +2002,11 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
               const slogans = getLocationSlogans(currentLoc);
               if (slogans.length === 0) return null;
               return (
-                <div style={{ marginTop: '0.45rem', padding: '0.6rem 0.8rem', background: 'rgba(212,175,55,0.06)', borderRadius: '8px', border: '1px solid rgba(212,175,55,0.25)' }}>
-                  <div style={{ fontSize: '0.72rem', color: 'var(--gold-light)', fontWeight: 800, marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                    <Sparkles size={12} color="var(--gold-primary)" /> ⚡ Slogans based on "{currentLoc}": (Click any to apply as slogan)
+                <div style={{ marginTop: '0.5rem', padding: '0.5rem 0.75rem', background: 'rgba(212,175,55,0.06)', borderRadius: '8px', border: '1px solid rgba(212,175,55,0.25)' }}>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--gold-light)', fontWeight: 800, marginBottom: '0.3rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <Sparkles size={12} color="var(--gold-primary)" /> ⚡ Slogans for "{currentLoc}": (Click any to set as subtitle/slogan)
                   </div>
-                  <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
                     {slogans.map((slog, sIdx) => {
                       const isApplied = form.subtitle === slog;
                       return (
@@ -1641,8 +2019,8 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
                             border: isApplied ? '1px solid #10b981' : '1px solid rgba(255,255,255,0.15)',
                             color: isApplied ? '#6ee7b7' : '#fef08a',
                             borderRadius: '12px',
-                            padding: '0.25rem 0.6rem',
-                            fontSize: '0.72rem',
+                            padding: '0.2rem 0.55rem',
+                            fontSize: '0.7rem',
                             fontWeight: 600,
                             cursor: 'pointer',
                             textAlign: 'left',
@@ -1659,6 +2037,8 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
                 </div>
               );
             })()}
+
+
 
             {/* AI Slogan & Title Suggester Modal / Dropdown */}
             {showTitleSuggester && (
@@ -1810,9 +2190,9 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '0.8rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '1rem', marginBottom: '0.8rem' }}>
               <div>
-                <label style={labelStyle}>Number of Days ☀️</label>
+                <label style={labelStyle}>Number of Days</label>
                 <input
                   type="number"
                   min="1"
@@ -1825,7 +2205,7 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
                 />
               </div>
               <div>
-                <label style={labelStyle}>Number of Nights 🌙</label>
+                <label style={labelStyle}>Number of Nights</label>
                 <input
                   type="number"
                   min="0"
@@ -1924,7 +2304,7 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem' }}>
               <div>
                 <label style={labelStyle}>Start Date (Departure Date) *</label>
                 <input
@@ -1970,102 +2350,511 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Shown on website cards and header banner</span>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '140px 1fr', gap: '1.2rem', alignItems: 'center' }}>
-              <div style={{ width: '140px', height: '100px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border-gold)', background: '#000', position: 'relative' }}>
+            {/* Current Selected Cover & Direct URL / File Upload Row */}
+            <div className="admin-grid-cover-photo" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.2rem', alignItems: 'center', marginBottom: '1rem' }}>
+              {/* Clickable & Drag-and-Drop Preview Area */}
+              <div
+                onClick={() => coverFileInputRef.current?.click()}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const file = e.dataTransfer?.files?.[0];
+                  if (file) handleUploadCoverPhotoFile(file);
+                }}
+                title="Click or drag an image here to upload from your computer"
+                style={{
+                  width: '100%',
+                  maxWidth: '250px',
+                  height: '140px',
+                  borderRadius: '10px',
+                  overflow: 'hidden',
+                  border: '2px solid var(--gold-primary)',
+                  background: '#000',
+                  position: 'relative',
+                  boxShadow: '0 4px 15px rgba(0,0,0,0.6)',
+                  cursor: 'pointer',
+                  transition: 'transform 0.15s ease',
+                  margin: '0 auto'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+              >
                 <img src={form.image || './ooty-toy-train-real.jpg'} alt="Cover preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.92))', padding: '3px 4px', fontSize: '0.62rem', color: '#fef08a', fontWeight: 800, textAlign: 'center' }}>
+                  📁 Click to Upload
+                </div>
                 {(generatingCoverAi || uploadingCoverFile) && (
-                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--gold-light)' }}>
+                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.75)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--gold-light)', gap: '0.2rem' }}>
                     <Loader2 size={22} className="spinner" />
+                    <span style={{ fontSize: '0.65rem', fontWeight: 800 }}>{uploadingCoverFile ? 'Uploading...' : 'Generating...'}</span>
                   </div>
                 )}
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                <label style={labelStyle}>Cover Photo URL / Direct File Upload / AI Generate *</label>
-                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                <label style={labelStyle}>Selected Cover Photo URL / Direct Upload *</label>
+                <div className="admin-mix-controls" style={{ width: '100%' }}>
                   <input
-                    style={{ ...fieldStyle, flex: 1, minWidth: '220px' }}
+                    style={{ ...fieldStyle, flex: '1 1 180px', minWidth: '0' }}
                     value={form.image}
                     onChange={set('image')}
-                    placeholder="Enter image URL or use buttons 👉"
+                    placeholder="Enter image URL or upload photo from your computer 👇"
                     required
                   />
                   
-                  {/* Hidden File Input for Cover */}
+                  {/* Robust Hidden File Input for Cover (with Ref) */}
                   <input
+                    ref={coverFileInputRef}
                     type="file"
-                    id="tour-cover-file-input"
                     accept="image/*"
                     style={{ display: 'none' }}
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) handleUploadCoverPhotoFile(file);
+                      e.target.value = ''; // Reset so the exact same file can be selected again
                     }}
                   />
                   
                   {/* Direct File Upload Button */}
-                  <label
-                    htmlFor="tour-cover-file-input"
-                    className="btn-glass"
-                    style={{
-                      padding: '0.45rem 0.9rem',
-                      fontSize: '0.8rem',
-                      fontWeight: 700,
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '0.35rem',
-                      cursor: 'pointer',
-                      margin: 0
-                    }}
-                  >
-                    <Upload size={14} color="var(--gold-primary)" />
-                    {uploadingCoverFile ? 'Uploading...' : '📁 Upload Photo'}
-                  </label>
-
-                  {/* AI Generate Cover Button */}
                   <button
                     type="button"
-                    onClick={handleGenerateCoverAiPhoto}
-                    disabled={generatingCoverAi}
-                    className="btn-gold"
+                    onClick={() => coverFileInputRef.current?.click()}
+                    disabled={uploadingCoverFile}
+                    className="btn-glass"
                     style={{
-                      padding: '0.45rem 0.95rem',
+                      padding: '0.5rem 1rem',
                       fontSize: '0.8rem',
                       fontWeight: 800,
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: '0.35rem',
-                      opacity: generatingCoverAi ? 0.7 : 1
+                      justifyContent: 'center',
+                      gap: '0.4rem',
+                      cursor: uploadingCoverFile ? 'wait' : 'pointer',
+                      background: 'rgba(212,175,55,0.15)',
+                      border: '1px solid var(--gold-primary)',
+                      color: '#fef08a',
+                      borderRadius: '8px',
+                      flex: '1 1 180px'
                     }}
                   >
-                    {generatingCoverAi ? (
+                    {uploadingCoverFile ? (
                       <>
-                        <Loader2 size={14} className="spinner" /> Generating AI...
+                        <Loader2 size={14} className="spinner" /> Uploading Photo...
                       </>
                     ) : (
                       <>
-                        <Sparkles size={14} /> ✨ AI Suggest Image
+                        <Upload size={14} color="var(--gold-primary)" /> 📁 Upload Photo from PC
                       </>
                     )}
                   </button>
                 </div>
+                <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                  💡 Supports JPG, PNG, WebP. You can also drag &amp; drop an image onto the preview box or pick from suggestions below.
+                </span>
               </div>
             </div>
+
+            {/* ─── AI & ORIGINAL IMAGE SUGGESTIONS STUDIO & HORIZONTAL CAROUSEL ─── */}
+            {(() => {
+              const currentLoc = coverSearchName || resolveLocationKeyword(form.title, form.subtitle, form.destinationId, 'Nepal');
+              const suggestions = getCoverPhotoAiSuggestions(coverSearchName, activeStudioLocation, customAiCoverImages, liveOnlineImages, coverFilterType);
+              const originalCount = getCoverPhotoAiSuggestions(coverSearchName, activeStudioLocation, customAiCoverImages, liveOnlineImages, 'original').length;
+              const aiCount = getCoverPhotoAiSuggestions(coverSearchName, activeStudioLocation, customAiCoverImages, liveOnlineImages, 'ai').length;
+
+              return (
+                <div style={{
+                  background: 'linear-gradient(135deg, rgba(212,175,55,0.08), rgba(2,132,199,0.08), rgba(9,20,38,0.88))',
+                  border: '1px solid rgba(212,175,55,0.35)',
+                  borderRadius: '12px',
+                  padding: '1rem',
+                  marginTop: '0.6rem'
+                }}>
+                  {/* Header */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.7rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                      <Sparkles size={16} color="var(--gold-primary)" />
+                      <div>
+                        <span style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--gold-light)' }}>
+                          Original Image AI &amp; Landmark Photo Search
+                        </span>
+                        <span style={{ marginLeft: '0.5rem', fontSize: '0.68rem', background: 'rgba(212,175,55,0.2)', color: '#fef08a', padding: '0.12rem 0.5rem', borderRadius: '10px', fontWeight: 700 }}>
+                          👈 Click any card to apply as Cover 👉
+                        </span>
+                      </div>
+                    </div>
+                    
+                    {/* Horizontal Scroll Arrows */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                      <button
+                        type="button"
+                        onClick={() => coverScrollRef.current?.scrollBy({ left: -260, behavior: 'smooth' })}
+                        title="Scroll Left"
+                        style={{
+                          background: 'rgba(255,255,255,0.08)',
+                          border: '1px solid rgba(255,255,255,0.15)',
+                          color: '#fef08a',
+                          width: '28px',
+                          height: '28px',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <ChevronLeft size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => coverScrollRef.current?.scrollBy({ left: 260, behavior: 'smooth' })}
+                        title="Scroll Right"
+                        style={{
+                          background: 'rgba(255,255,255,0.08)',
+                          border: '1px solid rgba(255,255,255,0.15)',
+                          color: '#fef08a',
+                          width: '28px',
+                          height: '28px',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <ChevronRight size={16} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Search Place Name Input & Live Search / AI Generate Buttons */}
+                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
+                    <div style={{ position: 'relative', flex: '1 1 180px', minWidth: '0' }}>
+                      <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--gold-primary)' }} />
+                      <input
+                        type="text"
+                        value={coverSearchName}
+                        onChange={(e) => setCoverSearchName(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleSearchOriginalPhotos(coverSearchName);
+                          }
+                        }}
+                        placeholder="Enter landmark or destination (e.g. Pashupatinath, Taj Mahal, Pokhara, Munnar, Kashmir)..."
+                        style={{
+                          ...fieldStyle,
+                          paddingLeft: '2.1rem',
+                          paddingRight: coverSearchName ? '2rem' : '0.9rem',
+                          paddingTop: '0.55rem',
+                          paddingBottom: '0.55rem',
+                          fontSize: '0.82rem',
+                          background: 'rgba(2,6,23,0.9)',
+                          border: '1.5px solid rgba(212,175,55,0.4)',
+                          color: '#ffffff'
+                        }}
+                      />
+                      {coverSearchName && (
+                        <button
+                          type="button"
+                          onClick={() => setCoverSearchName('')}
+                          style={{
+                            position: 'absolute',
+                            right: '8px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            background: 'none',
+                            border: 'none',
+                            color: 'var(--text-muted)',
+                            cursor: 'pointer',
+                            fontSize: '0.85rem'
+                          }}
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+
+                    {/* 1. Live Original Photo Search */}
+                    <button
+                      type="button"
+                      onClick={() => handleSearchOriginalPhotos(coverSearchName || form.title || currentLoc)}
+                      disabled={searchingOriginalOnline}
+                      style={{
+                        background: 'linear-gradient(135deg, #0284c7, #0369a1)',
+                        color: '#ffffff',
+                        border: '1px solid #38bdf8',
+                        borderRadius: '10px',
+                        padding: '0.5rem 0.95rem',
+                        fontSize: '0.8rem',
+                        fontWeight: 800,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.4rem',
+                        cursor: searchingOriginalOnline ? 'wait' : 'pointer',
+                        opacity: searchingOriginalOnline ? 0.7 : 1,
+                        whiteSpace: 'nowrap',
+                        boxShadow: '0 4px 14px rgba(2,132,199,0.35)'
+                      }}
+                    >
+                      {searchingOriginalOnline ? (
+                        <>
+                          <Loader2 size={14} className="spinner" /> Searching Live...
+                        </>
+                      ) : (
+                        <>
+                          <Globe size={14} /> 📸 Search Original Photos (Live)
+                        </>
+                      )}
+                    </button>
+
+                    {/* 2. AI Generate Photo Button */}
+                    <button
+                      type="button"
+                      onClick={() => handleGenerateCustomCoverAi(coverSearchName || form.title || currentLoc)}
+                      disabled={generatingCoverAi}
+                      className="btn-gold"
+                      style={{
+                        padding: '0.5rem 0.95rem',
+                        fontSize: '0.8rem',
+                        fontWeight: 800,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.4rem',
+                        opacity: generatingCoverAi ? 0.7 : 1,
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      {generatingCoverAi ? (
+                        <>
+                          <Loader2 size={14} className="spinner" /> Generating AI...
+                        </>
+                      ) : (
+                        <>
+                          <Wand2 size={14} /> ✨ Generate with Gemini AI
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Filter Mode Tabs & Preset Pills Row */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center' }}>
+                      <span style={{ fontSize: '0.7rem', color: '#fef08a', fontWeight: 800 }}>Show:</span>
+                      {[
+                        { id: 'all', label: `🌐 All Photos (${suggestions.length})` },
+                        { id: 'original', label: `📸 Original Real Photos (${originalCount})` },
+                        { id: 'ai', label: `✨ AI Generated (${aiCount})` }
+                      ].map(tab => (
+                        <button
+                          key={tab.id}
+                          type="button"
+                          onClick={() => setCoverFilterType(tab.id)}
+                          style={{
+                            background: coverFilterType === tab.id ? 'var(--gold-primary)' : 'rgba(255,255,255,0.06)',
+                            color: coverFilterType === tab.id ? '#000' : 'var(--gold-light)',
+                            border: coverFilterType === tab.id ? '1px solid var(--gold-primary)' : '1px solid rgba(255,255,255,0.12)',
+                            borderRadius: '8px',
+                            padding: '0.2rem 0.55rem',
+                            fontSize: '0.7rem',
+                            fontWeight: 800,
+                            cursor: 'pointer'
+                          }}
+                        >
+                          {tab.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Quick Popular Pills */}
+                    <div style={{ display: 'flex', gap: '0.3rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                      {[
+                        'Nepal',
+                        'Pokhara',
+                        'Muktinath',
+                        'Kashmir',
+                        'Munnar',
+                        'Ooty',
+                        'Wayanad',
+                        'Athirappilly',
+                        'Kashi',
+                        'Ayodhya',
+                        'Goa',
+                        'Taj Mahal'
+                      ].map((tag) => {
+                        const isTagActive = coverSearchName.toLowerCase() === tag.toLowerCase();
+                        return (
+                          <button
+                            key={tag}
+                            type="button"
+                            onClick={() => {
+                              setCoverSearchName(tag);
+                              handleSearchOriginalPhotos(tag);
+                            }}
+                            style={{
+                              background: isTagActive ? 'var(--gold-primary)' : 'rgba(255,255,255,0.06)',
+                              color: isTagActive ? '#000' : 'var(--gold-light)',
+                              border: isTagActive ? '1px solid var(--gold-primary)' : '1px solid rgba(255,255,255,0.12)',
+                              borderRadius: '14px',
+                              padding: '0.15rem 0.5rem',
+                              fontSize: '0.68rem',
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                              transition: 'all 0.15s ease'
+                            }}
+                          >
+                            {tag}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* ─── HORIZONTAL SCROLLING SUGGESTION LIST ─── */}
+                  <div
+                    ref={coverScrollRef}
+                    style={{
+                      display: 'flex',
+                      gap: '0.75rem',
+                      overflowX: 'auto',
+                      padding: '0.4rem 0.2rem 0.6rem',
+                      scrollbarWidth: 'thin',
+                      scrollbarColor: 'var(--gold-primary) rgba(255,255,255,0.05)',
+                      scrollBehavior: 'smooth'
+                    }}
+                  >
+                    {suggestions.length === 0 ? (
+                      <div style={{ padding: '1.2rem', textAlign: 'center', width: '100%', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                        No photos match "{coverSearchName}". Click <strong>"📸 Search Original Photos Live"</strong> or <strong>"✨ Generate AI Photo"</strong> above!
+                      </div>
+                    ) : suggestions.map((item, imgIdx) => {
+                      const isSelected = form.image === item.url;
+                      const isOriginal = item.type === 'original' || item.type === 'real' || !item.type?.includes('ai');
+                      return (
+                        <div
+                          key={item.url + imgIdx}
+                          onClick={() => setForm(f => ({ ...f, image: item.url }))}
+                          style={{
+                            flex: '0 0 clamp(140px, 38vw, 175px)',
+                            width: 'clamp(140px, 38vw, 175px)',
+                            cursor: 'pointer',
+                            borderRadius: '10px',
+                            overflow: 'hidden',
+                            background: '#040810',
+                            border: isSelected ? '2px solid var(--gold-primary)' : '1px solid rgba(255,255,255,0.12)',
+                            boxShadow: isSelected ? '0 0 16px rgba(212,175,55,0.45)' : '0 2px 8px rgba(0,0,0,0.5)',
+                            position: 'relative',
+                            transition: 'all 0.2s ease',
+                            transform: isSelected ? 'scale(1.02)' : 'scale(1)'
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!isSelected) {
+                              e.currentTarget.style.borderColor = 'rgba(212,175,55,0.6)';
+                              e.currentTarget.style.transform = 'translateY(-2px)';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!isSelected) {
+                              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)';
+                              e.currentTarget.style.transform = 'translateY(0)';
+                            }
+                          }}
+                        >
+                          {/* Image Thumbnail */}
+                          <div style={{ width: '100%', height: '105px', position: 'relative', background: '#000' }}>
+                            <img
+                              src={item.url}
+                              alt={item.name}
+                              loading="lazy"
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            />
+                            
+                            {/* Type Badge */}
+                            <span style={{
+                              position: 'absolute',
+                              top: '5px',
+                              left: '5px',
+                              fontSize: '0.58rem',
+                              fontWeight: 800,
+                              padding: '0.1rem 0.38rem',
+                              borderRadius: '4px',
+                              background: isOriginal ? 'rgba(2,132,199,0.85)' : 'linear-gradient(135deg, #8b5cf6, #ec4899)',
+                              color: '#fff',
+                              border: '1px solid rgba(255,255,255,0.25)'
+                            }}>
+                              {isOriginal ? (item.source === 'Wikimedia Commons' ? '📸 Original (Wikimedia)' : '📸 Original Photo') : '✨ AI Visual'}
+                            </span>
+
+                            {/* Active Checkmark Badge */}
+                            {isSelected && (
+                              <div style={{
+                                position: 'absolute',
+                                top: '5px',
+                                right: '5px',
+                                background: 'var(--gold-primary)',
+                                color: '#000',
+                                borderRadius: '50%',
+                                width: '20px',
+                                height: '20px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontWeight: 900,
+                                boxShadow: '0 2px 6px rgba(0,0,0,0.7)'
+                              }}>
+                                <Check size={13} />
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Footer Info */}
+                          <div style={{ padding: '0.45rem 0.55rem', background: 'rgba(5,12,24,0.95)' }}>
+                            <div style={{
+                              fontSize: '0.74rem',
+                              fontWeight: 700,
+                              color: isSelected ? '#fef08a' : '#fff',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis'
+                            }} title={item.name}>
+                              {item.name}
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.25rem' }}>
+                              <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)' }}>
+                                {item.category || 'Landmark'}
+                              </span>
+                              <span style={{
+                                fontSize: '0.62rem',
+                                fontWeight: 800,
+                                color: isSelected ? '#10b981' : 'var(--gold-light)'
+                              }}>
+                                {isSelected ? '✓ Cover' : 'Set Cover'}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
+
           </div>
 
-          {/* 2. Background Mixing & Multi-Image Slider */}
-          <div className="glass-card" style={{ padding: '1.2rem', background: 'rgba(9,20,38,0.6)', border: '1px solid var(--border-gold)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.8rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Layers size={18} color="var(--gold-primary)" />
-                <div>
-                  <h4 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--gold-light)', margin: 0 }}>
-                    2. Background Mixing &amp; Multi-Image Slider
-                  </h4>
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '0.15rem 0 0' }}>
-                    Mix multiple tourist place photos together for homepage banner and slider with live blend effects
-                  </p>
-                </div>
-              </div>
+          {/* 2. Background Mixing & Multi-Image Slider (Collapsible) */}
+          <details className="glass-card" style={{ padding: '0.8rem 1.2rem', background: 'rgba(9,20,38,0.6)', border: '1px solid var(--border-gold)', borderRadius: '12px' }}>
+            <summary style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', outline: 'none' }}>
+              <Layers size={16} color="var(--gold-primary)" />
+              <span style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--gold-light)' }}>
+                Advanced: Background Mixing & Multi-Image Slider
+              </span>
+            </summary>
+            
+            <div style={{ marginTop: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.8rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
+                  Mix multiple tourist place photos together for homepage banner and slider with live blend effects
+                </p>
 
               {/* Blend Style Selector */}
               <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', alignItems: 'center' }}>
@@ -2086,6 +2875,7 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
                       fontSize: '0.72rem',
                       fontWeight: 700,
                       cursor: 'pointer',
+                      flex: '0 0 auto',
                       background: (form.bgMixStyle || 'collage-blend') === st.id ? 'rgba(212,175,55,0.25)' : 'rgba(255,255,255,0.05)',
                       border: (form.bgMixStyle || 'collage-blend') === st.id ? '1px solid var(--gold-primary)' : '1px solid rgba(255,255,255,0.1)',
                       color: (form.bgMixStyle || 'collage-blend') === st.id ? '#fef08a' : 'var(--text-muted)'
@@ -2139,9 +2929,9 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
                   Only 1 cover photo is currently used. Add AI-generated scenic images or upload photos below to create a multi-image background mix!
                 </div>
               ) : (
-                <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                <div className="sightsee-mix-ribbon">
                   {(form.bgMixImages || []).map((imgUrl, mIdx) => (
-                    <div key={mIdx} style={{ position: 'relative', width: '90px', height: '65px', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--border-gold)', background: '#000' }}>
+                    <div key={mIdx} style={{ position: 'relative', width: 'min(90px, 22vw)', height: '65px', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--border-gold)', background: '#000', flexShrink: 0 }}>
                       <img src={imgUrl} alt={`Mix photo ${mIdx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       <button
                         type="button"
@@ -2183,9 +2973,9 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
               </div>
 
               {/* AI Image Input & Generate for Mix */}
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+              <div className="admin-mix-controls">
                 <input
-                  style={{ ...fieldStyle, flex: 1, minWidth: '220px' }}
+                  style={{ ...fieldStyle, flex: '1 1 180px', minWidth: '0' }}
                   value={mixAiPrompt}
                   onChange={(e) => setMixAiPrompt(e.target.value)}
                   placeholder="Type place name for AI image (e.g. Pokhara Phewa Lake, Muktinath, Munnar Tea)..."
@@ -2277,14 +3067,15 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
                 })}
               </div>
             </div>
-          </div>
+            </div>
+          </details>
 
           {/* 3. Sightseeing Places (Sightseen) */}
           <div className="glass-card" style={{ padding: '1.2rem', background: 'rgba(9,20,38,0.6)', border: '1px solid var(--border-gold)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem', flexWrap: 'wrap', gap: '0.5rem' }}>
               <div>
                 <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--gold-light)', margin: 0, display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                  🏛️ 3. Sightseeing Places (Sightseen) — {((form.sightseeing || []).length)} Spots Added
+                  2. Sightseeing Places (Sightseen) — {((form.sightseeing || []).length)} Spots Added
                 </h4>
                 <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '0.2rem 0 0' }}>
                   Add as many spots as you need (e.g. <b>5 Spots</b> for Nepal or Kerala). Use 1-click batch presets or customize below!
@@ -2308,28 +3099,28 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
               <div style={{ fontSize: '0.75rem', color: 'var(--gold-light)', fontWeight: 800, marginBottom: '0.45rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                 <Sparkles size={14} color="var(--gold-primary)" /> ⚡ 1-Click Add 5 Popular Tour Spots:
               </div>
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <div className="admin-batch-btns">
                 <button
                   type="button"
                   onClick={() => handleBatchAdd5Spots('nepal')}
-                  className="btn-glass"
-                  style={{ padding: '0.35rem 0.75rem', fontSize: '0.74rem', fontWeight: 700, color: '#fef08a', border: '1px solid var(--border-gold)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                  className="btn-glass admin-batch-btn"
+                  style={{ color: '#fef08a', border: '1px solid var(--border-gold)' }}
                 >
                   🇳🇵 + Add 5 Nepal Highlights (Kathmandu, Pokhara, Muktinath, Sarangkot, Lumbini)
                 </button>
                 <button
                   type="button"
                   onClick={() => handleBatchAdd5Spots('kerala')}
-                  className="btn-glass"
-                  style={{ padding: '0.35rem 0.75rem', fontSize: '0.74rem', fontWeight: 700, color: '#6ee7b7', border: '1px solid rgba(16,185,129,0.4)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                  className="btn-glass admin-batch-btn"
+                  style={{ color: '#6ee7b7', border: '1px solid rgba(16,185,129,0.4)' }}
                 >
                   🌴 + Add 5 Kerala Spots (Munnar, Athirappilly, Wayanad, Kovalam, Alleppey)
                 </button>
                 <button
                   type="button"
                   onClick={() => handleBatchAdd5Spots('pilgrimage')}
-                  className="btn-glass"
-                  style={{ padding: '0.35rem 0.75rem', fontSize: '0.74rem', fontWeight: 700, color: '#fbcfe8', border: '1px solid rgba(244,114,182,0.4)', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                  className="btn-glass admin-batch-btn"
+                  style={{ color: '#fbcfe8', border: '1px solid rgba(244,114,182,0.4)' }}
                 >
                   🛕 + Add 5 Sacred Pilgrimage Spots (Kashi, Ayodhya, Kathmandu, Muktinath, Lumbini)
                 </button>
@@ -2395,13 +3186,13 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
                 {(form.sightseeing || []).map((s, idx) => {
                   const matchingPresets = getMatchingPlacePhotos(s.name || '');
                   return (
-                    <div key={idx} style={{ border: '1px solid var(--border-gold)', borderRadius: '12px', padding: '1.1rem', background: 'rgba(6,12,23,0.9)', display: 'grid', gap: '0.8rem', boxShadow: '0 4px 16px rgba(0,0,0,0.35)' }}>
+                    <div key={idx} className="sightsee-spot-card">
                       
                       {/* Spot Card Header with Reorder, Duplicate & Remove Controls */}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '0.5rem', flexWrap: 'wrap', gap: '0.4rem' }}>
+                      <div className="sightsee-spot-header">
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                           <span style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--gold-light)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                            📍 Spot #{idx + 1} {s.name ? `— ${s.name}` : ''}
+                            Spot #{idx + 1} {s.name ? `— ${s.name}` : ''}
                           </span>
                           {s.category && (
                             <span style={{ fontSize: '0.68rem', padding: '0.15rem 0.5rem', borderRadius: '10px', background: 'rgba(212,175,55,0.15)', color: '#fef08a', border: '1px solid rgba(212,175,55,0.3)', fontWeight: 700 }}>
@@ -2411,7 +3202,7 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
                         </div>
 
                         {/* Action Buttons Toolbar */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                        <div className="sightsee-spot-actions">
                           {idx > 0 && (
                             <button
                               type="button"
@@ -2487,7 +3278,7 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
                       </div>
 
                       {/* Place Name & Attraction Title */}
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: '0.8rem' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.8rem' }}>
                         <div>
                           <label style={labelStyle}>Place Name * (e.g. Pokhara, Muktinath, Munnar)</label>
                           <input
@@ -2564,8 +3355,8 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
                       )}
 
                       {/* Photo Preview & Custom URL / Direct Upload / AI Generate */}
-                      <div style={{ display: 'grid', gridTemplateColumns: '95px 1fr', gap: '0.9rem', alignItems: 'center' }}>
-                        <div style={{ width: '95px', height: '70px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border-gold)', background: '#000', position: 'relative' }}>
+                      <div className="sightsee-photo-row">
+                        <div style={{ width: '95px', height: '70px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--border-gold)', background: '#000', position: 'relative', margin: '0 auto' }}>
                           <img src={s.image || './ooty-toy-train-real.jpg'} alt="Spot preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                           {(generatingSpotAiIdx === idx || uploadingSpotIdx === idx) && (
                             <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--gold-light)' }}>
@@ -2576,9 +3367,9 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
                         
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                           <label style={labelStyle}>Spot Photo URL / Direct Upload / AI Generate *</label>
-                          <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                          <div className="sightsee-photo-inputs">
                             <input
-                              style={{ ...fieldStyle, flex: 1, minWidth: '180px' }}
+                              style={{ ...fieldStyle, flex: '1 1 150px', minWidth: '0' }}
                               value={s.image || ''}
                               onChange={(e) => updateListItem('sightseeing', idx, { image: e.target.value })}
                               placeholder="Paste photo URL or use buttons 👉"
@@ -2647,7 +3438,7 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
                       </div>
 
                       {/* Timing & Inclusions Badge Row (More Options) */}
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '0.8rem' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.8rem' }}>
                         <div>
                           <label style={labelStyle}>Best Timing (e.g. 🌅 Sunrise 5:30 AM / 🌆 Evening 6:30 PM)</label>
                           <input
@@ -2686,7 +3477,7 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
                         <summary style={{ fontSize: '0.75rem', color: 'var(--gold-light)', fontWeight: 700, cursor: 'pointer', outline: 'none' }}>
                           ⚙️ + Add More Options (Video Link, Transfer Mode, Traveler Tips)
                         </summary>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.7rem', marginTop: '0.6rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.7rem', marginTop: '0.6rem' }}>
                           <div>
                             <label style={labelStyle}>🎥 Video Tour URL (YouTube / Reel)</label>
                             <input
@@ -2798,7 +3589,7 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
 
       {/* ══════════════ STEP 3 · START & PICKUP ROUTE ══════════════ */}
       {activeStep === 2 && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
           <div style={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.1rem' }}>
             <Navigation size={18} color="var(--gold-primary)" />
             <h4 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--gold-light)', margin: 0, fontFamily: 'var(--font-heading)' }}>
@@ -2814,29 +3605,19 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
               onUpdateRoutePoints={(list) => setForm(f => ({ ...f, routePoints: list }))}
             />
           </div>
-
-          <div style={{ gridColumn: '1 / -1' }}>
-            <label style={labelStyle}>Route Sequence (comma separated: Start, Pickup Stops, Dropping Stops, Destination)</label>
-            <input
-              style={fieldStyle}
-              value={(form.routePoints || []).map(p => p.name).join(', ')}
-              onChange={(e) => setForm(f => ({ ...f, routePoints: enforceRouteOrder(e.target.value.split(',')) }))}
-              placeholder="Thrissur Swaraj Round, Cochin Airport, Ernakulam South, Varanasi"
-            />
-          </div>
         </div>
       )}
 
       {/* ─── WIZARD NAVIGATION ─── */}
-      <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '1.2rem' }}>
+      <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', marginTop: '1.5rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '1.2rem', alignItems: 'center' }}>
         {activeStep > 0 && (
           <button
             type="button"
             className="btn-glass"
             onClick={() => handleStepNavigation(-1)}
-            style={{ flex: 1, justifyContent: 'center', padding: '0.8rem' }}
+            style={{ flex: '1 1 120px', minWidth: '110px', justifyContent: 'center', padding: '0.75rem 0.9rem', fontSize: '0.82rem' }}
           >
-            ← Back to {TOUR_FORM_STEPS[activeStep - 1].icon} {TOUR_FORM_STEPS[activeStep - 1].label}
+            ← Back
           </button>
         )}
 
@@ -2849,23 +3630,25 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
               }
             }}
             style={{
-              padding: '0.8rem 1.2rem',
+              padding: '0.75rem 1rem',
               background: 'rgba(239,68,68,0.18)',
               border: '1px solid rgba(239,68,68,0.5)',
               color: '#fca5a5',
               borderRadius: '10px',
               cursor: 'pointer',
               fontWeight: 800,
-              fontSize: '0.85rem',
+              fontSize: '0.82rem',
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '0.4rem',
+              flex: '1 1 120px',
+              minWidth: '110px',
               transition: 'all 0.2s ease'
             }}
             title="Delete this tour package permanently"
           >
-            <Trash2 size={16} /> Delete Package
+            <Trash2 size={15} /> Delete Package
           </button>
         )}
 
@@ -2876,22 +3659,24 @@ export function TourForm({ initial, onSave, onCancel, onDirtyChange, onDelete })
             onClick={() => handleStepNavigation(1)}
             disabled={!stepCompleteFlags[activeStep]}
             style={{
-              flex: 2,
+              flex: '2 1 180px',
+              minWidth: '160px',
               justifyContent: 'center',
-              padding: '0.8rem',
+              padding: '0.75rem 1rem',
+              fontSize: '0.85rem',
               opacity: stepCompleteFlags[activeStep] ? 1 : 0.5,
               cursor: stepCompleteFlags[activeStep] ? 'pointer' : 'not-allowed'
             }}
           >
-            {stepCompleteFlags[activeStep] ? '✓ ' : ''}Continue to Step {activeStep + 2} · {TOUR_FORM_STEPS[activeStep + 1].label} →
+            {stepCompleteFlags[activeStep] ? '✓ ' : ''}Next: Step {activeStep + 2} · {TOUR_FORM_STEPS[activeStep + 1].label} →
           </button>
         ) : (
-          <button type="submit" className="btn-gold" style={{ flex: 2, justifyContent: 'center', padding: '0.8rem' }}>
+          <button type="submit" className="btn-gold" style={{ flex: '2 1 180px', minWidth: '160px', justifyContent: 'center', padding: '0.75rem 1rem', fontSize: '0.85rem' }}>
             <Save size={16} /> Publish Tour Package
           </button>
         )}
 
-        <button type="button" className="btn-glass" onClick={onCancel} style={{ flex: 1, justifyContent: 'center', padding: '0.8rem' }}>
+        <button type="button" className="btn-glass" onClick={onCancel} style={{ flex: '1 1 90px', minWidth: '80px', justifyContent: 'center', padding: '0.75rem 0.9rem', fontSize: '0.82rem' }}>
           Cancel
         </button>
       </div>

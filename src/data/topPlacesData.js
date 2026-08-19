@@ -93,6 +93,18 @@ export const TOP_PLACES = {
       { name: 'Lingaraj Temple', tag: 'Ancient Bhubaneswar temple' },
       { name: 'Chilika Lake', tag: 'Largest brackish water lagoon' }
     ]
+  },
+  thanjavur: {
+    label: 'Thanjavur & Chidambaram',
+    keyword: 'thanjavur',
+    places: [
+      { name: 'Brihadeeswara Temple', tag: 'UNESCO Great Living Chola Big Temple' },
+      { name: 'Chidambaram Nataraja Temple', tag: 'Akasa Lingam & Golden Hall' },
+      { name: 'Srirangam Ranganathaswamy Temple', tag: '156-acre 108 Divya Desam' },
+      { name: 'Adi Kumbeswarar Temple', tag: 'Sacred Mahamaham temple' },
+      { name: 'Sarangapani Temple', tag: 'Vaishnavite chariot temple' },
+      { name: 'Vaitheeswaran Koil', tag: 'Healing Shiva & Mars temple' }
+    ]
   }
 };
 

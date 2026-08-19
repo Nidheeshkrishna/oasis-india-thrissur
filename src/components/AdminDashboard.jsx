@@ -4,11 +4,13 @@ import {
   BookOpen, ShieldCheck, Check, Trash2, Plus, Search, 
   Lock, Sparkles, Download, Save, AlertCircle, Loader2, Wand2, 
   PenTool, Eye, RefreshCw, Upload, ImagePlus, Type, Copy, Pencil, Edit3, Edit, Send,
-  MonitorPlay, ArrowUp, ArrowDown, Phone, Mail, MapPin, Clock, Globe
+  MonitorPlay, ArrowUp, ArrowDown, Phone, Mail, MapPin, Clock, Globe, Star
 } from 'lucide-react';
 import { firestoreService, isFirebaseConnected } from '../services/firebase';
 import { geminiService, posterStorage } from '../services/gemini';
-import { catalogService, initCatalogFromCloud, getLastWriteOk } from '../services/catalog';
+import { catalogService, initCatalogFromCloud, getLastWriteOk, sortToursUpcomingFirst } from '../services/catalog';
+import { reviewStorage } from '../services/reviews';
+import { RatingStars } from './ReviewsSection';
 
 import { AdminFormModal, TourForm, GalleryForm, BlogForm, HeroSlideForm, DestinationForm } from './admin/CatalogForms';
 import ImageUploader from './admin/ImageUploader';
@@ -33,18 +35,19 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
   // Data States
   const [contactForm, setContactForm] = useState(contactData || {
     phone: '+91 89211 24101',
-    phoneAlt: '+91 89211 24101',
+    phoneAlt: '+91 89213 94179',
     whatsapp: '+91 89211 24101',
     email: 'Oasisindiaholidays@gmail.com',
     emailAlt: 'Oasisindiaholidays@gmail.com',
-    address: 'OASIS India Thrissur, Swaraj Round Main Branch & Airport Escort Desk, Thrissur, Kerala 680001',
+    address: '40/3924 Rohini Plaza, Near Railway Station, Kokkalai, Thrissur',
     workingHours: 'Mon - Sat: 9:00 AM - 8:00 PM | Sun: 10:00 AM - 5:00 PM',
-    escortDesk: 'Cochin International Airport (COK) & Thrissur Railway Station Pickup Desk'
+    escortDesk: '40/3924 Rohini Plaza, Near Railway Station, Kokkalai, Thrissur'
   });
   const [contactMsg, setContactMsg] = useState('');
 
   const [bookings, setBookings] = useState([]);
   const [inquiries, setInquiries] = useState([]);
+  const [reviews, setReviews] = useState(() => reviewStorage.getReviews());
   const [tours, setTours] = useState(() => catalogService.getTours());
   const [destinations, setDestinations] = useState(() => catalogService.getDestinations());
   const [galleryItems, setGalleryItems] = useState(() => catalogService.getGallery());
@@ -53,6 +56,11 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
   const [selectedDestForMix, setSelectedDestForMix] = useState('ooty-tea-railway');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+
+  // Reviews Editor States
+  const [reviewFormOpen, setReviewFormOpen] = useState(false);
+  const [adminReviewForm, setAdminReviewForm] = useState({ name: '', email: '', rating: 5, trip: '', review: '', image: '' });
+  const [reviewSearchTerm, setReviewSearchTerm] = useState('');
 
   // Catalog Editor States
   const [tourFormOpen, setTourFormOpen] = useState(false);
@@ -106,6 +114,9 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
     if (isFirebaseConnected()) {
       initCatalogFromCloud();
     }
+    reviewStorage.fetchReviewsFromCloud().then(r => r && setReviews(r));
+    const unsubReviews = reviewStorage.subscribe(setReviews);
+    return () => unsubReviews();
   }, []);
 
   // Check API key status
@@ -125,6 +136,33 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
     setInquiries(iData);
   };
 
+  // Review Handlers
+  const handleDeleteReview = async (id) => {
+    if (!window.confirm('Delete this traveler review from Firebase cloud and website?')) return;
+    const updated = await reviewStorage.deleteReview(id);
+    setReviews(updated);
+    showCatalogMsg('Review deleted from Firebase cloud and website');
+  };
+
+  const handleSaveAdminReview = async (e) => {
+    e.preventDefault();
+    if (!adminReviewForm.name.trim() || !adminReviewForm.review.trim()) {
+      alert('Please provide traveler name and review text');
+      return;
+    }
+    const updated = await reviewStorage.addReview({
+      name: adminReviewForm.name.trim(),
+      email: adminReviewForm.email.trim() || 'verified.traveler@oasis.in',
+      rating: Number(adminReviewForm.rating) || 5,
+      trip: adminReviewForm.trip.trim(),
+      review: adminReviewForm.review.trim(),
+      image: adminReviewForm.image || undefined
+    });
+    setReviews(updated);
+    setAdminReviewForm({ name: '', email: '', rating: 5, trip: '', review: '', image: '' });
+    setReviewFormOpen(false);
+    showCatalogMsg('Verified review saved to Firebase cloud & published!');
+  };
 
   // Catalog Save/Delete Handlers
   const showCatalogMsg = (msg) => {
@@ -576,10 +614,11 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
   return (
     <div className="modal-overlay" style={{ zIndex: 10000 }}>
       <div 
-        className="glass-card"
+        className="glass-card admin-dash-card"
         style={{
           width: '100%',
           maxWidth: '1240px',
+          height: '94vh',
           maxHeight: '94vh',
           overflow: 'hidden',
           margin: 'auto',
@@ -591,15 +630,8 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
         }}
       >
         {/* Header Bar */}
-        <div style={{
-          padding: '1.2rem 2rem',
-          borderBottom: '1px solid var(--border-gold)',
-          background: 'rgba(6, 12, 23, 0.9)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+        <div className="admin-dash-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', minWidth: 0 }}>
             <div style={{
               width: '36px',
               height: '36px',
@@ -608,12 +640,13 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#000'
+              color: '#000',
+              flexShrink: 0
             }}>
               <LayoutDashboard size={20} />
             </div>
-            <div>
-              <h2 style={{ fontSize: '1.3rem', fontWeight: 800, fontFamily: 'var(--font-heading)', color: 'var(--gold-light)' }}>
+            <div style={{ minWidth: 0 }}>
+              <h2 style={{ fontSize: 'clamp(0.95rem, 2.5vw, 1.3rem)', fontWeight: 800, fontFamily: 'var(--font-heading)', color: 'var(--gold-light)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 OASIS Thrissur • Admin Console
               </h2>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
@@ -638,7 +671,7 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
             {/* Real-time Cloud Indicator (No manual sync button needed) */}
             {isFirebaseConnected() && (
               <div
@@ -704,18 +737,13 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
 
 
         {/* Admin Navigation Tabs - High Contrast & High Visibility */}
-        <div style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '0.5rem',
-          padding: '0.8rem 1.5rem',
-          borderBottom: '1px solid var(--border-gold)',
-          background: '#091322'
-        }}>
+        <div style={{ position: 'relative', flexShrink: 0 }}>
+          <div className="admin-dash-tabs">
                 {[
                   { id: 'tours', label: 'Tours', icon: Package, count: activeToursCount },
                   { id: 'bookings', label: 'Bookings', icon: Calendar, count: bookings.length },
                   { id: 'customers', label: 'Inquiries', icon: Users, count: inquiries.length },
+                  { id: 'reviews', label: 'Reviews & Ratings', icon: Star, count: reviews.length },
                   { id: 'destinations', label: 'Destinations', icon: Globe, count: destinations.length },
                   { id: 'slides', label: 'Hero Banner', icon: MonitorPlay, count: heroSlides.length },
                   { id: 'contact', label: 'Contact Info', icon: Phone },
@@ -731,24 +759,7 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
                       key={tab.id}
                       type="button"
                       onClick={() => setActiveTab(tab.id)}
-                      style={{
-                        background: isActive
-                          ? 'linear-gradient(135deg, rgba(212,175,55,0.3), rgba(212,175,55,0.12))'
-                          : 'rgba(255, 255, 255, 0.07)',
-                        border: isActive ? '1px solid var(--gold-primary)' : '1px solid rgba(255, 255, 255, 0.15)',
-                        color: isActive ? '#fef08a' : '#ffffff',
-                        fontSize: '0.84rem',
-                        fontWeight: isActive ? '800' : '600',
-                        padding: '0.45rem 0.85rem',
-                        borderRadius: '20px',
-                        cursor: 'pointer',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.45rem',
-                        whiteSpace: 'nowrap',
-                        boxShadow: isActive ? '0 0 12px rgba(212,175,55,0.3)' : 'none',
-                        transition: 'all 0.2s ease'
-                      }}
+                      className={`admin-dash-tab-btn ${isActive ? 'active' : ''}`}
                     >
                       <Icon size={15} color={isActive ? '#fef08a' : 'var(--gold-light)'} />
                       <span>{tab.label}</span>
@@ -768,9 +779,13 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
                   );
                 })}
               </div>
+          <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: '40px', background: 'linear-gradient(to right, transparent, #091322)', pointerEvents: 'none', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '4px' }}>
+            <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', opacity: 0.6 }}>▸</span>
+          </div>
+        </div>
 
               {/* Content Section */}
-              <div style={{ padding: '1.8rem', overflowY: 'auto', flexGrow: 1 }}>
+              <div className="admin-dash-content" style={{ padding: '1.5rem' }}>
 
                 {/* Quick Metrics & Overview Dashboard for Admin */}
                 <div style={{
@@ -1712,31 +1727,65 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
 
           {/* ==================== TAB: CUSTOMER INQUIRIES ==================== */}
           {activeTab === 'customers' && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.2rem' }}>
-              {inquiries.map((inq) => (
-                <div key={inq.id} className="glass-card" style={{ padding: '1.4rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
-                    <span className="badge-gold">{inq.id}</span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{inq.date}</span>
-                  </div>
-                  <h4 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.2rem' }}>{inq.name}</h4>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--gold-light)', marginBottom: '0.6rem' }}>{inq.phone}</div>
-                  <div style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.4rem' }}>{inq.subject}</div>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.5, marginBottom: '1rem' }}>
-                    "{inq.message}"
-                  </p>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-subtle)', paddingTop: '0.8rem' }}>
-                    <span className="badge-emerald">{inq.status}</span>
-                    <button
-                      onClick={() => handleUpdateInquiryStatus(inq.id, 'Responded / Contacted')}
-                      className="btn-glass"
-                      style={{ padding: '0.3rem 0.7rem', fontSize: '0.75rem' }}
-                    >
-                      Mark Contacted
-                    </button>
-                  </div>
-                </div>
-              ))}
+            <div>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid var(--border-gold)', color: 'var(--gold-light)' }}>
+                      <th style={{ padding: '0.8rem' }}>Inquiry ID / Date</th>
+                      <th style={{ padding: '0.8rem' }}>Customer Details</th>
+                      <th style={{ padding: '0.8rem' }}>Tour / Package</th>
+                      <th style={{ padding: '0.8rem' }}>Status</th>
+                      <th style={{ padding: '0.8rem', textAlign: 'right' }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {inquiries.length === 0 ? (
+                      <tr>
+                        <td colSpan="5" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                          No inquiries found.
+                        </td>
+                      </tr>
+                    ) : inquiries.map((inq) => (
+                      <tr key={inq.id} style={{ borderBottom: '1px solid var(--border-subtle)', background: 'rgba(255,255,255,0.01)' }}>
+                        <td style={{ padding: '0.8rem' }}>
+                          <div style={{ fontWeight: 700, color: 'var(--gold-light)' }}>{inq.id}</div>
+                          <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{inq.date}</div>
+                        </td>
+                        <td style={{ padding: '0.8rem' }}>
+                          <div style={{ fontWeight: 700, fontSize: '1rem', color: '#fff' }}>{inq.customerName || inq.name}</div>
+                          <div style={{ fontSize: '0.85rem', color: 'var(--gold-light)' }}>{inq.phone}</div>
+                          {inq.email && <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{inq.email}</div>}
+                        </td>
+                        <td style={{ padding: '0.8rem', maxWidth: '220px', color: '#fff' }}>
+                          <div style={{ fontWeight: 600 }}>{inq.tour || inq.subject || 'General Enquiry'}</div>
+                          {inq.message && <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontStyle: 'italic', marginTop: '0.3rem' }}>"{inq.message}"</div>}
+                        </td>
+                        <td style={{ padding: '0.8rem' }}>
+                          <span style={{
+                            padding: '0.25rem 0.65rem',
+                            borderRadius: '12px',
+                            fontSize: '0.75rem',
+                            fontWeight: 700,
+                            background: inq.status === 'Responded / Contacted' ? 'rgba(16,185,129,0.2)' : 'rgba(245,158,11,0.2)',
+                            color: inq.status === 'Responded / Contacted' ? '#10b981' : '#f59e0b'
+                          }}>
+                            {inq.status || 'New Inquiry'}
+                          </span>
+                        </td>
+                        <td style={{ padding: '0.8rem', textAlign: 'right' }}>
+                          <button
+                            onClick={() => handleUpdateInquiryStatus(inq.id, inq.status === 'Responded / Contacted' ? 'New Inquiry' : 'Responded / Contacted')}
+                            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border-gold)', color: '#fff', padding: '0.3rem 0.6rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem' }}
+                          >
+                            Toggle Status
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
 
@@ -1880,7 +1929,7 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
                 const activeCount = tours.filter(p => isTourActive(p.departureDate)).length;
                 const inactiveCount = tours.filter(p => !isTourActive(p.departureDate)).length;
 
-                const filteredTours = tours.filter(p => {
+                const rawFiltered = tours.filter(p => {
                   const isActive = isTourActive(p.departureDate);
                   if (tourStatusFilter === 'active' && !isActive) return false;
                   if (tourStatusFilter === 'inactive' && isActive) return false;
@@ -1891,6 +1940,7 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
                     (Array.isArray(p.mainPlaces) ? p.mainPlaces.join(' ') : String(p.mainPlaces || '')).toLowerCase().includes(q) ||
                     (p.badge || '').toLowerCase().includes(q);
                 });
+                const filteredTours = sortToursUpcomingFirst(rawFiltered);
 
                 return (
                   <>
@@ -2255,7 +2305,253 @@ export default function AdminDashboard({ contactData, onUpdateContact, onClose }
             </div>
           )}
 
+          {/* ==================== TAB: REVIEWS & RATINGS ==================== */}
+          {activeTab === 'reviews' && (() => {
+            const filteredReviews = reviews.filter(r => {
+              const q = reviewSearchTerm.toLowerCase();
+              return (
+                (r.name && r.name.toLowerCase().includes(q)) ||
+                (r.email && r.email.toLowerCase().includes(q)) ||
+                (r.trip && r.trip.toLowerCase().includes(q)) ||
+                (r.review && r.review.toLowerCase().includes(q))
+              );
+            });
+
+            const avgRating = reviews.length
+              ? (reviews.reduce((acc, r) => acc + (Number(r.rating) || 5), 0) / reviews.length).toFixed(1)
+              : '5.0';
+
+            const fiveStarCount = reviews.filter(r => Number(r.rating) === 5).length;
+
+            return (
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                  <div>
+                    <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--gold-light)' }}>
+                      Traveler Reviews & Star Ratings
+                    </h3>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem', marginTop: '0.2rem' }}>
+                      Manage public traveler ratings. All reviews are permanently synchronized with Firebase Firestore cloud.
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.6rem',
+                      background: 'rgba(245, 158, 11, 0.15)',
+                      border: '1px solid rgba(245, 158, 11, 0.4)',
+                      padding: '0.4rem 0.85rem',
+                      borderRadius: '20px'
+                    }}>
+                      <Star size={16} fill="#f59e0b" color="#f59e0b" />
+                      <span style={{ fontWeight: 800, color: '#fbbf24', fontSize: '0.9rem' }}>
+                        Avg {avgRating} / 5.0
+                      </span>
+                      <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.78rem' }}>
+                        ({fiveStarCount} Five-Star)
+                      </span>
+                    </div>
+
+                    <button 
+                      className="btn-gold" 
+                      style={{ padding: '0.5rem 1.2rem', fontSize: '0.85rem' }} 
+                      onClick={() => setReviewFormOpen(true)}
+                    >
+                      <Plus size={16} /> Add Verified Review
+                    </button>
+                  </div>
+                </div>
+
+                {/* Search Bar */}
+                <div style={{ marginBottom: '1.5rem', position: 'relative', maxWidth: '400px' }}>
+                  <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)' }} />
+                  <input
+                    type="text"
+                    placeholder="Search reviews by traveler name, email, trip..."
+                    value={reviewSearchTerm}
+                    onChange={(e) => setReviewSearchTerm(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.6rem 1rem 0.6rem 2.4rem',
+                      borderRadius: '10px',
+                      background: 'rgba(255,255,255,0.06)',
+                      border: '1px solid rgba(255,255,255,0.15)',
+                      color: '#ffffff',
+                      fontSize: '0.85rem',
+                      outline: 'none'
+                    }}
+                  />
+                </div>
+
+                {/* Reviews Grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1.2rem' }}>
+                  {filteredReviews.map((r) => {
+                    const numRating = Number(r.rating) || 5;
+                    return (
+                      <div key={r.id} className="glass-card" style={{ padding: '1.4rem', display: 'flex', flexDirection: 'column', gap: '0.8rem', background: '#091322' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <div>
+                            <div style={{ fontWeight: 700, fontSize: '0.98rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                              <span>{r.name}</span>
+                              <Check size={14} color="#10b981" />
+                            </div>
+                            <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.6)', marginTop: '0.1rem' }}>
+                              {r.email} • {r.createdAt}
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => handleDeleteReview(r.id)}
+                            style={{ background: 'rgba(239,68,68,0.15)', border: 'none', color: '#ef4444', padding: '0.45rem', borderRadius: '8px', cursor: 'pointer' }}
+                            title="Delete Review"
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
+
+                        {/* Stars and Score Badge */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.4rem 0' }}>
+                          <RatingStars value={numRating} size={15} />
+                          <span style={{
+                            background: 'rgba(245, 158, 11, 0.2)',
+                            border: '1px solid rgba(245, 158, 11, 0.5)',
+                            color: '#fbbf24',
+                            fontWeight: 800,
+                            fontSize: '0.75rem',
+                            padding: '0.15rem 0.45rem',
+                            borderRadius: '6px'
+                          }}>
+                            ★ {numRating.toFixed(1)} / 5.0
+                          </span>
+                        </div>
+
+                        {r.trip && (
+                          <span className="badge-emerald" style={{ alignSelf: 'flex-start', fontSize: '0.7rem' }}>
+                            {r.trip}
+                          </span>
+                        )}
+
+                        <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.85rem', lineHeight: 1.6, margin: 0 }}>
+                          "{r.review}"
+                        </p>
+
+                        {r.image && (
+                          <div style={{ borderRadius: '8px', overflow: 'hidden', maxHeight: '140px', border: '1px solid rgba(245,158,11,0.3)', marginTop: '0.2rem' }}>
+                            <img src={r.image} alt="Travel Photo" style={{ width: '100%', height: '140px', objectFit: 'cover' }} />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {filteredReviews.length === 0 && (
+                  <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '3rem 0' }}>
+                    No reviews found matching "{reviewSearchTerm}".
+                  </p>
+                )}
+              </div>
+            );
+          })()}
+
         </div>
+
+        {/* Add Verified Review Modal */}
+        {reviewFormOpen && (
+          <AdminFormModal
+            title="Add Verified Traveler Review"
+            icon={Star}
+            onClose={() => setReviewFormOpen(false)}
+          >
+            <form onSubmit={handleSaveAdminReview} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem', padding: '1rem 0' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.4rem', color: '#ffffff' }}>
+                  Traveler Full Name *
+                </label>
+                <input
+                  value={adminReviewForm.name}
+                  onChange={(e) => setAdminReviewForm({ ...adminReviewForm, name: e.target.value })}
+                  placeholder="e.g. Ramesh Menon"
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: '#0b1626', border: '1px solid rgba(245,158,11,0.4)', color: '#fff', outline: 'none' }}
+                  required
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.4rem', color: '#ffffff' }}>
+                  Email Address *
+                </label>
+                <input
+                  type="email"
+                  value={adminReviewForm.email}
+                  onChange={(e) => setAdminReviewForm({ ...adminReviewForm, email: e.target.value })}
+                  placeholder="traveler@example.com"
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: '#0b1626', border: '1px solid rgba(245,158,11,0.4)', color: '#fff', outline: 'none' }}
+                  required
+                />
+              </div>
+
+              <div style={{ padding: '0.8rem', background: 'rgba(255,255,255,0.04)', borderRadius: '10px', border: '1px solid rgba(245,158,11,0.3)' }}>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.5rem', color: '#fbbf24' }}>
+                  Rating Stars *
+                </label>
+                <RatingStars
+                  value={adminReviewForm.rating}
+                  onChange={(r) => setAdminReviewForm({ ...adminReviewForm, rating: r })}
+                  size={24}
+                  showLabel={true}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.4rem', color: '#ffffff' }}>
+                  Tour Package Name (Optional)
+                </label>
+                <input
+                  value={adminReviewForm.trip}
+                  onChange={(e) => setAdminReviewForm({ ...adminReviewForm, trip: e.target.value })}
+                  placeholder="e.g. Sacred North Yatra: Kashi, Ayodhya & Prayagraj"
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: '#0b1626', border: '1px solid rgba(245,158,11,0.4)', color: '#fff', outline: 'none' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.4rem', color: '#ffffff' }}>
+                  Review & Experience Text *
+                </label>
+                <textarea
+                  value={adminReviewForm.review}
+                  onChange={(e) => setAdminReviewForm({ ...adminReviewForm, review: e.target.value })}
+                  placeholder="Share feedback on arrangements, food, darshan, guides..."
+                  rows={4}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: '#0b1626', border: '1px solid rgba(245,158,11,0.4)', color: '#fff', outline: 'none', resize: 'vertical' }}
+                  required
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.4rem', color: '#ffffff' }}>
+                  Travel Photo (Optional URL or base64)
+                </label>
+                <input
+                  value={adminReviewForm.image}
+                  onChange={(e) => setAdminReviewForm({ ...adminReviewForm, image: e.target.value })}
+                  placeholder="https://... or data:image/..."
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: '#0b1626', border: '1px solid rgba(245,158,11,0.4)', color: '#fff', outline: 'none' }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+                <button type="submit" className="btn-gold" style={{ flex: 1, justifyContent: 'center' }}>
+                  <Check size={16} /> Save to Firebase Cloud
+                </button>
+                <button type="button" className="btn-glass" onClick={() => setReviewFormOpen(false)}>
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </AdminFormModal>
+        )}
 
         {/* Catalog Success Toast */}
         {catalogMsg && (

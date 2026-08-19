@@ -22,7 +22,19 @@ export default function TripPlanner({ onBook }) {
 
   const handleSearch = () => {
     if (!selectedDestObj) return;
-    onBook({ ...selectedDestObj, pickupPoint: selectedPickup, travelDate, guests });
+    const dateText = travelDate ? `Travel Date: ${travelDate}` : 'Travel Date: Flexible / To be decided';
+    const message = [
+      '🌿 *Tour Enquiry – OASIS India Holidays Thrissur*',
+      '',
+      `📍 *Destination:* ${selectedDestObj.name}`,
+      `🚌 *Pickup Point:* ${selectedPickup.name}`,
+      `📅 *${dateText}*`,
+      `👥 *Guests:* ${guests} ${guests === 1 ? 'person' : 'persons'}`,
+      '',
+      'Please share available packages and pricing. Thank you!'
+    ].join('\n');
+    const encoded = encodeURIComponent(message);
+    window.open(`https://wa.me/918921124101?text=${encoded}`, '_blank');
   };
 
   const handleSuggestion = (name) => {
@@ -168,10 +180,10 @@ export default function TripPlanner({ onBook }) {
               <button
                 onClick={handleSearch}
                 className="btn-aurora"
-                style={{ padding: '0.85rem 2rem', justifyContent: 'center' }}
+                style={{ padding: '0.85rem 2rem', justifyContent: 'center', background: 'linear-gradient(135deg, #25D366, #128C7E)', border: 'none' }}
               >
-                <Search size={18} />
-                <span>{t('tripPlanner.search')}</span>
+                <span style={{ fontSize: '1.1rem' }}>💬</span>
+                <span>Plan on WhatsApp</span>
               </button>
             </div>
 

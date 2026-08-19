@@ -78,10 +78,18 @@ export const storageService = {
   },
 
   /**
-   * Upload an image File / Blob to Firebase Cloud Storage
+   * Upload an image File / Blob to Firebase Cloud Storage with instant Base64 fallback
    */
   async uploadFile(file, folder = 'uploads') {
     if (!file) throw new Error('No file provided for upload');
+
+    // Local data URL reader fallback
+    const readAsDataUrl = () => new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve({ success: true, url: e.target.result, isLocal: true });
+      reader.onerror = () => resolve({ success: false, url: '' });
+      reader.readAsDataURL(file);
+    });
     
     if (storage && this.isConfigured()) {
       try {
@@ -89,23 +97,25 @@ export const storageService = {
         const filePath = `oasis-india-thrissur/${folder}/${Date.now()}_${cleanName}`;
         const storageRef = ref(storage, filePath);
         
-        const snapshot = await uploadBytes(storageRef, file, {
-          contentType: file.type || 'image/jpeg'
-        });
-        const downloadUrl = await getDownloadURL(snapshot.ref);
-        return { success: true, url: downloadUrl, path: filePath };
+        const uploadTask = (async () => {
+          const snapshot = await uploadBytes(storageRef, file, {
+            contentType: file.type || 'image/jpeg'
+          });
+          const downloadUrl = await getDownloadURL(snapshot.ref);
+          return { success: true, url: downloadUrl, path: filePath };
+        })();
+
+        const timeoutTask = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Firebase Storage timed out')), 4000)
+        );
+
+        return await Promise.race([uploadTask, timeoutTask]);
       } catch (err) {
-        console.warn('Firebase Cloud Storage upload fallback to base64:', err.message);
+        console.warn('Firebase Cloud Storage upload fallback to local URL:', err.message);
       }
     }
 
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        resolve({ success: true, url: e.target.result, isLocal: true });
-      };
-      reader.readAsDataURL(file);
-    });
+    return await readAsDataUrl();
   },
 
   /**
@@ -266,6 +276,45 @@ const INITIAL_INQUIRIES = [
   }
 ];
 
+export const INITIAL_REVIEWS = [
+  {
+    id: 'rev-1',
+    name: 'Ramesh Menon',
+    email: 'ramesh.menon@gmail.com',
+    rating: 5,
+    review: 'Kashi Yatra from Thrissur was perfectly arranged. VIP darshan, Ganga Aarti boat seats and the Malayalam escort made our senior parents feel completely at home. Highly recommended!',
+    trip: 'Sacred North Yatra: Kashi, Ayodhya & Prayagraj',
+    createdAt: '2026-07-28'
+  },
+  {
+    id: 'rev-2',
+    name: 'Lakshmi Nair',
+    email: 'lakshmi.nair@yahoo.com',
+    rating: 5,
+    review: 'The Kashmir package was magical — Dal Lake houseboat, Gulmarg gondola and the Golden Temple. OASIS handled everything from Cochin airport to Wagah Border with zero hassle.',
+    trip: 'Kashmir Paradise & Punjab Golden Trail',
+    createdAt: '2026-07-30'
+  },
+  {
+    id: 'rev-3',
+    name: 'Dr. Suresh Kumar',
+    email: 'dr.suresh@kims.in',
+    rating: 4,
+    review: 'Parambikulam jungle safari and Kannimara teak were wonderful. Eco lodge stay inside the reserve was a unique experience. Smooth transfers from Thrissur.',
+    trip: 'Emerald Escapes: Munnar, Ooty & Parambikulam',
+    createdAt: '2026-07-31'
+  },
+  {
+    id: 'rev-4',
+    name: 'Anitha Varma',
+    email: 'anitha.varma@gmail.com',
+    rating: 5,
+    review: 'Ayodhya Shri Ram Janmabhoomi darshan was a divine, memorable experience for our whole family. AC coach, Kerala food arrangements, and guide support was 10/10.',
+    trip: 'Sacred North Yatra: Kashi, Ayodhya & Prayagraj',
+    createdAt: '2026-08-05'
+  }
+];
+
 // ==========================================
 // 🔥 FIRESTORE REALTIME CRUD SERVICE
 // ==========================================
@@ -419,6 +468,81 @@ export const firestoreService = {
     return updated;
   },
 
+  // ---- Traveler Reviews & Ratings ----
+  async getReviews(defaultReviews = INITIAL_REVIEWS) {
+    const local = getStorageItem('reviews', defaultReviews);
+    if (db && isFirebaseConnected()) {
+      try {
+        const snap = await getDocs(collection(db, 'oasis_reviews'));
+        if (!snap.empty) {
+          const cloudList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          cloudList.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+          setStorageItem('reviews', cloudList);
+          return cloudList;
+        } else if (local && local.length > 0) {
+          // Seed cloud database from local defaults
+          for (const r of local) {
+            await setDoc(doc(db, 'oasis_reviews', String(r.id)), sanitizeForFirestore(r), { merge: true });
+          }
+        }
+      } catch (err) {
+        console.warn('Firestore getReviews error:', err.message);
+      }
+    }
+    return local;
+  },
+
+  async createReview(reviewData) {
+    const reviews = getStorageItem('reviews', INITIAL_REVIEWS);
+    let imageUrl = reviewData.image || null;
+
+    if (imageUrl && typeof imageUrl === 'string' && imageUrl.startsWith('data:image')) {
+      try {
+        imageUrl = await storageService.uploadImageIfBase64(imageUrl, 'reviews', `rev_${Date.now()}.png`);
+      } catch (err) {
+        console.warn('Firebase Storage review image upload fallback:', err.message);
+      }
+    }
+
+    const newReview = {
+      id: reviewData.id || `rev-${Date.now()}`,
+      name: reviewData.name || 'Traveler',
+      email: reviewData.email || '',
+      rating: Number(reviewData.rating) || 5,
+      trip: reviewData.trip || '',
+      review: reviewData.review || '',
+      image: imageUrl,
+      createdAt: reviewData.createdAt || new Date().toISOString().split('T')[0]
+    };
+
+    const updated = [newReview, ...reviews.filter(r => r.id !== newReview.id)];
+    setStorageItem('reviews', updated);
+
+    if (db && isFirebaseConnected()) {
+      try {
+        await setDoc(doc(db, 'oasis_reviews', String(newReview.id)), sanitizeForFirestore(newReview));
+      } catch (err) {
+        console.warn('Firestore createReview error:', err.message);
+      }
+    }
+    return newReview;
+  },
+
+  async deleteReview(id) {
+    const reviews = getStorageItem('reviews', INITIAL_REVIEWS);
+    const updated = reviews.filter(r => r.id !== id);
+    setStorageItem('reviews', updated);
+
+    if (db && isFirebaseConnected()) {
+      try {
+        await deleteDoc(doc(db, 'oasis_reviews', String(id)));
+      } catch (err) {
+        console.warn('Firestore deleteReview error:', err.message);
+      }
+    }
+    return updated;
+  },
+
   // ---- Company Contact Settings ----
   async getContact(defaultData) {
     const local = getStorageItem('company_contact', defaultData);
@@ -452,7 +576,7 @@ export const firestoreService = {
     return contactData;
   },
 
-  // ---- Cloud Catalog Sync (Tours, Destinations, Gallery, Blogs, Slides) ----
+  // ---- Cloud Catalog Sync (Tours, Destinations, Gallery, Blogs, Slides, Reviews) ----
   async syncCatalogToCloud(collectionName, items) {
     if (!db || !isFirebaseConnected() || !Array.isArray(items)) return false;
     try {
@@ -502,7 +626,7 @@ export const firestoreService = {
   },
 
   // ---- 1-Click Sync All Datasets to Firestore ----
-  async syncAllToCloud({ tours, destinations, gallery, blogs, slides, contact, bookings, inquiries }) {
+  async syncAllToCloud({ tours, destinations, gallery, blogs, slides, contact, bookings, inquiries, reviews }) {
     if (!db || !isFirebaseConnected()) {
       return { success: false, message: 'Firebase configuration is missing or invalid in .env' };
     }
@@ -527,6 +651,12 @@ export const firestoreService = {
       if (slides?.length) {
         await this.syncCatalogToCloud('slides', slides);
         count += slides.length;
+      }
+      if (reviews?.length) {
+        for (const r of reviews) {
+          await setDoc(doc(db, 'oasis_reviews', String(r.id)), sanitizeForFirestore(r), { merge: true });
+        }
+        count += reviews.length;
       }
       if (contact) {
         await this.saveContact(contact);

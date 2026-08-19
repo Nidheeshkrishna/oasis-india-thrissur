@@ -8,7 +8,7 @@ export const MAJOR_PICKUP_POINTS = [
     category: 'Primary Hub & Main Office',
     lat: 10.5276,
     lng: 76.2144,
-    address: 'OASIS India Tours, Swaraj Round South, Thrissur, Kerala 680001',
+    address: '40/3924 Rohini Plaza, Near Railway Station, Kokkalai, Thrissur',
     landmark: 'Opposite Banyan Tree & Vadakkunnathan Temple Gate',
     contact: '+91 98470 12345',
     isHub: true,

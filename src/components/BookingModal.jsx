@@ -60,7 +60,7 @@ export default function BookingModal({ initialData, onClose, onBookingSuccess })
   const [formData, setFormData] = useState({
     packageName: src.title || src.packageName || (src.name ? `${src.name} Tour Package` : 'Custom Tour Package'),
     destination: src.location || src.destination || srcMainPlaces || src.name || 'Thrissur Departure',
-    travelDate: src.travelDate || '',
+    travelDate: src.departureDate || src.travelDate || '',
     adults: src.guests || src.adults || 2,
     children: 0,
     tier: 'Deluxe 4-Star',

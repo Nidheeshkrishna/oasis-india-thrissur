@@ -9,13 +9,20 @@ export const getContactData = () => {
     const saved = localStorage.getItem(CONTACT_STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
+      
+      // Auto-migrate old "Swaraj Round" addresses out of localStorage
+      if (parsed.address && (parsed.address.includes('Swaraj Round') || parsed.address.includes('680001'))) {
+        parsed.address = initialContactData.address;
+      }
+      if (parsed.escortDesk && (parsed.escortDesk.includes('Swaraj Round') || parsed.escortDesk.includes('680001'))) {
+        parsed.escortDesk = initialContactData.escortDesk;
+      }
+
       return {
         ...initialContactData,
         ...parsed,
-        // Enforce updated communication contacts
-        email: parsed.email && !parsed.email.includes('oasisindiatours') ? parsed.email : initialContactData.email,
-        whatsapp: parsed.whatsapp || initialContactData.whatsapp,
-        phone: parsed.phone || initialContactData.phone
+        // Enforce valid oasis email format if broken
+        email: parsed.email && !parsed.email.includes('oasisindiatours') && parsed.email !== initialContactData.email ? parsed.email : initialContactData.email,
       };
     }
   } catch (e) {
@@ -47,50 +54,31 @@ export const openWhatsApp = (message) => {
 
 const fmt = (n) => `₹${Number(n || 0).toLocaleString('en-IN')}`;
 
-// Full booking message — formatted as a comprehensive Booking Enquiry for WhatsApp
-export const buildBookingMessage = (booking) => {
-  const lines = [
-    '✨ *OASIS INDIA HOLIDAYS THRISSUR — BOOKING ENQUIRY*',
-    '',
-    'Hello, I would like to make a booking enquiry for the following tour package:',
-    `📦 *Package:* ${booking.packageName || booking.title || ''}`,
-    booking.destination ? `📍 *Destination:* ${booking.destination}` : '',
-    booking.duration ? `⏱️ *Duration:* ${booking.duration}` : '',
-    booking.totalPrice || booking.basePrice || booking.price ? `💰 *Price:* ${fmt(booking.totalPrice || booking.basePrice || booking.price)} per person` : '',
-    '',
-    '👤 *TRAVELER & TRIP DETAILS:*',
-    `📅 *Preferred Travel / Departure Date:* ${booking.travelDate || booking.departureDate || 'Upcoming Departure'}`,
-    `👥 *Travelers:* ${booking.adults || 1} Adults${booking.children ? `, ${booking.children} Children` : ''}`,
-    `👤 *Name:* ${booking.customerName || ''}`,
-    `📱 *Phone / WhatsApp:* ${booking.phone || '8921124101'}`,
-    booking.email ? `📧 *Email:* ${booking.email}` : '',
-    booking.pickupLocation ? `📍 *Pickup Point:* ${booking.pickupLocation}` : '📍 *Pickup Hub:* Thrissur Swaraj Round / Direct Escort Desk',
-    booking.hotelPreference || booking.tier ? `🏨 *Stay Preference:* ${booking.hotelPreference || booking.tier}` : '',
-    booking.requirements && booking.requirements !== '—' ? `📝 *Special Notes:* ${booking.requirements}` : '',
-    '',
-    '💬 Please confirm availability, final quote, and booking details with me.',
-    'Thank you!'
-  ].filter(line => line !== undefined && line !== null && line !== '');
-  return lines.join('\n');
-};
-
-// Quick enquiry from a package card — "Book Now as Enquiry"
+// Simple, direct tour enquiry message for WhatsApp (no complex booking fields required)
 export const buildQuickEnquiryMessage = (pkg) => {
+  if (!pkg) {
+    return 'Hello OASIS India Holidays Thrissur, I would like to make an enquiry about your tour packages.';
+  }
+  const title = pkg.title || pkg.packageName || pkg.name || 'Tour Package';
   const dest = Array.isArray(pkg.mainPlaces)
     ? pkg.mainPlaces.join(', ')
     : (pkg.destination || pkg.location || '');
   const lines = [
-    '✨ *OASIS INDIA HOLIDAYS THRISSUR — BOOK NOW ENQUIRY*',
+    '✨ *OASIS INDIA HOLIDAYS THRISSUR — TOUR ENQUIRY*',
     '',
-    'Hello, I am interested in booking this tour package and would like to make an enquiry:',
-    `📦 *Package Name:* ${pkg.title || pkg.name || ''}`,
-    dest ? `📍 *Places Covered:* ${dest}` : '',
-    pkg.duration ? `⏱️ *Duration:* ${pkg.duration}` : '',
-    pkg.price ? `💰 *Package Price:* ${fmt(pkg.price)} per person` : '',
+    'Hello, I would like to enquire about this tour package:',
+    `📦 *Package:* ${title}`,
     pkg.departureDate ? `📅 *Departure Date:* ${pkg.departureDate}` : '',
+    pkg.duration ? `⏱️ *Duration:* ${pkg.duration}` : '',
+    pkg.price ? `💰 *Price:* ₹${Number(pkg.price).toLocaleString('en-IN')} / person` : '',
+    dest ? `📍 *Places / Sightseeing:* ${dest}` : '',
     '',
-    '💬 Please share available slots, full itinerary, and booking procedure with me.',
+    '💬 Please share available seats, pickup details from Thrissur, and package itinerary with me.',
     'Thank you!'
   ].filter(Boolean);
   return lines.join('\n');
+};
+
+export const buildBookingMessage = (booking) => {
+  return buildQuickEnquiryMessage(booking);
 };

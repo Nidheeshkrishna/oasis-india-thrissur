@@ -1,6 +1,190 @@
 // Handcrafted Tour Packages curated by OASIS India Thrissur
 export const PACKAGES = [
   {
+    id: 'thirupathi-padmavathi-kalahasthi-yathra',
+    title: 'Thirupathi • Padmavathi • Kalahasthi Yathra',
+    subtitle: '3 Days Sacred Spiritual Journey • AC Air Bus Pickup from Thrissur • 1 Night AC Stay & Food Included',
+    destinationId: 'thirupathi-padmavathi-kalahasthi',
+    duration: '3 Days / 2 Nights (1 Night Hotel Stay)',
+    departureDate: '2026-09-04',
+    returnDate: '2026-09-06',
+    price: 3900,
+    originalPrice: 4999,
+    discountPercent: 22,
+    rating: 4.99,
+    reviews: 280,
+    badge: '⚡ September 4, 5, 6 Departure • Limited Seats',
+    image: './thirupathi_yathra_poster.jpg',
+    phone: '+91 89211 24101',
+    pickupLocation: 'Starting from Thrissur at 9:00 AM (Via: Wadakanchery » Kulappulli » Ottapalam » Palakkad)',
+    bgMixImages: [
+      './thirupathi_yathra_poster.jpg',
+      './thirupathi_balaji_temple.png',
+      './thirupathi_padmavathi_temple.png',
+      './thirupathi_kalahasthi_temple.png'
+    ],
+    bgMixStyle: 'collage-blend',
+    mainPlaces: [
+      'Tirumala Tirupati Balaji',
+      'Sri Padmavathi Ammavari Temple',
+      'Srikalahasti Vayu Lingam Shiva Temple',
+      'Luxury AC Air Bus Experience'
+    ],
+    placeImages: [
+      {
+        name: 'Tirumala Tirupati Balaji',
+        title: 'Lord Sri Venkateswara Swamy Temple (Tirumala)',
+        url: './thirupathi_balaji_temple.png',
+        group: 'Tirupati',
+        description: 'World-famous sacred abode of Lord Venkateswara Swamy perched atop the Seven Hills of Tirumala. Experience peaceful VIP darshan, holy Ananda Nilayam golden gopuram view, and receive sacred Tirupati Laddu prasadam.'
+      },
+      {
+        name: 'Sri Padmavathi Ammavari Temple',
+        title: 'Goddess Sri Padmavathi Devi Temple (Tiruchanur)',
+        url: './thirupathi_padmavathi_temple.png',
+        group: 'Tiruchanur',
+        description: 'The auspicious shrine of Goddess Padmavathi (incarnation of Goddess Lakshmi) situated on the banks of holy Padma Sarovaram in Tiruchanur. Visiting Padmavathi Ammavaru completes the sacred Tirupati pilgrimage.'
+      },
+      {
+        name: 'Srikalahasti Vayu Lingam Shiva Temple',
+        title: 'Srikalahasteeswara Swamy & Rahu-Ketu Kshetra',
+        url: './thirupathi_kalahasthi_temple.png',
+        group: 'Srikalahasti',
+        description: 'One of the prestigious Pancha Bhoota Sthalams representing the Wind / Air (Vayu Lingam) element and renowned Rahu-Ketu Sarpa Dosha Nivarana Kshetra on the banks of holy river Swarnamukhi.'
+      },
+      {
+        name: 'Luxury AC Air Bus Experience',
+        title: 'Comfortable AC Air Bus Coach with Food & Hotel Stay',
+        url: './thirupathi_air_bus.png',
+        group: 'Transport & Stays',
+        description: 'Executive Air-Suspension AC Coach with pushback seats departing from Thrissur with boarding points at Wadakanchery, Kulappulli, Ottapalam and Palakkad. Includes 1-Night comfortable AC hotel stay, all pure vegetarian meals, and entry passes.'
+      }
+    ],
+    included: [
+      'Luxury AC Air Bus coach transfer from Thrissur & return',
+      'Boarding points: Thrissur, Wadakanchery, Kulappulli, Ottapalam, Palakkad',
+      '1 Night comfortable AC hotel accommodation in Tirupati',
+      'Pure vegetarian South Indian / Kerala food included throughout the journey',
+      'All temple entry fees & special darshan arrangements included',
+      'Lord Sri Venkateswara (Tirumala Balaji) Darshan',
+      'Goddess Sri Padmavathi Ammavari (Tiruchanur) Darshan',
+      'Srikalahasteeswara Swamy (Vayu Lingam) Darshan',
+      'Experienced Malayali Tour Escort & dedicated pilgrimage assistance'
+    ],
+    itinerary: [
+      { 
+        day: 1, 
+        title: 'Sep 04 (Thursday): 9:00 AM Departure from Thrissur via Wadakanchery, Kulappulli, Ottapalam & Palakkad', 
+        desc: 'Assemble at Thrissur at 9:00 AM. Board the luxury AC Air Bus with OASIS Malayali Tour Escort. Pickup en route at Wadakanchery, Kulappulli, Ottapalam, and Palakkad. Enjoy a scenic, comfortable journey with delicious Kerala lunch and dinner stops. Late evening arrival in Tirupati and check-in to AC hotel. Overnight stay in Tirupati.' 
+      },
+      { 
+        day: 2, 
+        title: 'Sep 05 (Friday): Tirumala Lord Venkateswara Balaji Darshan & Tiruchanur Padmavathi Temple', 
+        desc: 'Early morning holy ascent to Tirumala hills. Sacred VIP darshan of Lord Sri Venkateswara Swamy (Tirupati Balaji). Receive blessed Tirupati Laddu prasadam. Delicious South Indian vegetarian lunch. Afternoon excursion to the sacred Sri Padmavathi Ammavari Temple in Tiruchanur for divine blessings. Evening leisure, dinner, and comfortable overnight stay in Tirupati.' 
+      },
+      { 
+        day: 3, 
+        title: 'Sep 06 (Saturday): Srikalahasteeswara (Vayu Lingam) Temple Darshan → Return Journey to Kerala', 
+        desc: 'Morning check-out from hotel and journey to Srikalahasti. Divine darshan of Lord Srikalahasteeswara (Vayu Lingam) and Goddess Gnanaprasoonambika at the ancient riverside temple. Afternoon return journey in AC Air Bus towards Kerala with food stops. Late night safe arrival at Palakkad, Ottapalam, Kulappulli, Wadakanchery, and Thrissur with divine blessings and sacred memories.' 
+      }
+    ]
+  },
+  {
+    id: 'thanjavur-chidambaram-srirangam-yathra',
+    title: 'Thanjavur • Chidambaram • Srirangam Yathra',
+    subtitle: '4 Days Grand Chola Temple Pilgrimage • AC Bus Departure from Thrissur • 1 Night Stay & 6 Meals Included',
+    destinationId: 'thanjavur-chidambaram-srirangam',
+    duration: '4 Days / 3 Nights (1 Night Hotel Stay)',
+    departureDate: '2026-10-09',
+    returnDate: '2026-10-12',
+    price: 4200,
+    originalPrice: 5499,
+    discountPercent: 24,
+    rating: 4.98,
+    reviews: 340,
+    badge: '⚡ October 9 – 12 Departure • Special Temple Yathra',
+    image: './thanjavur_yathra_poster.png',
+    phone: '+91 89211 24101',
+    pickupLocation: 'Starting from Thrissur at 9:00 PM (Oasis India Holidays LLP, Rohini Plaza, Near Rly. Station, Thrissur - 21)',
+    bgMixImages: [
+      './thanjavur_yathra_poster.png',
+      './thanjavur_brihadeeswara_temple.png',
+      './chidambaram_nataraja_temple.png',
+      './srirangam_ranganathaswamy_temple.png'
+    ],
+    bgMixStyle: 'collage-blend',
+    mainPlaces: [
+      'Thanjavur Brihadeeswara Temple',
+      'Chidambaram Thillai Nataraja Kshethram',
+      'Srirangam Sri Ranganathaswamy Temple',
+      'Kumbakonam & Vaitheeswaran Koil'
+    ],
+    placeImages: [
+      {
+        name: 'Thanjavur Brihadeeswara Temple',
+        title: 'Brihadeeswara Temple (Great Living Chola Temple)',
+        url: './thanjavur_brihadeeswara_temple.png',
+        group: 'Thanjavur',
+        description: 'World-famous 1,000-year-old UNESCO World Heritage granite wonder built by Emperor Raja Raja Chola I. Admire the 216-ft Vimana tower, the 80-tonne single granite capstone, and one of the largest monolithic Nandi statues in India.'
+      },
+      {
+        name: 'Chidambaram Thillai Nataraja Kshethram',
+        title: 'Thillai Nataraja Temple (Akasa Sthalam)',
+        url: './chidambaram_nataraja_temple.png',
+        group: 'Chidambaram',
+        description: 'One of the Pancha Bhoota Sthalams representing Ether/Space (Akasa Lingam). Revered shrine of Lord Shiva performing the cosmic dance of creation and bliss (Ananda Tandavam) inside the sacred Golden Hall (Kanakasabha).'
+      },
+      {
+        name: 'Srirangam Sri Ranganathaswamy Temple',
+        title: 'Sri Ranganathaswamy Temple (Trichy Srirangam)',
+        url: './srirangam_ranganathaswamy_temple.png',
+        group: 'Srirangam',
+        description: 'First and foremost of the 108 sacred Divya Desams dedicated to Lord Vishnu in reclining posture (Sayanam). Spanning 156 acres on the Kaveri river island, it is the largest functioning Hindu temple complex in the world with 21 magnificent gopurams.'
+      },
+      {
+        name: 'Kumbakonam Temples & Vaitheeswaran Koil',
+        title: 'Adi Kumbeswarar, Sarangapani, Chakrapani & Vaitheeswaran Koil',
+        url: './thanjavur_yathra_poster.png',
+        group: 'Kumbakonam',
+        description: 'Sacred temple cluster including Adi Kumbeswarar, Sarangapani (chariot temple), Chakrapani, and the powerful healing shrine of Vaitheeswaran Koil dedicated to Lord Vaidyanatha Shiva and Angaraka (Mars).'
+      }
+    ],
+    included: [
+      'Comfortable AC Bus transportation from Thrissur & return',
+      '6 Delicious pure vegetarian meals included throughout the tour',
+      '1 Night comfortable hotel accommodation in Kumbakonam / Thanjavur',
+      'All temple entry passes & special darshan arrangements',
+      'Brihadeeswara Temple UNESCO Big Temple guided visit',
+      'Chidambaram Thillai Nataraja Kshethram Darshan',
+      'Srirangam Sri Ranganathaswamy Temple VIP Darshan',
+      'Kumbakonam Temples (Adi Kumbeswarar, Sarangapani, Chakrapani)',
+      'Vaitheeswaran Koil Lord Vaidyanatha healing shrine visit',
+      'Experienced Malayali Tour Escort & dedicated pilgrimage assistance from Thrissur'
+    ],
+    itinerary: [
+      {
+        day: 1,
+        title: 'Oct 09 (Friday): 9:00 PM Night Departure from Thrissur Swaraj Round',
+        desc: 'Assemble at Oasis India Holidays LLP, Rohini Plaza near Thrissur Railway Station at 8:30 PM. Board the luxury AC Bus at 9:00 PM with OASIS Malayali Tour Escort. Overnight scenic journey towards the Tamil Nadu temple heritage corridor.'
+      },
+      {
+        day: 2,
+        title: 'Oct 10 (Saturday): Kumbakonam Temples & Holy Vaitheeswaran Koil Darshan',
+        desc: 'Morning arrival in Kumbakonam. Check-in to hotel, freshen up, and enjoy a delicious South Indian breakfast. Visit the historic Adi Kumbeswarar Temple, Sarangapani Temple, and Chakrapani Temple. Relish traditional lunch. Afternoon excursion to the sacred Vaitheeswaran Koil healing shrine. Evening temple aarti, dinner, and comfortable overnight stay in Kumbakonam.'
+      },
+      {
+        day: 3,
+        title: 'Oct 11 (Sunday): Thanjavur Brihadeeswara Temple, Chidambaram Nataraja & Srirangam Ranganathar',
+        desc: 'Morning check-out from hotel and journey to Thanjavur for the divine darshan of Brihadeeswara Big Temple (UNESCO World Heritage Chola marvel). Proceed to Chidambaram Thillai Nataraja Kshethram for Akasa Lingam darshan. Delicious lunch. Afternoon visit to the grand Srirangam Sri Ranganathaswamy Temple complex in Trichy. Evening dinner stop and departure on return journey towards Kerala.'
+      },
+      {
+        day: 4,
+        title: 'Oct 12 (Monday): 5:00 AM Safe Early Morning Return Arrival in Thrissur',
+        desc: 'Early morning 5:00 AM safe arrival in Thrissur with blissful divine blessings of Chola temples, cherished spiritual memories, and fellowship with OASIS India Holidays.'
+      }
+    ]
+  },
+  {
     id: 'nepal-yathra-spiritual-scenic',
     title: 'Nepal Yathra: Lumbini, Pokhara, Muktinath & Kathmandu',
     subtitle: '7 Nights Spiritual & Scenic Journey • Kerala – Gorakhpur 3rd AC Train Included • Malayali Tour Manager',
@@ -86,6 +270,8 @@ export const PACKAGES = [
     subtitle: 'Thrissur Direct Pickup Eco-Excursion & Rainforest Safari',
     destinationId: 'athirappilly-waterfalls',
     duration: '1 Day / Full Day Tour',
+    departureDate: '2027-02-18',
+    returnDate: '2027-02-18',
     price: 4999,
     originalPrice: 6999,
     discountPercent: 28,
@@ -124,6 +310,8 @@ export const PACKAGES = [
     subtitle: 'Thrissur Departure Special Pilgrimage Package',
     destinationId: 'kashi-varanasi',
     duration: '7 Days / 6 Nights',
+    departureDate: '2026-11-15',
+    returnDate: '2026-11-21',
     price: 32999,
     originalPrice: 38999,
     discountPercent: 15,
@@ -168,6 +356,8 @@ export const PACKAGES = [
     subtitle: 'Luxury Nature & Hill Station Tour from Thrissur',
     destinationId: 'munnar-tea-plantations',
     duration: '6 Days / 5 Nights',
+    departureDate: '2027-02-05',
+    returnDate: '2027-02-10',
     price: 27999,
     originalPrice: 32999,
     discountPercent: 15,
@@ -213,6 +403,8 @@ export const PACKAGES = [
     subtitle: 'Heritage & Char Dham Experience',
     destinationId: 'puri-jagannath',
     duration: '5 Days / 4 Nights',
+    departureDate: '2027-01-10',
+    returnDate: '2027-01-14',
     price: 25999,
     originalPrice: 29999,
     discountPercent: 13,
@@ -253,6 +445,8 @@ export const PACKAGES = [
     subtitle: 'Weekend Spiritual Getaway from Thrissur',
     destinationId: 'tiruchendur-murugan',
     duration: '3 Days / 2 Nights',
+    departureDate: '2027-01-22',
+    returnDate: '2027-01-24',
     price: 14999,
     originalPrice: 17999,
     discountPercent: 16,
@@ -290,6 +484,8 @@ export const PACKAGES = [
     subtitle: 'Amritsar • Wagah Border • Gulmarg • Pahalgam • Sonamarg • Dal Lake',
     destinationId: 'kashmir-punjab-golden-trail',
     duration: '7 Days / 6 Nights',
+    departureDate: '2026-12-05',
+    returnDate: '2026-12-11',
     price: 49999,
     originalPrice: 57999,
     discountPercent: 14,
@@ -343,6 +539,8 @@ export const PACKAGES = [
     subtitle: 'Thrissur / Cochin Departure Special • Sacred Pashupatinath Darshan, Phewa Lake Boating & Sarangkot Himalayan Sunrise',
     destinationId: 'nepal-himalayan-kingdom',
     duration: '6 Days / 5 Nights',
+    departureDate: '2026-12-22',
+    returnDate: '2026-12-27',
     price: 38999,
     originalPrice: 45999,
     discountPercent: 15,

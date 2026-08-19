@@ -14,6 +14,7 @@ import BlogSection from './components/BlogSection';
 import BookingModal from './components/BookingModal';
 import AdminDashboard from './components/AdminDashboard';
 import AiDestinationGuideModal from './components/AiDestinationGuideModal';
+import EnquiryModal from './components/EnquiryModal';
 import ContactSection from './components/ContactSection';
 import Footer from './components/Footer';
 import FloatingActions from './components/FloatingActions';
@@ -22,7 +23,7 @@ import CinematicScrollReveal from './components/CinematicScrollReveal';
 import CinematicParticleEngine from './components/CinematicParticleEngine';
 
 import { DESTINATIONS } from './data/destinationsData';
-import { getContactData } from './services/whatsapp';
+import { getContactData, openWhatsApp, buildQuickEnquiryMessage } from './services/whatsapp';
 import { catalogService } from './services/catalog';
 import { useCatalog } from './hooks/useCatalog';
 import { ShieldCheck, Award, HeartHandshake, PhoneCall, Sparkles, MapPin, Star } from 'lucide-react';
@@ -36,14 +37,17 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [selectedDestination, setSelectedDestination] = useState(null);
   const [selectedPackage, setSelectedPackage] = useState(null);
-  const [selectedBookingData, setSelectedBookingData] = useState(null);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isAiGuideOpen, setIsAiGuideOpen] = useState(false);
   const [aiGuideLocation, setAiGuideLocation] = useState('Kodaikanal');
   const [loaderDone, setLoaderDone] = useState(false);
 
+  const [enquiryData, setEnquiryData] = useState(null);
+  const [isEnquiryOpen, setIsEnquiryOpen] = useState(false);
+
   const handleOpenBooking = (data = null) => {
-    setSelectedBookingData(data);
+    setEnquiryData(data || { isGeneral: true });
+    setIsEnquiryOpen(true);
   };
 
   // Auto-open admin if URL contains #admin or ?admin=true
@@ -375,14 +379,6 @@ export default function App() {
           pkg={selectedPackage}
           onClose={() => setSelectedPackage(null)}
           onBookTour={(pkg) => handleOpenBooking(pkg)}
-        />
-      )}
-
-      {/* Multi-Step Tour Booking Modal */}
-      {selectedBookingData && (
-        <BookingModal 
-          initialData={selectedBookingData}
-          onClose={() => setSelectedBookingData(null)}
         />
       )}
 

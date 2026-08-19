@@ -4,9 +4,9 @@ export const translations = {
   en: {
     // Brand & Top Bar
     brand: 'OASIS India Thrissur',
-    topbarBranch: 'Thrissur Swaraj Round Main Branch & Airport Escort Desk',
+    topbarBranch: '40/3924 Rohini Plaza, Near Railway Station, Kokkalai, Thrissur',
     topbarAuth: '100% Authentic Licensed Destination Photography • Ministry of Tourism Recognized',
-    helpline: 'Helpline: +91 89211 24101',
+    helpline: 'Helpline: +91 89211 24101 / +91 89213 94179',
     language: 'Language',
     // Nav
     nav: {
@@ -124,12 +124,12 @@ export const translations = {
     // Footer
     footer: {
       aboutTitle: 'About OASIS India',
-      aboutText: 'Headquartered at Swaraj Round, Thrissur — Kerala’s trusted travel portal for sacred yatras, hill station retreats and heritage circuits.',
+      aboutText: 'Headquartered at Rohini Plaza, Kokkalai, Thrissur — Kerala’s trusted travel portal for sacred yatras, hill station retreats and heritage circuits.',
       office: 'Thrissur Head Office',
       quickLinks: 'Featured Shrines & Spots',
       mediaPolicy: 'Authentic Media Policy',
       contact: 'Contact Us',
-      address: 'Swaraj Round, Thrissur, Kerala 680001',
+      address: '40/3924 Rohini Plaza, Near Railway Station, Kokkalai, Thrissur',
       email: 'hello@oasisindiatravel.com',
       newsletterTitle: 'Get Travel Deals & Yatra Updates',
       newsletterText: 'Subscribe for exclusive seasonal discounts and new tour launches.',
@@ -300,7 +300,7 @@ export const translations = {
 
   ml: {
     brand: 'ഒയാസിസ് ഇന്ത്യ തൃശൂർ',
-    topbarBranch: 'തൃശൂർ സ്വരാജ് റൗണ്ട് മെയിൻ ബ്രാഞ്ച് & എയർപോർട്ട് എസ്കോർട്ട് ഡെസ്ക്',
+    topbarBranch: '40/3924 Rohini Plaza, Near Railway Station, Kokkalai, Thrissur',
     topbarAuth: '100% ആധികാരിക ലൈസൻസുള്ള ഡെസ്റ്റിനേഷൻ ഫോട്ടോഗ്രഫി • ടൂറിസം മന്ത്രാലയം അംഗീകൃതം',
     helpline: 'ഹെൽപ്പ്‌ലൈൻ: +91 89211 24101',
     language: 'ഭാഷ',
@@ -409,12 +409,12 @@ export const translations = {
     },
     footer: {
       aboutTitle: 'ഒയാസിസ് ഇന്ത്യയെ കുറിച്ച്',
-      aboutText: 'സ്വരാജ് റൗണ്ട് തൃശൂർ കേന്ദ്രമായി പവിത്ര യാത്രകൾക്കും ഹിൽ സ്റ്റേഷൻ റിട്രീറ്റുകൾക്കും ഹെറിറ്റേജ് സർക്യൂട്ടുകൾക്കുമുള്ള കേരളത്തിന്റെ വിശ്വസ്ത ട്രാവൽ പോർട്ടൽ.',
+      aboutText: 'റോഹിനി പ്ലാസ, കൊക്കലൈ, തൃശൂർ ആസ്ഥാനമാക്കി — പവിത്ര യാത്രകൾക്കും ഹിൽ സ്റ്റേഷൻ റിട്രീറ്റുകൾക്കും ഹെറിറ്റേജ് സർക്യൂട്ടുകൾക്കുമുള്ള കേരളത്തിന്റെ വിശ്വസ്ത ട്രാവൽ പോർട്ടൽ.',
       office: 'തൃശൂർ ഹെഡ് ഓഫീസ്',
       quickLinks: 'പ്രധാന ക്ഷേത്രങ്ങളും കേന്ദ്രങ്ങളും',
       mediaPolicy: 'ആധികാരിക മീഡിയ നയം',
       contact: 'ബന്ധപ്പെടുക',
-      address: 'സ്വരാജ് റൗണ്ട്, തൃശൂർ, കേരള 680001',
+      address: '40/3924 Rohini Plaza, Near Railway Station, Kokkalai, Thrissur',
       email: 'hello@oasisindiatravel.com',
       newsletterTitle: 'ട്രാവൽ ഓഫറുകളും യാത്രാ വിവരങ്ങളും നേടൂ',
       newsletterText: 'എക്സ്ക്ലൂസീവ് സീസൺ ഡിസ്കൗണ്ടുകൾക്കും പുതിയ ടൂർ ലോഞ്ചുകൾക്കും സബ്സ്ക്രൈബ് ചെയ്യൂ.',
@@ -578,7 +578,7 @@ export const translations = {
 
   ta: {
     brand: 'ஓயாசிஸ் இந்தியா திருச்சூர்',
-    topbarBranch: 'திருச்சூர் ஸ்வராஜ் ரவுண்ட் மெயின் கிளை & விமான நிலைய எஸ்கார்ட் டெஸ்க்',
+    topbarBranch: '40/3924 Rohini Plaza, Near Railway Station, Kokkalai, Thrissur',
     topbarAuth: '100% அங்கீகரிக்கப்பட்ட உரிமம் பெற்ற டெஸ்டினேஷன் புகைப்படம் • சுற்றுலாத் துறை அங்கீகாரம்',
     helpline: 'உதவி எண்: +91 89211 24101',
     language: 'மொழி',
@@ -687,12 +687,12 @@ export const translations = {
     },
     footer: {
       aboutTitle: 'ஓயாசிஸ் இந்தியா பற்றி',
-      aboutText: 'ஸ்வராஜ் ரவுண்ட் திருச்சூர் தலைமையகம் — புனித யாத்திரைகள், மலைவாசஸ்தலங்கள், பாரம்பரிய சுற்றுலாக்களுக்கான கேரளாவின் நம்பகமான டிராவல் போர்டல்.',
+      aboutText: 'ரோஹினி பிளாசா, கொக்கலை, திருச்சூர் தலைமையகம் — புனித யாத்திரைகள், மலைவாசஸ்தலங்கள், பாரம்பரிய சுற்றுலாக்களுக்கான கேரளாவின் நம்பகமான டிராவல் போர்டல்.',
       office: 'திருச்சூர் தலைமை அலுவலகம்',
       quickLinks: 'சிறப்பு கோவில்கள் & இடங்கள்',
       mediaPolicy: 'நம்பகமான மீடியா கொள்கை',
       contact: 'தொடர்பு',
-      address: 'ஸ்வராஜ் ரவுண்ட், திருச்சூர், கேரளா 680001',
+      address: '40/3924 Rohini Plaza, Near Railway Station, Kokkalai, Thrissur',
       email: 'hello@oasisindiatravel.com',
       newsletterTitle: 'பயண சலுகைகள் & யாத்திரை அறிவிப்புகளைப் பெறுங்கள்',
       newsletterText: 'சிறப்பு பருவகால தள்ளுபடிகள் மற்றும் புதிய சுற்றுலா அறிமுகங்களுக்கு குழுசேரவும்.',
