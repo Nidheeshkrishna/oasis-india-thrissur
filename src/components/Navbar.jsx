@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Phone, ShieldCheck, UserCheck, Sparkles, Globe, Check, ChevronDown, Menu, X, MessageCircle } from 'lucide-react';
+import { Phone, ShieldCheck, MapPin, UserCheck, Sparkles, Globe, Check, ChevronDown, Menu, X, MessageCircle } from 'lucide-react';
 import OasisLogo from './OasisLogo';
 import { getWhatsAppNumber } from '../services/whatsapp';
 import { useLanguage, LANGUAGES } from '../i18n/LanguageContext';
@@ -31,12 +31,12 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAdmin, onBookCli
   }, [langOpen]);
 
   const navLinks = [
-    { id: 'home',         label: t('nav.home') },
+    { id: 'home', label: t('nav.home') },
     { id: 'destinations', label: t('nav.destinations') },
-    { id: 'packages',     label: t('nav.packages') },
-    { id: 'gallery',      label: t('nav.gallery') },
-    { id: 'about',        label: t('nav.about') },
-    { id: 'contact',      label: t('nav.contact') },
+    { id: 'packages', label: t('nav.packages') },
+    { id: 'gallery', label: t('nav.gallery') },
+    { id: 'about', label: t('nav.about') },
+    { id: 'contact', label: t('nav.contact') },
   ];
 
   /* ── shared glass pill style for icon buttons ── */
@@ -105,6 +105,9 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAdmin, onBookCli
         letterSpacing: '0.05em',
         borderBottom: '1px solid rgba(255,255,255,0.1)',
       }}>
+        {/* <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <MapPin size={12} /> <span>{t('topbarBranch')}</span>
+        </div> */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
           <ShieldCheck size={12} /> <span>{t('topbarAuth')}</span>
         </div>
@@ -300,6 +303,39 @@ export default function Navbar({ activeTab, setActiveTab, onOpenAdmin, onBookCli
             <span style={{ fontWeight: 800 }}>Admin Console</span>
           </button>
 
+          {/* WhatsApp Button */}
+          <a
+            href={`https://wa.me/${getWhatsAppNumber()}?text=${encodeURIComponent('Hello OASIS India Thrissur, I want to plan a tour package.')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Chat with us on WhatsApp"
+            style={{ ...glassPill, border: '1px solid rgba(37,211,102,0.55)', color: '#4ade80', textDecoration: 'none' }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(37,211,102,0.18)';
+              e.currentTarget.style.borderColor = 'rgba(37,211,102,0.8)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(255,255,255,0.08)';
+              e.currentTarget.style.borderColor = 'rgba(245,158,11,0.4)';
+            }}
+          >
+            <MessageCircle size={14} />
+            <span>WhatsApp</span>
+          </a>
+
+          {/* Book Now CTA */}
+          <button
+            className="btn-gold"
+            onClick={() => onBookClick()}
+            style={{
+              padding: '0.55rem 1.35rem',
+              fontSize: '0.85rem',
+              boxShadow: '0 4px 20px rgba(245,158,11,0.35), inset 0 1px 0 rgba(255,255,255,0.15)',
+            }}
+          >
+            <Sparkles size={15} />
+            <span>{t('bookTour')}</span>
+          </button>
 
           {/* Mobile menu toggle */}
           <button
